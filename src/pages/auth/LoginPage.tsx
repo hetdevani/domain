@@ -14,8 +14,10 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { ButtonLoader } from '../../components/common/Loaders';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage: React.FC = () => {
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [authStep, setAuthStep] = useState<'creds' | '2fa' | 'otp' | 'register' | 'forgot'>('creds');
     const [otp, setOtp] = useState('');
@@ -135,21 +137,33 @@ const LoginPage: React.FC = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
-                    style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: 600 }}
+                    style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: 800 }}
                 >
                     <motion.div
                         animate={{ y: [0, -10, 0] }}
                         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                     >
-                        <Box component="img" src="/logo.png" alt="LeasePacket Logo" sx={{ width: 280, mb: 4, filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.2))' }} />
+                        <Box
+                            component="img"
+                            src="/logo-white.png"
+                            alt="LeasePacket Logo"
+                            onClick={() => navigate('/')}
+                            sx={{
+                                width: 280,
+                                mb: 4,
+                                filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.2))',
+                                cursor: 'pointer',
+                                '&:hover': { opacity: 0.8 }
+                            }}
+                        />
                     </motion.div>
 
-                    <Typography variant="h2" sx={{ fontWeight: 800, mb: 2, fontSize: '3.5rem', lineHeight: 1.1 }}>
+                    <Typography variant="h2" sx={{color: '#ffffff', fontWeight: 800, mb: 2, fontSize: '3.5rem', lineHeight: 1.1 }}>
                         Optimized Infrastructure <br />
                         <Box component="span" sx={{ color: '#2ECC71' }}>Management</Box>
                     </Typography>
 
-                    <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.7)', mb: 6, fontWeight: 400, maxWidth: 450, mx: 'auto' }}>
+                    <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.7)', mb: 6, fontWeight: 400, maxWidth: 550, mx: 'auto' }}>
                         Streamline your lease packets and optimize your network operations with our high-performance control panel.
                     </Typography>
 
@@ -158,7 +172,7 @@ const LoginPage: React.FC = () => {
                             <motion.div key={idx} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 + (idx * 0.1) }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, opacity: 0.8 }}>
                                     <Box sx={{ color: '#2ECC71' }}>{feature.icon}</Box>
-                                    <Typography variant="caption" sx={{ fontWeight: 600, letterSpacing: 0.5 }}>
+                                    <Typography variant="caption" sx={{color: '#ffffff', fontWeight: 600, letterSpacing: 0.5 }}>
                                         {feature.text.toUpperCase()}
                                     </Typography>
                                 </Box>
@@ -391,7 +405,22 @@ const LoginPage: React.FC = () => {
                 {/* Powered By Footer */}
                 <Box sx={{ position: 'absolute', bottom: 30, textAlign: 'center', width: '100%', px: 2 }}>
                     <Typography variant="caption" sx={{ color: '#94a3b8', fontWeight: 500, letterSpacing: 0.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
-                        POWERED BY <Box component="span" sx={{ color: '#0A3D62', fontWeight: 800 }}>SADHGURU INFOTECH</Box>
+                        POWERED BY{' '}
+                        <Box
+                            component="a"
+                            href="https://sadhguruinfotech.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={{
+                                color: '#0A3D62',
+                                fontWeight: 800,
+                                textDecoration: 'none',
+                                cursor: 'pointer',
+                                '&:hover': { textDecoration: 'underline' }
+                            }}
+                        >
+                            SADHGURU INFOTECH
+                        </Box>
                     </Typography>
                 </Box>
             </Box>

@@ -101,10 +101,10 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                     onClick={() => navigate('/dashboard')}
                 >
                     <img
-                        src={open ? "/logo.png" : "/faviicon.webp"}
+                        src={open ? "/logo-white.png" : "/icon.png"}
                         alt="Logo"
                         style={{
-                            height: open ? 36 : 32,
+                            height: open ? 48 : 42,
                             width: 'auto',
                             objectFit: 'contain',
                             transition: 'all 0.3s ease'

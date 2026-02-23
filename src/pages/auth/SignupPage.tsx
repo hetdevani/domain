@@ -56,15 +56,15 @@ const SignupPage: React.FC = () => {
                 <motion.div animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} style={{ position: 'absolute', top: '-10%', left: '-10%', width: '50%', height: '50%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(46, 204, 113, 0.15) 0%, transparent 70%)', filter: 'blur(60px)' }} />
                 <motion.div animate={{ scale: [1, 1.3, 1], rotate: [0, -90, 0] }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '60%', height: '60%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(235, 245, 255, 0.1) 0%, transparent 70%)', filter: 'blur(80px)' }} />
 
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: 600 }}>
-                    <Box component="img" src="/logo.png" alt="LeasePacket Logo" sx={{ width: 280, mb: 4, filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.2))' }} />
-                    <Typography variant="h2" sx={{ fontWeight: 800, mb: 2, fontSize: '3.5rem', lineHeight: 1.1 }}>Join The Network <Box component="span" sx={{ color: '#2ECC71' }}>Revolution</Box></Typography>
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: 800 }}>
+                    <Box component="img" src="/logo-white.png" alt="LeasePacket Logo" sx={{ width: 280, mb: 4, filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.2))' }} />
+                    <Typography variant="h2" sx={{color: '#ffffff', fontWeight: 800, mb: 2, fontSize: '3.5rem', lineHeight: 1.1 }}>Join The Network <Box component="span" sx={{ color: '#2ECC71' }}>Revolution</Box></Typography>
                     <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.7)', mb: 6, fontWeight: 400, maxWidth: 450, mx: 'auto' }}>Create your account to start managing your lease packets securely.</Typography>
 
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 4 }}>
                         {features.map((feature, idx) => (
                             <motion.div key={idx} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 + (idx * 0.1) }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, opacity: 0.8 }}><Box sx={{ color: '#2ECC71' }}>{feature.icon}</Box><Typography variant="caption" sx={{ fontWeight: 600, letterSpacing: 0.5 }}>{feature.text.toUpperCase()}</Typography></Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, opacity: 0.8 }}><Box sx={{ color: '#2ECC71' }}>{feature.icon}</Box><Typography variant="caption" sx={{color: '#ffffff', fontWeight: 600, letterSpacing: 0.5 }}>{feature.text.toUpperCase()}</Typography></Box>
                             </motion.div>
                         ))}
                     </Box>

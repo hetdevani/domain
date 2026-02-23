@@ -32,10 +32,10 @@ const PageLoader: React.FC = () => {
                 }}
             >
                 <img
-                    src="/logo.png"
+                    src="/icon.png"
                     alt="Loading..."
                     style={{
-                        height: 50,
+                        height: 100,
                         marginBottom: 20,
                         animation: 'pulse 1.5s infinite ease-in-out'
                     }}
