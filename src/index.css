@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary-main: #0ea5e9;
+    --background-default: #f8fafc;
+    --background-paper: #ffffff;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 overflow-x-hidden;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-xl;
+  }
+  
+  .dynamic-transition {
+    @apply transition-all duration-300 ease-in-out;
+  }
+}
+
+/* MUI Override Fixes */
+.MuiButton-root {
+  text-transform: none !important;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
