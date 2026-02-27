@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Chip, Avatar, Typography, IconButton, Tooltip } from '@mui/material';
+
 import { ShieldCheck, Ban, Key, Shield } from 'lucide-react';
 import DynamicTable, { type Column } from '../../components/table/DynamicTable';
 import Breadcrumb from '../../components/layout/Breadcrumb';
@@ -112,6 +113,14 @@ const UserManagementPage: React.FC = () => {
     return (
         <Box>
             <Breadcrumb />
+            <Box sx={{ mb: 3 }}>
+                <Typography variant="h4" sx={{ fontWeight: 900, color: '#0A3D62', letterSpacing: '-0.02em' }}>
+                    User Management
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    Manage admin users, roles, and permissions.
+                </Typography>
+            </Box>
             <DynamicTable
                 key={refreshTrigger}
                 title="User Management"

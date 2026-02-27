@@ -1,5 +1,5 @@
-import { Box, Typography, Button, Paper, List, ListItem, ListItemIcon, ListItemText, Tooltip } from '@mui/material';
-import { Shield, Globe, Users, Clock, Mail, MessageSquare, Webhook } from 'lucide-react';
+import { Box, Typography, Button, Paper, List, ListItem, ListItemIcon, ListItemText, Tooltip, alpha } from '@mui/material';
+import { Shield, Globe, Users, Clock, Mail, MessageSquare, Webhook, Check } from 'lucide-react';
 import type { IPlan } from '../../../types';
 
 interface PlanCardProps {
@@ -9,145 +9,198 @@ interface PlanCardProps {
 }
 
 const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, isAdmin }) => {
-    // const isFree = plan.price === 0;
-
     const features = [
-        { icon: <Shield size={18} />, text: `${plan.maxMonitors} Monitors`, subtext: `Min interval: ${plan.minCheckInterval} min` },
-        { icon: <Globe size={18} />, text: `${plan.maxStatusPages} Status Pages` },
-        { icon: <Users size={18} />, text: `${plan.maxTeamMembers} Team Members` },
-        { icon: <Clock size={18} />, text: `${plan.logRetentionDays} Days Log Retention` },
+        { icon: <Shield size={16} />, text: `${plan.maxMonitors} Monitors`, subtext: `Min interval: ${plan.minCheckInterval} min` },
+        { icon: <Globe size={16} />, text: `${plan.maxStatusPages} Status Pages` },
+        { icon: <Users size={16} />, text: `${plan.maxTeamMembers} Team Members` },
+        { icon: <Clock size={16} />, text: `${plan.logRetentionDays} Days Log Retention` },
     ];
 
     const notifications = [
-        { icon: <Mail size={16} />, active: plan.emailNotifications, label: 'Email' },
-        { icon: <MessageSquare size={16} />, active: plan.smsNotifications, label: 'SMS' },
-        { icon: <Webhook size={16} />, active: plan.webhookNotifications, label: 'Webhook' },
+        { icon: <Mail size={14} />, active: plan.emailNotifications, label: 'Email' },
+        { icon: <MessageSquare size={14} />, active: plan.smsNotifications, label: 'SMS' },
+        { icon: <Webhook size={14} />, active: plan.webhookNotifications, label: 'Webhook' },
     ];
 
     return (
         <Paper
             elevation={0}
             sx={{
-                p: 2.5,
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                borderRadius: 4,
-                border: '1px solid',
-                borderColor: plan.isDefault ? 'primary.main' : 'divider',
-                position: 'relative',
+                borderRadius: 3,
+                border: plan.isDefault ? '2px solid #0A3D62' : '1px solid rgba(0,0,0,0.08)',
                 overflow: 'hidden',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: '0 2px 16px rgba(0,0,0,0.06)',
                 '&:hover': {
-                    transform: 'translateY(-8px)',
-                    boxShadow: '0 12px 24px rgba(0,0,0,0.1)',
-                    borderColor: 'primary.main',
+                    transform: 'translateY(-6px)',
+                    boxShadow: '0 16px 40px rgba(0,0,0,0.12)',
+                    borderColor: '#0A3D62',
                 }
             }}
         >
-            {plan.isDefault && (
-                <Box
-                    sx={{
+            {/* Card Header */}
+            <Box sx={{
+                p: 3,
+                background: plan.isDefault
+                    ? 'linear-gradient(135deg, #0A3D62 0%, #1a5276 100%)'
+                    : 'linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)',
+                borderBottom: '1px solid rgba(0,0,0,0.06)',
+                position: 'relative',
+                overflow: 'hidden',
+            }}>
+                {plan.isDefault && (
+                    <Box sx={{
                         position: 'absolute',
-                        top: 20,
-                        right: -35,
+                        top: 14,
+                        right: -28,
                         transform: 'rotate(45deg)',
-                        bgcolor: 'primary.main',
+                        bgcolor: '#2ECC71',
                         color: 'white',
-                        py: 0.5,
+                        py: 0.4,
                         px: 5,
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                        zIndex: 1
-                    }}
-                >
-                    DEFAULT
-                </Box>
-            )}
+                        fontSize: '0.65rem',
+                        fontWeight: 800,
+                        letterSpacing: '0.08em',
+                        textTransform: 'uppercase',
+                        boxShadow: '0 2px 8px rgba(46,204,113,0.4)',
+                    }}>
+                        Default
+                    </Box>
+                )}
 
-            <Box sx={{ mb: 2 }}>
-                <Box>
-                    <Typography variant="h5" sx={{ fontWeight: 800, mb: 1, color: '#0A3D62' }}>
-                        {plan.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ minHeight: 40, fontSize: '0.8125rem', lineHeight: 1.4 }}>
-                        {plan.description || 'Perfect for starting your monitoring journey.'}
-                    </Typography>
-                </Box>
+                <Typography variant="overline" sx={{
+                    fontSize: '0.65rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.1em',
+                    color: plan.isDefault ? 'rgba(255,255,255,0.7)' : '#64748b',
+                    display: 'block',
+                    mb: 0.5
+                }}>
+                    Plan
+                </Typography>
+                <Typography variant="h5" sx={{
+                    fontWeight: 900,
+                    color: plan.isDefault ? '#ffffff' : '#0A3D62',
+                    letterSpacing: '-0.02em',
+                    mb: 0.5
+                }}>
+                    {plan.name}
+                </Typography>
+                <Typography variant="body2" sx={{
+                    color: plan.isDefault ? 'rgba(255,255,255,0.75)' : '#64748b',
+                    fontSize: '0.8125rem',
+                    lineHeight: 1.5,
+                    minHeight: 36
+                }}>
+                    {plan.description || 'Perfect for starting your monitoring journey.'}
+                </Typography>
             </Box>
 
-            <Box sx={{ mb: 2.5, display: 'flex', alignItems: 'baseline' }}>
-                <Typography variant="h4" sx={{ fontWeight: 800, color: 'primary.main' }}>
+            {/* Price Section */}
+            <Box sx={{ px: 3, pt: 2.5, pb: 1, display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
+                <Typography variant="h3" sx={{ fontWeight: 900, color: '#0A3D62', letterSpacing: '-0.03em', lineHeight: 1 }}>
                     ${plan.price}
                 </Typography>
-                <Typography variant="subtitle1" color="text.secondary" sx={{ ml: 1 }}>
+                <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>
                     /{plan.billingCycle}
                 </Typography>
             </Box>
 
-            <List sx={{ mb: 'auto' }}>
+            {/* Features */}
+            <List sx={{ px: 2, flexGrow: 1 }}>
                 {features.map((feature, index) => (
-                    <ListItem key={index} disableGutters sx={{ py: 0.4 }}>
-                        <ListItemIcon sx={{ minWidth: 32, color: 'primary.main' }}>
-                            {feature.icon}
+                    <ListItem key={index} disableGutters sx={{ py: 0.5, alignItems: 'flex-start' }}>
+                        <ListItemIcon sx={{ minWidth: 28, mt: 0.25 }}>
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: 20,
+                                height: 20,
+                                borderRadius: '50%',
+                                bgcolor: alpha('#0A3D62', 0.08),
+                                color: '#0A3D62',
+                            }}>
+                                <Check size={12} strokeWidth={3} />
+                            </Box>
                         </ListItemIcon>
                         <ListItemText
                             primary={feature.text}
                             secondary={feature.subtext}
-                            primaryTypographyProps={{ variant: 'body2', fontWeight: 600 }}
-                            secondaryTypographyProps={{ variant: 'caption' }}
+                            primaryTypographyProps={{ variant: 'body2', fontWeight: 600, color: '#374151', fontSize: '0.8375rem' }}
+                            secondaryTypographyProps={{ variant: 'caption', color: 'text.disabled' }}
                         />
                     </ListItem>
                 ))}
             </List>
 
-            <Box sx={{ mt: 2, mb: 2 }}>
-                <Typography variant="caption" sx={{ fontWeight: 700, textTransform: 'uppercase', color: 'text.secondary', display: 'block', mb: 1.5 }}>
+            {/* Notifications */}
+            <Box sx={{ px: 3, pb: 2, mt: 1 }}>
+                <Typography variant="caption" sx={{
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.07em',
+                    color: '#94a3b8',
+                    display: 'block',
+                    mb: 1
+                }}>
                     Notifications
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     {notifications.map((n, i) => (
                         <Tooltip key={i} title={`${n.label}: ${n.active ? 'Enabled' : 'Disabled'}`}>
-                            <Box
-                                sx={{
-                                    p: 1,
-                                    borderRadius: 1.5,
-                                    bgcolor: n.active ? 'rgba(46, 204, 113, 0.1)' : 'rgba(0,0,0,0.04)',
-                                    color: n.active ? '#2ecc71' : 'text.disabled',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
-                            >
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                                px: 1.25,
+                                py: 0.6,
+                                borderRadius: 1.5,
+                                bgcolor: n.active ? alpha('#2ECC71', 0.1) : 'rgba(0,0,0,0.04)',
+                                color: n.active ? '#2ecc71' : '#94a3b8',
+                                border: `1px solid ${n.active ? alpha('#2ECC71', 0.2) : 'transparent'}`,
+                                fontSize: '0.7rem',
+                                fontWeight: 700,
+                                cursor: 'default',
+                            }}>
                                 {n.icon}
+                                <span>{n.label}</span>
                             </Box>
                         </Tooltip>
                     ))}
                 </Box>
             </Box>
 
-            {
-                isAdmin && (
-                    <Box sx={{ display: 'flex', gap: 1.5, mt: 1.5 }}>
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            size="medium"
-                            onClick={() => onEdit?.(plan)}
-                            sx={{
-                                borderRadius: 2,
-                                fontWeight: 700,
-                                boxShadow: 'none',
-                                '&:hover': { boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }
-                            }}
-                        >
-                            Edit Plan Details
-                        </Button>
-                    </Box>
-                )
-            }
-        </Paper >
+            {/* Action */}
+            {isAdmin && (
+                <Box sx={{ px: 3, pb: 3 }}>
+                    <Button
+                        fullWidth
+                        variant={plan.isDefault ? 'contained' : 'outlined'}
+                        size="medium"
+                        onClick={() => onEdit?.(plan)}
+                        sx={{
+                            borderRadius: 2,
+                            fontWeight: 700,
+                            py: 1,
+                            boxShadow: 'none',
+                            bgcolor: plan.isDefault ? '#0A3D62' : 'transparent',
+                            borderColor: plan.isDefault ? '#0A3D62' : 'rgba(10,61,98,0.25)',
+                            color: plan.isDefault ? '#fff' : '#0A3D62',
+                            '&:hover': {
+                                boxShadow: '0 4px 14px rgba(10,61,98,0.2)',
+                                bgcolor: plan.isDefault ? '#0d4d7a' : alpha('#0A3D62', 0.06),
+                            }
+                        }}
+                    >
+                        Edit Plan
+                    </Button>
+                </Box>
+            )}
+        </Paper>
     );
 };
 

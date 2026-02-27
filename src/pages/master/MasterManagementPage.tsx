@@ -1,6 +1,5 @@
 import React from 'react';
-import { Box, Typography, Button, Chip } from '@mui/material';
-import { Plus } from 'lucide-react';
+import { Box, Typography, Chip } from '@mui/material';
 import DynamicTable, { type Column } from '../../components/table/DynamicTable';
 import Breadcrumb from '../../components/layout/Breadcrumb';
 import MasterForm from './components/MasterForm';
@@ -50,23 +49,13 @@ const MasterManagementPage: React.FC = () => {
         <Box>
             <Breadcrumb />
 
-            <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box>
-                    <Typography variant="h4" sx={{ fontWeight: 800, color: '#0A3D62' }}>
-                        Master Data Management
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        Manage lookup values, categories, and system constants.
-                    </Typography>
-                </Box>
-                <Button
-                    variant="contained"
-                    startIcon={<Plus size={18} />}
-                    onClick={handleCreate}
-                    sx={{ borderRadius: 2.5, px: 3 }}
-                >
-                    Add Entry
-                </Button>
+            <Box sx={{ mb: 4 }}>
+                <Typography variant="h4" sx={{ fontWeight: 900, color: '#0A3D62', letterSpacing: '-0.02em' }}>
+                    Master Data Management
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    Manage lookup values, categories, and system constants.
+                </Typography>
             </Box>
 
             <DynamicTable

@@ -10,8 +10,10 @@ import { useMonitorLogic } from './hooks/useMonitorLogic';
 import { monitorApi } from './api/monitorApi';
 import { MONITOR_TYPE, MONITOR_STATUS, USER_TYPES } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const MonitorPage: React.FC = () => {
+    const navigate = useNavigate();
     const {
         loading,
         modalOpen,
@@ -184,11 +186,20 @@ const MonitorPage: React.FC = () => {
     return (
         <Box>
             <Breadcrumb />
+            <Box sx={{ mb: 3 }}>
+                <Typography variant="h4" sx={{ fontWeight: 900, color: '#0A3D62', letterSpacing: '-0.02em' }}>
+                    Website Monitors
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    Monitor uptime, SSL, and performance across all your sites.
+                </Typography>
+            </Box>
             <DynamicTable
                 key={refreshTrigger}
                 title="Website Monitors"
                 columns={columns}
                 fetchData={fetchMonitors}
+                onRowClick={(row) => navigate(`/monitors/${row.id}`)}
                 onEdit={handleEdit}
                 onDelete={handleDeleteClick}
                 onCreate={() => {

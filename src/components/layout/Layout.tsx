@@ -31,7 +31,7 @@ const Layout: React.FC = () => {
     };
 
     return (
-        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
+        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#F1F5F9' }}>
             <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
             <Box

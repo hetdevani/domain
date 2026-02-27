@@ -12,6 +12,7 @@ const DashboardPage = lazy(() => import('../pages/dashboard/DashboardPage'));
 const UserManagementPage = lazy(() => import('../pages/users/UserManagementPage'));
 const CustomerManagementPage = lazy(() => import('../pages/customers/CustomerManagementPage'));
 const MonitorPage = lazy(() => import('../pages/monitors/MonitorPage'));
+const MonitorDetailPage = lazy(() => import('../pages/monitors/MonitorDetailPage'));
 const IncidentPage = lazy(() => import('../pages/monitors/IncidentPage'));
 const PlanManagementPage = lazy(() => import('../pages/plans/PlanManagementPage'));
 const MasterManagementPage = lazy(() => import('../pages/master/MasterManagementPage'));
@@ -70,6 +71,14 @@ const AppRoutes: React.FC = () => {
                     element={
                         <ProtectedRoute module={MODULES.MONITOR}>
                             <MonitorPage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/monitors/:id"
+                    element={
+                        <ProtectedRoute module={MODULES.MONITOR}>
+                            <MonitorDetailPage />
                         </ProtectedRoute>
                     }
                 />

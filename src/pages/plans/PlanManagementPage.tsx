@@ -51,13 +51,15 @@ const PlanManagementPage: React.FC = () => {
         <Box>
             <Breadcrumb />
 
-            <Box sx={{ mb: 4 }}>
-                <Typography variant="h4" sx={{ fontWeight: 800, color: '#0A3D62' }}>
-                    Subscription Plans
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                    Review and modify service tiers and limits.
-                </Typography>
+            <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 2 }}>
+                <Box>
+                    <Typography variant="h4" sx={{ fontWeight: 900, color: '#0A3D62', letterSpacing: '-0.02em' }}>
+                        Subscription Plans
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                        Review and modify service tiers and feature limits.
+                    </Typography>
+                </Box>
             </Box>
 
             {loading ? (
