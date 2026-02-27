@@ -184,7 +184,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     </IconButton>
                 </Box>
 
-                <TableContainer sx={{ maxHeight: 'calc(100vh - 400px)' }}>
+                <TableContainer>
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>
