@@ -403,12 +403,12 @@ const LoginPage: React.FC = () => {
                 </Box>
 
                 {/* Powered By Footer */}
-                <Box sx={{ position: 'absolute', bottom: 30, textAlign: 'center', width: '100%', px: 2 }}>
+                {/* <Box sx={{ position: 'absolute', bottom: 30, textAlign: 'center', width: '100%', px: 2 }}>
                     <Typography variant="caption" sx={{ color: '#94a3b8', fontWeight: 500, letterSpacing: 0.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
                         POWERED BY{' '}
                         <Box
                             component="a"
-                            href="https://sadhguruinfotech.com"
+                            href="https://leasepacket.com"
                             target="_blank"
                             rel="noopener noreferrer"
                             sx={{
@@ -419,10 +419,10 @@ const LoginPage: React.FC = () => {
                                 '&:hover': { textDecoration: 'underline' }
                             }}
                         >
-                            SADHGURU INFOTECH
+                            Lease Packet
                         </Box>
                     </Typography>
-                </Box>
+                </Box> */}
             </Box>
         </Box>
     );

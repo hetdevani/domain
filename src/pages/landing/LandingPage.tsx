@@ -964,21 +964,7 @@ const LandingPage: React.FC = () => {
 
             <Box sx={{ py: 6, px:1, textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)', position: 'relative', zIndex: 1 }}>
                 <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.4)' }}>
-                    © {new Date().getFullYear()} Lease Packet Tools. Powered by{' '}
-                    <Box
-                        component="a"
-                        href="https://sadhguruinfotech.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        sx={{
-                            color: '#2ECC71',
-                            textDecoration: 'none',
-                            cursor: 'pointer',
-                            '&:hover': { textDecoration: 'underline' }
-                        }}
-                    >
-                        Sadhguru Infotech
-                    </Box>.
+                    © {new Date().getFullYear()} Lease Packet Tools. {' '}
                 </Typography>
             </Box>
         </Box>
