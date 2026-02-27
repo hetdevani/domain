@@ -14,14 +14,10 @@ const api: AxiosInstance = axios.create({
 // Request interceptor
 api.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        // Since we are using HttpOnly cookies, we don't strictly need to send the Authorization header.
-        // Sending a stale token from localStorage can cause 401s if the cookie is newer/different.
-        /*
         const token = localStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
-        */
         return config;
     },
     (error: AxiosError) => {
