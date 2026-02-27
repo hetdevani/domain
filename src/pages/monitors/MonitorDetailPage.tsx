@@ -49,7 +49,6 @@ import {
     CartesianGrid,
     Tooltip as RechartsTooltip,
     ResponsiveContainer,
-    ReferenceLine,
 } from 'recharts';
 import Breadcrumb from '../../components/layout/Breadcrumb';
 import { monitorApi } from './api/monitorApi';
