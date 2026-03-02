@@ -219,7 +219,7 @@ const DnsPropagationPage: React.FC = () => {
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(46,204,113,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(46,204,113,0.2)' }}>
                         <Globe size={36} color="#2ECC71" />
                     </Box>
-                    <Typography variant="h2" sx={{ fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>
+                    <Typography variant="h2" sx={{ color: '#ffffff', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>
                         DNS Propagation Checker
                     </Typography>
                     <Typography sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
@@ -309,7 +309,7 @@ const DnsPropagationPage: React.FC = () => {
 
                 {/* How to Use */}
                 <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                    <Typography variant="h5" sx={{ fontWeight: 800, mb: 3 }}>How to Use</Typography>
+                    <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>How to Use</Typography>
                     {[
                         { step: '1', title: 'Enter Domain', desc: 'Type or paste the domain name you want to check (e.g., example.com or sub.example.com).' },
                         { step: '2', title: 'Select Record Type', desc: 'Choose the DNS record type you recently changed — A for IP, MX for mail, TXT for verification codes, etc.' },
@@ -321,7 +321,7 @@ const DnsPropagationPage: React.FC = () => {
                                 <Typography sx={{ color: '#2ECC71', fontWeight: 800, fontSize: '0.85rem' }}>{item.step}</Typography>
                             </Box>
                             <Box>
-                                <Typography sx={{ fontWeight: 700, mb: 0.5 }}>{item.title}</Typography>
+                                <Typography sx={{ color: '#ffffff', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography>
                                 <Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography>
                             </Box>
                         </Box>
@@ -329,7 +329,7 @@ const DnsPropagationPage: React.FC = () => {
                 </Paper>
 
                 {/* FAQs */}
-                <Typography variant="h5" sx={{ fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
+                <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
                 {FAQS.map((faq, i) => (
                     <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
                         <AccordionSummary expandIcon={<ChevronDown size={18} color="rgba(255,255,255,0.5)" />} sx={{ px: 3, py: 1.5 }}>

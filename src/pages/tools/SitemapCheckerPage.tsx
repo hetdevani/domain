@@ -29,8 +29,12 @@ const SitemapCheckerPage: React.FC = () => {
         try {
             const res = await fetch(`${API_BASE}/sitemap-checker?url=${encodeURIComponent(url)}`);
             const data = await res.json();
-            if (data.status === 'success' || data.status === 200 || data.code === 'SUCCESS') setResult(data.data);
-            else setError(data.message || 'Request failed');
+            const isSuccess = data.code === 'SUCCESS' || data.status === 200 || data.status === 'success' || String(data.status) === '200';
+            if (isSuccess) {
+                setResult(data.data ?? null);
+            } else {
+                setError(typeof data.message === 'string' ? data.message : 'Request failed');
+            }
         } catch {
             setError('Failed to reach the server. Please try again.');
         } finally {
@@ -40,30 +44,55 @@ const SitemapCheckerPage: React.FC = () => {
 
     const renderResult = () => {
         if (!result) return null;
-        const urls: any[] = result.urls || result.entries || [];
-        const sitemaps: string[] = result.sitemaps || result.sitemapIndex || [];
-        const isIndex = result.isSitemapIndex || sitemaps.length > 0;
+
+        const found: boolean = result.found === true;
+        const isIndex: boolean = result.isIndexSitemap === true;
+        const urlCount: number = result.urlCount ?? 0;
+        const urls: any[] = Array.isArray(result.urls) ? result.urls : [];
+        const sitemaps: string[] = Array.isArray(result.sitemaps) ? result.sitemaps : [];
 
         return (
             <Box>
                 {/* Stats */}
                 <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
-                    <Box sx={{ p: 2.5, bgcolor: result.valid !== false ? 'rgba(46,204,113,0.08)' : 'rgba(231,76,60,0.08)', border: `1px solid ${result.valid !== false ? 'rgba(46,204,113,0.2)' : 'rgba(231,76,60,0.2)'}`, borderRadius: '12px', display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        {result.valid !== false ? <CheckCircle size={20} color="#2ECC71" /> : <XCircle size={20} color="#E74C3C" />}
-                        <Typography sx={{ color: result.valid !== false ? '#2ECC71' : '#E74C3C', fontWeight: 700 }}>{result.valid !== false ? 'Valid Sitemap' : 'Invalid Sitemap'}</Typography>
+                    <Box sx={{ p: 2.5, bgcolor: found ? 'rgba(46,204,113,0.08)' : 'rgba(231,76,60,0.08)', border: `1px solid ${found ? 'rgba(46,204,113,0.2)' : 'rgba(231,76,60,0.2)'}`, borderRadius: '12px', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        {found ? <CheckCircle size={20} color="#2ECC71" /> : <XCircle size={20} color="#E74C3C" />}
+                        <Typography sx={{ color: found ? '#2ECC71' : '#E74C3C', fontWeight: 700 }}>{found ? 'Sitemap Found' : 'Sitemap Not Found'}</Typography>
                     </Box>
+                    {result.statusCode != null && (
+                        <Box sx={{ p: 2.5, bgcolor: 'rgba(46,204,113,0.08)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: '12px' }}>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block' }}>HTTP Status</Typography>
+                            <Typography variant="h5" sx={{ color: result.statusCode === 200 ? '#2ECC71' : '#F39C12', fontWeight: 900 }}>{result.statusCode}</Typography>
+                        </Box>
+                    )}
                     <Box sx={{ p: 2.5, bgcolor: 'rgba(142,68,173,0.08)', border: '1px solid rgba(142,68,173,0.2)', borderRadius: '12px' }}>
                         <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block' }}>URLs Found</Typography>
-                        <Typography variant="h5" sx={{ color: '#8E44AD', fontWeight: 900 }}>{urls.length}</Typography>
+                        <Typography variant="h5" sx={{ color: '#8E44AD', fontWeight: 900 }}>{urlCount}</Typography>
                     </Box>
                     {isIndex && (
-                        <Box sx={{ p: 2.5, bgcolor: 'rgba(52,152,219,0.08)', border: '1px solid rgba(52,152,219,0.2)', borderRadius: '12px' }}>
+                        <Box sx={{ p: 2.5, bgcolor: 'rgba(52,152,219,0.08)', border: '1px solid rgba(52,152,219,0.2)', borderRadius: '12px', display: 'flex', alignItems: 'center' }}>
                             <Chip label="Sitemap Index" sx={{ bgcolor: 'rgba(52,152,219,0.15)', color: '#3498DB', border: '1px solid rgba(52,152,219,0.3)', fontWeight: 700 }} />
+                        </Box>
+                    )}
+                    {result.responseTimeMs != null && (
+                        <Box sx={{ p: 2.5, bgcolor: 'rgba(155,89,182,0.08)', border: '1px solid rgba(155,89,182,0.2)', borderRadius: '12px' }}>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block' }}>Response Time</Typography>
+                            <Typography variant="h5" sx={{ color: '#9B59B6', fontWeight: 900 }}>
+                                {result.responseTimeMs}<Typography component="span" variant="caption" sx={{ color: 'rgba(255,255,255,0.4)' }}>ms</Typography>
+                            </Typography>
                         </Box>
                     )}
                 </Box>
 
-                {/* Sitemap Index files */}
+                {/* Sitemap URL */}
+                {result.sitemapUrl && (
+                    <Box sx={{ mb: 3, p: 2, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Link size={14} color="#8E44AD" style={{ flexShrink: 0 }} />
+                        <Typography sx={{ color: '#a8c5e8', fontFamily: 'monospace', fontSize: '0.85rem', wordBreak: 'break-all' }}>{result.sitemapUrl}</Typography>
+                    </Box>
+                )}
+
+                {/* Child Sitemaps (index) */}
                 {sitemaps.length > 0 && (
                     <Box sx={{ mb: 3 }}>
                         <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1 }}>Child Sitemaps</Typography>
@@ -82,14 +111,14 @@ const SitemapCheckerPage: React.FC = () => {
                         <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>URLs ({urls.length})</Typography>
                         <Box sx={{ bgcolor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', overflow: 'hidden', maxHeight: 400, overflowY: 'auto' }}>
                             {urls.slice(0, 100).map((entry: any, idx: number) => {
-                                const loc = typeof entry === 'string' ? entry : entry.loc || entry.url;
-                                const lastmod = entry.lastmod;
-                                const priority = entry.priority;
+                                const loc = typeof entry === 'string' ? entry : (entry.loc || entry.url || '');
+                                const lastmod = typeof entry === 'object' ? entry.lastmod : null;
+                                const priority = typeof entry === 'object' ? entry.priority : null;
                                 return (
                                     <Box key={idx} sx={{ px: 3, py: 1.5, display: 'flex', gap: 3, alignItems: 'center', bgcolor: idx % 2 === 0 ? 'rgba(0,0,0,0.1)' : 'transparent', borderBottom: idx < urls.length - 1 ? '1px solid rgba(255,255,255,0.03)' : 'none', flexWrap: 'wrap' }}>
                                         <Typography sx={{ color: '#a8c5e8', fontFamily: 'monospace', fontSize: '0.78rem', flex: 1, wordBreak: 'break-all' }}>{loc}</Typography>
-                                        {lastmod && <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.3)', flexShrink: 0 }}>{lastmod}</Typography>}
-                                        {priority && <Typography variant="caption" sx={{ color: '#8E44AD', flexShrink: 0, fontFamily: 'monospace' }}>{priority}</Typography>}
+                                        {lastmod && <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.3)', flexShrink: 0 }}>{String(lastmod)}</Typography>}
+                                        {priority && <Typography variant="caption" sx={{ color: '#8E44AD', flexShrink: 0, fontFamily: 'monospace' }}>{String(priority)}</Typography>}
                                     </Box>
                                 );
                             })}
@@ -112,7 +141,7 @@ const SitemapCheckerPage: React.FC = () => {
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(142,68,173,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(142,68,173,0.25)' }}>
                         <FileText size={36} color="#8E44AD" />
                     </Box>
-                    <Typography variant="h2" sx={{ fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>Sitemap Checker</Typography>
+                    <Typography variant="h2" sx={{ color: '#ffffff', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>Sitemap Checker</Typography>
                     <Typography sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
                         Validate and analyze XML sitemaps. Check URL count, detect sitemap index files, and verify proper formatting for SEO compliance.
                     </Typography>
@@ -143,7 +172,7 @@ const SitemapCheckerPage: React.FC = () => {
                         <motion.div key="err" initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                             <Paper elevation={0} sx={{ p: 3, bgcolor: 'rgba(231,76,60,0.08)', border: '1px solid rgba(231,76,60,0.25)', borderRadius: '14px', mb: 4, display: 'flex', gap: 1.5 }}>
                                 <AlertCircle size={20} color="#E74C3C" style={{ flexShrink: 0 }} />
-                                <Typography sx={{ color: '#E74C3C' }}>{error}</Typography>
+                                <Typography sx={{ color: '#E74C3C' }}>{typeof error === 'string' ? error : 'An error occurred'}</Typography>
                             </Paper>
                         </motion.div>
                     )}
@@ -158,7 +187,7 @@ const SitemapCheckerPage: React.FC = () => {
                 </AnimatePresence>
 
                 <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                    <Typography variant="h5" sx={{ fontWeight: 800, mb: 3 }}>How to Use</Typography>
+                    <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>How to Use</Typography>
                     {[
                         { step: '1', title: 'Enter Sitemap URL', desc: 'Paste the direct URL to your sitemap.xml file or enter your domain root to let the tool auto-detect /sitemap.xml.' },
                         { step: '2', title: 'Click Check Sitemap', desc: 'The tool fetches and parses the XML sitemap, detecting whether it\'s a standard sitemap or a sitemap index.' },
@@ -168,12 +197,12 @@ const SitemapCheckerPage: React.FC = () => {
                             <Box sx={{ width: 32, height: 32, borderRadius: '8px', bgcolor: 'rgba(142,68,173,0.15)', border: '1px solid rgba(142,68,173,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                 <Typography sx={{ color: '#8E44AD', fontWeight: 800, fontSize: '0.85rem' }}>{item.step}</Typography>
                             </Box>
-                            <Box><Typography sx={{ fontWeight: 700, mb: 0.5 }}>{item.title}</Typography><Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography></Box>
+                            <Box><Typography sx={{ color: '#ffffff', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography><Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography></Box>
                         </Box>
                     ))}
                 </Paper>
 
-                <Typography variant="h5" sx={{ fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
+                <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
                 {FAQS.map((faq, i) => (
                     <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
                         <AccordionSummary expandIcon={<ChevronDown size={18} color="rgba(255,255,255,0.5)" />} sx={{ px: 3, py: 1.5 }}>

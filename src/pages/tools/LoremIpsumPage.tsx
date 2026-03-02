@@ -3,7 +3,7 @@ import {
     Box, Typography, Container, Button, Paper,
     CircularProgress, Accordion, AccordionSummary, AccordionDetails,
     Slider, Switch, FormControlLabel, Select, MenuItem, FormControl,
-    InputLabel, Grid
+    InputLabel, Grid, Tabs, Tab
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlignLeft, ChevronDown, AlertCircle, Copy, Check } from 'lucide-react';
@@ -33,9 +33,10 @@ const LoremIpsumPage: React.FC = () => {
     const [result, setResult] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
+    const [viewTab, setViewTab] = useState(0);
 
     const handleGenerate = async () => {
-        setLoading(true); setError(null); setResult(null);
+        setLoading(true); setError(null); setResult(null); setViewTab(0);
         try {
             const res = await fetch(`${API_BASE}/lorem-ipsum-generator`, {
                 method: 'POST',
@@ -69,13 +70,11 @@ const LoremIpsumPage: React.FC = () => {
     };
 
     const handleCopy = () => {
-        const text = typeof result === 'string' ? result : result?.text || result?.content || JSON.stringify(result);
+        const text = viewTab === 1 && result?.html ? result.html : (result?.text || '');
         navigator.clipboard.writeText(text);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
-
-    const outputText = result ? (typeof result === 'string' ? result : result.text || result.content || JSON.stringify(result, null, 2)) : '';
 
     return (
         <ToolPageLayout>
@@ -84,7 +83,7 @@ const LoremIpsumPage: React.FC = () => {
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(52,152,219,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(52,152,219,0.25)' }}>
                         <AlignLeft size={36} color="#3498DB" />
                     </Box>
-                    <Typography variant="h2" sx={{ fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>Lorem Ipsum Generator</Typography>
+                    <Typography variant="h2" sx={{ color: '#ffffff', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>Lorem Ipsum Generator</Typography>
                     <Typography sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
                         Generate placeholder text with full control over quantity, format, and HTML elements. Perfect for design mockups and development.
                     </Typography>
@@ -170,23 +169,81 @@ const LoremIpsumPage: React.FC = () => {
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                             <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
+                                {/* Header */}
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                    <Typography variant="h6" sx={{ fontWeight: 700 }}>Generated Text</Typography>
+                                    <Typography variant="h6" sx={{ color: '#ffffff', fontWeight: 700 }}>Generated Text</Typography>
                                     <Button size="small" startIcon={copied ? <Check size={14} /> : <Copy size={14} />} onClick={handleCopy}
                                         sx={{ color: copied ? '#2ECC71' : 'rgba(255,255,255,0.5)', textTransform: 'none', borderRadius: '8px', '&:hover': { color: '#3498DB' } }}>
                                         {copied ? 'Copied!' : 'Copy'}
                                     </Button>
                                 </Box>
-                                <Box sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', color: '#c8d6e5', fontSize: '0.9rem', lineHeight: 1.8, maxHeight: 500, overflow: 'auto', whiteSpace: 'pre-wrap' }}>
-                                    {outputText}
+
+                                {/* Metadata chips */}
+                                <Box sx={{ display: 'flex', gap: 1.5, mb: 2.5, flexWrap: 'wrap' }}>
+                                    {result.type && (
+                                        <Box sx={{ px: 1.5, py: 0.5, bgcolor: 'rgba(52,152,219,0.1)', border: '1px solid rgba(52,152,219,0.2)', borderRadius: '6px' }}>
+                                            <Typography variant="caption" sx={{ color: '#3498DB', fontWeight: 600, textTransform: 'capitalize' }}>{result.type}</Typography>
+                                        </Box>
+                                    )}
+                                    {result.count != null && (
+                                        <Box sx={{ px: 1.5, py: 0.5, bgcolor: 'rgba(52,152,219,0.1)', border: '1px solid rgba(52,152,219,0.2)', borderRadius: '6px' }}>
+                                            <Typography variant="caption" sx={{ color: '#3498DB', fontWeight: 600 }}>Count: {result.count}</Typography>
+                                        </Box>
+                                    )}
+                                    {result.paragraphLength && (
+                                        <Box sx={{ px: 1.5, py: 0.5, bgcolor: 'rgba(52,152,219,0.1)', border: '1px solid rgba(52,152,219,0.2)', borderRadius: '6px' }}>
+                                            <Typography variant="caption" sx={{ color: '#3498DB', fontWeight: 600, textTransform: 'capitalize' }}>{result.paragraphLength}</Typography>
+                                        </Box>
+                                    )}
+                                    {result.htmlEnabled && (
+                                        <Box sx={{ px: 1.5, py: 0.5, bgcolor: 'rgba(46,204,113,0.1)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: '6px' }}>
+                                            <Typography variant="caption" sx={{ color: '#2ECC71', fontWeight: 600 }}>HTML Enabled</Typography>
+                                        </Box>
+                                    )}
+                                    {result.text && (
+                                        <Box sx={{ px: 1.5, py: 0.5, bgcolor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px' }}>
+                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>
+                                                {result.text.split(/\s+/).filter(Boolean).length} words
+                                            </Typography>
+                                        </Box>
+                                    )}
                                 </Box>
+
+                                {/* Text / HTML tabs (only when HTML available) */}
+                                {result.html && (
+                                    <Tabs value={viewTab} onChange={(_, v) => setViewTab(v)} sx={{ mb: 2, minHeight: 36, '& .MuiTabs-indicator': { bgcolor: '#3498DB' }, '& .MuiTab-root': { color: 'rgba(255,255,255,0.4)', minHeight: 36, textTransform: 'none', fontWeight: 600, fontSize: '0.85rem' }, '& .Mui-selected': { color: '#3498DB !important' } }}>
+                                        <Tab label="Plain Text" />
+                                        <Tab label="HTML Source" />
+                                        <Tab label="HTML Preview" />
+                                    </Tabs>
+                                )}
+
+                                {/* Plain text view */}
+                                {(viewTab === 0 || !result.html) && (
+                                    <Box sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', color: '#c8d6e5', fontSize: '0.9rem', lineHeight: 1.8, maxHeight: 500, overflow: 'auto', whiteSpace: 'pre-wrap' }}>
+                                        {result.text || ''}
+                                    </Box>
+                                )}
+
+                                {/* HTML source view */}
+                                {viewTab === 1 && result.html && (
+                                    <Box sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', fontFamily: 'monospace', fontSize: '0.8rem', color: '#a8b5c8', lineHeight: 1.7, maxHeight: 500, overflow: 'auto', whiteSpace: 'pre-wrap' }}>
+                                        {result.html}
+                                    </Box>
+                                )}
+
+                                {/* HTML rendered preview */}
+                                {viewTab === 2 && result.html && (
+                                    <Box sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', color: '#c8d6e5', fontSize: '0.9rem', lineHeight: 1.8, maxHeight: 500, overflow: 'auto', '& h1,& h2,& h3': { color: '#fff', mt: 2, mb: 1 }, '& b,& strong': { color: '#fff' }, '& i,& em': { color: '#94a3b8' }, '& a': { color: '#3498DB' }, '& ul,& ol': { pl: 3 } }}
+                                        dangerouslySetInnerHTML={{ __html: result.html }} />
+                                )}
                             </Paper>
                         </motion.div>
                     )}
                 </AnimatePresence>
 
                 <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                    <Typography variant="h5" sx={{ fontWeight: 800, mb: 3 }}>How to Use</Typography>
+                    <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>How to Use</Typography>
                     {[
                         { step: '1', title: 'Choose Format', desc: 'Select whether to generate paragraphs (for body text), sentences (for specific amounts), or individual words.' },
                         { step: '2', title: 'Set Quantity', desc: 'Drag the slider to choose how many paragraphs, sentences, or words you need.' },
@@ -197,12 +254,12 @@ const LoremIpsumPage: React.FC = () => {
                             <Box sx={{ width: 32, height: 32, borderRadius: '8px', bgcolor: 'rgba(52,152,219,0.15)', border: '1px solid rgba(52,152,219,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                 <Typography sx={{ color: '#3498DB', fontWeight: 800, fontSize: '0.85rem' }}>{item.step}</Typography>
                             </Box>
-                            <Box><Typography sx={{ fontWeight: 700, mb: 0.5 }}>{item.title}</Typography><Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography></Box>
+                            <Box><Typography sx={{ color: '#ffffff', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography><Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography></Box>
                         </Box>
                     ))}
                 </Paper>
 
-                <Typography variant="h5" sx={{ fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
+                <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
                 {FAQS.map((faq, i) => (
                     <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
                         <AccordionSummary expandIcon={<ChevronDown size={18} color="rgba(255,255,255,0.5)" />} sx={{ px: 3, py: 1.5 }}>
