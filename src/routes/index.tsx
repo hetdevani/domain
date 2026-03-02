@@ -18,6 +18,20 @@ const PlanManagementPage = lazy(() => import('../pages/plans/PlanManagementPage'
 const MasterManagementPage = lazy(() => import('../pages/master/MasterManagementPage'));
 const SettingsPage = lazy(() => import('../pages/settings/SettingsPage'));
 
+// Tool Pages
+const DnsPropagationPage = lazy(() => import('../pages/tools/DnsPropagationPage'));
+const IpIntelligencePage = lazy(() => import('../pages/tools/IpIntelligencePage'));
+const DnsLookupPage = lazy(() => import('../pages/tools/DnsLookupPage'));
+const WhatIsMyIpPage = lazy(() => import('../pages/tools/WhatIsMyIpPage'));
+const MetaTagAnalyzerPage = lazy(() => import('../pages/tools/MetaTagAnalyzerPage'));
+const HttpHeaderCheckerPage = lazy(() => import('../pages/tools/HttpHeaderCheckerPage'));
+const RobotsTxtCheckerPage = lazy(() => import('../pages/tools/RobotsTxtCheckerPage'));
+const SitemapCheckerPage = lazy(() => import('../pages/tools/SitemapCheckerPage'));
+const PageSpeedPage = lazy(() => import('../pages/tools/PageSpeedPage'));
+const WordCounterPage = lazy(() => import('../pages/tools/WordCounterPage'));
+const LoremIpsumPage = lazy(() => import('../pages/tools/LoremIpsumPage'));
+const HtaccessRedirectPage = lazy(() => import('../pages/tools/HtaccessRedirectPage'));
+
 const ProtectedRoute: React.FC<{
     children: React.ReactNode;
     module?: number;
@@ -45,6 +59,20 @@ const AppRoutes: React.FC = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+
+            {/* Tool Pages */}
+            <Route path="/tools/dns-propagation" element={<DnsPropagationPage />} />
+            <Route path="/tools/ip-intelligence" element={<IpIntelligencePage />} />
+            <Route path="/tools/dns-lookup" element={<DnsLookupPage />} />
+            <Route path="/tools/what-is-my-ip" element={<WhatIsMyIpPage />} />
+            <Route path="/tools/meta-tag-analyzer" element={<MetaTagAnalyzerPage />} />
+            <Route path="/tools/http-header-checker" element={<HttpHeaderCheckerPage />} />
+            <Route path="/tools/robots-txt-checker" element={<RobotsTxtCheckerPage />} />
+            <Route path="/tools/sitemap-checker" element={<SitemapCheckerPage />} />
+            <Route path="/tools/page-speed" element={<PageSpeedPage />} />
+            <Route path="/tools/word-counter" element={<WordCounterPage />} />
+            <Route path="/tools/lorem-ipsum" element={<LoremIpsumPage />} />
+            <Route path="/tools/htaccess-redirect" element={<HtaccessRedirectPage />} />
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>

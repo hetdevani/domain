@@ -1,0 +1,192 @@
+import React, { useState } from 'react';
+import {
+    Box, Typography, Container, TextField, Button, Paper,
+    CircularProgress, Accordion, AccordionSummary, AccordionDetails, Chip, Grid
+} from '@mui/material';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FileText, ChevronDown, AlertCircle, CheckCircle, XCircle, Link } from 'lucide-react';
+import ToolPageLayout from '../../components/layout/ToolPageLayout';
+
+const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;
+
+const FAQS = [
+    { q: 'What is an XML sitemap?', a: 'An XML sitemap is a file that lists all the important URLs on your website, helping search engines discover and crawl your content more efficiently.' },
+    { q: 'Where should my sitemap be located?', a: 'The standard location is /sitemap.xml at your root domain (e.g., https://example.com/sitemap.xml). You can also declare it in robots.txt.' },
+    { q: 'What is a sitemap index file?', a: 'A sitemap index file references multiple sitemap files. Large sites use it to split their sitemap into multiple files, each containing up to 50,000 URLs.' },
+    { q: 'How many URLs can a sitemap contain?', a: 'Each sitemap file can contain up to 50,000 URLs and must be under 50MB uncompressed. Use a sitemap index for larger sites.' },
+    { q: 'Does having a sitemap guarantee indexing?', a: 'No. A sitemap tells search engines which pages exist, but Google and others still decide which pages to index based on quality and relevance signals.' },
+];
+
+const SitemapCheckerPage: React.FC = () => {
+    const [url, setUrl] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [result, setResult] = useState<any>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleCheck = async () => {
+        if (!url) return;
+        setLoading(true); setError(null); setResult(null);
+        try {
+            const res = await fetch(`${API_BASE}/sitemap-checker?url=${encodeURIComponent(url)}`);
+            const data = await res.json();
+            if (data.status === 'success' || data.status === 200 || data.code === 'SUCCESS') setResult(data.data);
+            else setError(data.message || 'Request failed');
+        } catch {
+            setError('Failed to reach the server. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const renderResult = () => {
+        if (!result) return null;
+        const urls: any[] = result.urls || result.entries || [];
+        const sitemaps: string[] = result.sitemaps || result.sitemapIndex || [];
+        const isIndex = result.isSitemapIndex || sitemaps.length > 0;
+
+        return (
+            <Box>
+                {/* Stats */}
+                <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+                    <Box sx={{ p: 2.5, bgcolor: result.valid !== false ? 'rgba(46,204,113,0.08)' : 'rgba(231,76,60,0.08)', border: `1px solid ${result.valid !== false ? 'rgba(46,204,113,0.2)' : 'rgba(231,76,60,0.2)'}`, borderRadius: '12px', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        {result.valid !== false ? <CheckCircle size={20} color="#2ECC71" /> : <XCircle size={20} color="#E74C3C" />}
+                        <Typography sx={{ color: result.valid !== false ? '#2ECC71' : '#E74C3C', fontWeight: 700 }}>{result.valid !== false ? 'Valid Sitemap' : 'Invalid Sitemap'}</Typography>
+                    </Box>
+                    <Box sx={{ p: 2.5, bgcolor: 'rgba(142,68,173,0.08)', border: '1px solid rgba(142,68,173,0.2)', borderRadius: '12px' }}>
+                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block' }}>URLs Found</Typography>
+                        <Typography variant="h5" sx={{ color: '#8E44AD', fontWeight: 900 }}>{urls.length}</Typography>
+                    </Box>
+                    {isIndex && (
+                        <Box sx={{ p: 2.5, bgcolor: 'rgba(52,152,219,0.08)', border: '1px solid rgba(52,152,219,0.2)', borderRadius: '12px' }}>
+                            <Chip label="Sitemap Index" sx={{ bgcolor: 'rgba(52,152,219,0.15)', color: '#3498DB', border: '1px solid rgba(52,152,219,0.3)', fontWeight: 700 }} />
+                        </Box>
+                    )}
+                </Box>
+
+                {/* Sitemap Index files */}
+                {sitemaps.length > 0 && (
+                    <Box sx={{ mb: 3 }}>
+                        <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1 }}>Child Sitemaps</Typography>
+                        {sitemaps.map((s: string, i: number) => (
+                            <Box key={i} sx={{ p: 2, bgcolor: 'rgba(52,152,219,0.05)', border: '1px solid rgba(52,152,219,0.15)', borderRadius: '8px', mb: 1, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                <Link size={14} color="#3498DB" style={{ flexShrink: 0 }} />
+                                <Typography sx={{ color: '#3498DB', fontFamily: 'monospace', fontSize: '0.82rem', wordBreak: 'break-all' }}>{s}</Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                )}
+
+                {/* URLs Table */}
+                {urls.length > 0 && (
+                    <Box>
+                        <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>URLs ({urls.length})</Typography>
+                        <Box sx={{ bgcolor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', overflow: 'hidden', maxHeight: 400, overflowY: 'auto' }}>
+                            {urls.slice(0, 100).map((entry: any, idx: number) => {
+                                const loc = typeof entry === 'string' ? entry : entry.loc || entry.url;
+                                const lastmod = entry.lastmod;
+                                const priority = entry.priority;
+                                return (
+                                    <Box key={idx} sx={{ px: 3, py: 1.5, display: 'flex', gap: 3, alignItems: 'center', bgcolor: idx % 2 === 0 ? 'rgba(0,0,0,0.1)' : 'transparent', borderBottom: idx < urls.length - 1 ? '1px solid rgba(255,255,255,0.03)' : 'none', flexWrap: 'wrap' }}>
+                                        <Typography sx={{ color: '#a8c5e8', fontFamily: 'monospace', fontSize: '0.78rem', flex: 1, wordBreak: 'break-all' }}>{loc}</Typography>
+                                        {lastmod && <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.3)', flexShrink: 0 }}>{lastmod}</Typography>}
+                                        {priority && <Typography variant="caption" sx={{ color: '#8E44AD', flexShrink: 0, fontFamily: 'monospace' }}>{priority}</Typography>}
+                                    </Box>
+                                );
+                            })}
+                            {urls.length > 100 && (
+                                <Box sx={{ px: 3, py: 2, textAlign: 'center' }}>
+                                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.3)' }}>Showing first 100 of {urls.length} URLs</Typography>
+                                </Box>
+                            )}
+                        </Box>
+                    </Box>
+                )}
+            </Box>
+        );
+    };
+
+    return (
+        <ToolPageLayout>
+            <Box sx={{ py: { xs: 6, md: 10 }, textAlign: 'center', px: 2, background: 'linear-gradient(180deg, rgba(142,68,173,0.07) 0%, transparent 100%)' }}>
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+                    <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(142,68,173,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(142,68,173,0.25)' }}>
+                        <FileText size={36} color="#8E44AD" />
+                    </Box>
+                    <Typography variant="h2" sx={{ fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>Sitemap Checker</Typography>
+                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
+                        Validate and analyze XML sitemaps. Check URL count, detect sitemap index files, and verify proper formatting for SEO compliance.
+                    </Typography>
+                </motion.div>
+            </Box>
+
+            <Container maxWidth="md" sx={{ pb: 8 }}>
+                <Paper elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1, color: '#e2e8f0' }}>Check Sitemap</Typography>
+                    <Typography sx={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.875rem', mb: 3 }}>Enter the sitemap URL directly (e.g., https://example.com/sitemap.xml) or the root domain to auto-detect.</Typography>
+                    <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                        <TextField
+                            fullWidth label="Sitemap URL" placeholder="https://example.com/sitemap.xml"
+                            value={url} onChange={(e) => setUrl(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
+                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)' } }}
+                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(142,68,173,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#8E44AD' } } }}
+                        />
+                        <Button variant="contained" onClick={handleCheck} disabled={loading || !url}
+                            sx={{ bgcolor: '#8E44AD', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, '&:hover': { bgcolor: '#7d3c98' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
+                            {loading ? <CircularProgress size={22} color="inherit" /> : 'Check Sitemap'}
+                        </Button>
+                    </Box>
+                </Paper>
+
+                <AnimatePresence>
+                    {error && (
+                        <motion.div key="err" initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                            <Paper elevation={0} sx={{ p: 3, bgcolor: 'rgba(231,76,60,0.08)', border: '1px solid rgba(231,76,60,0.25)', borderRadius: '14px', mb: 4, display: 'flex', gap: 1.5 }}>
+                                <AlertCircle size={20} color="#E74C3C" style={{ flexShrink: 0 }} />
+                                <Typography sx={{ color: '#E74C3C' }}>{error}</Typography>
+                            </Paper>
+                        </motion.div>
+                    )}
+                    {result && (
+                        <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
+                                <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>Sitemap Analysis</Typography>
+                                {renderResult()}
+                            </Paper>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
+                    <Typography variant="h5" sx={{ fontWeight: 800, mb: 3 }}>How to Use</Typography>
+                    {[
+                        { step: '1', title: 'Enter Sitemap URL', desc: 'Paste the direct URL to your sitemap.xml file or enter your domain root to let the tool auto-detect /sitemap.xml.' },
+                        { step: '2', title: 'Click Check Sitemap', desc: 'The tool fetches and parses the XML sitemap, detecting whether it\'s a standard sitemap or a sitemap index.' },
+                        { step: '3', title: 'Review URL List', desc: 'See all URLs, their last modification dates, priorities, and change frequencies (if specified).' },
+                    ].map((item) => (
+                        <Box key={item.step} sx={{ display: 'flex', gap: 2.5, mb: 2.5 }}>
+                            <Box sx={{ width: 32, height: 32, borderRadius: '8px', bgcolor: 'rgba(142,68,173,0.15)', border: '1px solid rgba(142,68,173,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                <Typography sx={{ color: '#8E44AD', fontWeight: 800, fontSize: '0.85rem' }}>{item.step}</Typography>
+                            </Box>
+                            <Box><Typography sx={{ fontWeight: 700, mb: 0.5 }}>{item.title}</Typography><Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography></Box>
+                        </Box>
+                    ))}
+                </Paper>
+
+                <Typography variant="h5" sx={{ fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
+                {FAQS.map((faq, i) => (
+                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
+                        <AccordionSummary expandIcon={<ChevronDown size={18} color="rgba(255,255,255,0.5)" />} sx={{ px: 3, py: 1.5 }}>
+                            <Typography sx={{ fontWeight: 600, color: '#e2e8f0' }}>{faq.q}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails sx={{ px: 3, pb: 2.5 }}>
+                            <Typography sx={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.7 }}>{faq.a}</Typography>
+                        </AccordionDetails>
+                    </Accordion>
+                ))}
+            </Container>
+        </ToolPageLayout>
+    );
+};
+
+export default SitemapCheckerPage;

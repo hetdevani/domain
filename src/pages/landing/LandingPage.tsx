@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-    Box, Typography, Button, Container, AppBar, Toolbar,
+    Box, Typography, Button, Container,
     TextField, Paper, CircularProgress, Grid,
     Accordion, AccordionSummary, AccordionDetails
 } from '@mui/material';
@@ -8,12 +8,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
     Activity, Globe, Bell, Server, ArrowRight,
-    Search, Wifi, Lock, MapPin, User,
+    Search, Wifi, Lock, MapPin,
     Zap, Mail, MessageSquare, Send,
     Cloud, ChevronDown, Plus, Eye, Monitor,
     Users, TrendingUp
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import LandingNavbar from '../../components/layout/LandingNavbar';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const chartData = [
@@ -498,41 +499,7 @@ const LandingPage: React.FC = () => {
         <Box sx={{ minHeight: '100vh', bgcolor: '#0f172a', color: '#fff', overflowX: 'hidden' }}>
             <Box sx={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.05, backgroundImage: 'radial-gradient(circle at center, #2ECC71 0%, transparent 50%)', backgroundSize: '150% 150%', zIndex: 0, pointerEvents: 'none' }} />
 
-            <AppBar position="fixed" elevation={0} sx={{ bgcolor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255,255,255,0.1)', zIndex: 10 }}>
-                <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, cursor: 'pointer' }} onClick={() => navigate('/')}>
-                        <img src="/logo-white.png" alt="Logo" style={{ height: 40 }} />
-                    </Box>
-                    <Box sx={{ display: 'flex', gap: 2 }}>
-                        {isAuthenticated ? (
-                            <Button variant="outlined" onClick={() => navigate('/dashboard')} startIcon={<User size={18} />} sx={{ color: '#fff', borderColor: 'rgba(255,255,255,0.3)', px: 3, borderRadius: '8px', '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,0.1)' } }}>Profile</Button>
-                        ) : (
-                            <>
-                                {/* Desktop: Show both Login and Register */}
-                                <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 2 }}>
-                                    <Button variant="outlined" onClick={() => navigate('/login')} sx={{ color: '#fff', borderColor: 'rgba(255,255,255,0.3)', px: 3, borderRadius: '8px', '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,0.1)' } }}>Log In</Button>
-                                    <Button variant="contained" onClick={() => navigate('/signup')} sx={{ bgcolor: '#2ECC71', px: 3, borderRadius: '8px', boxShadow: '0 4px 14px 0 rgba(46, 204, 113, 0.39)', '&:hover': { bgcolor: '#27ae60' } }}>Register</Button>
-                                </Box>
-                                {/* Mobile: Show only Get Started */}
-                                <Button
-                                    variant="contained"
-                                    onClick={() => navigate('/signup')}
-                                    sx={{
-                                        display: { xs: 'block', sm: 'none' },
-                                        bgcolor: '#2ECC71',
-                                        px: 2,
-                                        borderRadius: '8px',
-                                        boxShadow: '0 4px 14px 0 rgba(46, 204, 113, 0.39)',
-                                        '&:hover': { bgcolor: '#27ae60' }
-                                    }}
-                                >
-                                    Get Started
-                                </Button>
-                            </>
-                        )}
-                    </Box>
-                </Toolbar>
-            </AppBar>
+            <LandingNavbar />
 
             <Container maxWidth="lg" sx={{ pt: { xs: 12, md: 20 }, pb: { xs: 6, md: 15 }, position: 'relative', zIndex: 1, textAlign: 'center' }}>
                 <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>

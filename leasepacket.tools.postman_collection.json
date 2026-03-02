@@ -1,0 +1,440 @@
+{
+  "info": {
+    "_postman_id": "115fc511-32f3-4038-9fa7-be781ea12a4b",
+    "name": "leasepacket.tools",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "36576550",
+    "_collection_link": "https://go.postman.co/collection/36576550-115fc511-32f3-4038-9fa7-be781ea12a4b?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "dns-propagation/check",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"domain\":\"https://leasepacket.tools\",\r\n    \"recordType\":\"TXT\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:3000/api/web/publicTool/dns-propagation/check",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "web",
+            "publicTool",
+            "dns-propagation",
+            "check"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ip-intelligence",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"domain\":\"https://leasepacket.tools\",\r\n    \"recordType\":\"TXT\"\r\n}"
+        },
+        "url": {
+          "raw": "localhost:3000/api/web/publicTool/ip-intelligence?ip=leasepacket.tools",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "web",
+            "publicTool",
+            "ip-intelligence"
+          ],
+          "query": [
+            {
+              "key": "ip",
+              "value": "leasepacket.tools"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "dnsLookup",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"domain\":\"https://leasepacket.tools\",\r\n    \"recordType\":\"TXT\"\r\n}"
+        },
+        "url": {
+          "raw": "https://api.leasepacket.tools/api/web/publicTool/dns-lookup?domain=leasepacket.tools",
+          "protocol": "https",
+          "host": [
+            "api",
+            "leasepacket",
+            "tools"
+          ],
+          "path": [
+            "api",
+            "web",
+            "publicTool",
+            "dns-lookup"
+          ],
+          "query": [
+            {
+              "key": "domain",
+              "value": "leasepacket.tools"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "what-is-my-ip-full",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"domain\":\"https://leasepacket.tools\",\r\n    \"recordType\":\"TXT\"\r\n}"
+        },
+        "url": {
+          "raw": "localhost:3000/api/web/publicTool/what-is-my-ip-full",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "web",
+            "publicTool",
+            "what-is-my-ip-full"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Meta Tag Analyzer",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"domain\":\"https://leasepacket.tools\",\r\n    \"recordType\":\"TXT\"\r\n}"
+        },
+        "url": {
+          "raw": "localhost:3000/api/web/publicTool/meta-tag-analyzer?url=https://leasepacket.tools/",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "web",
+            "publicTool",
+            "meta-tag-analyzer"
+          ],
+          "query": [
+            {
+              "key": "url",
+              "value": "https://leasepacket.tools/"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "HTTP Header Checker",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"domain\":\"https://leasepacket.tools\",\r\n    \"recordType\":\"TXT\"\r\n}"
+        },
+        "url": {
+          "raw": "localhost:3000/api/web/publicTool/http-header-checker?url=https://leasepacket.tools/",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "web",
+            "publicTool",
+            "http-header-checker"
+          ],
+          "query": [
+            {
+              "key": "url",
+              "value": "https://leasepacket.tools/"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "robots-txt-checker",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"domain\":\"https://leasepacket.tools\",\r\n    \"recordType\":\"TXT\"\r\n}"
+        },
+        "url": {
+          "raw": "localhost:3000/api/web/publicTool/http-header-checker?url=https://leasepacket.tools/",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "web",
+            "publicTool",
+            "http-header-checker"
+          ],
+          "query": [
+            {
+              "key": "url",
+              "value": "https://leasepacket.tools/"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "sitemap-checker",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"domain\":\"https://leasepacket.tools\",\r\n    \"recordType\":\"TXT\"\r\n}"
+        },
+        "url": {
+          "raw": "localhost:3000/api/web/publicTool/sitemap-checker?url=https://hdmovie.one/",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "web",
+            "publicTool",
+            "sitemap-checker"
+          ],
+          "query": [
+            {
+              "key": "url",
+              "value": "https://hdmovie.one/"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Page Speed Basic Metrics",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"domain\":\"https://leasepacket.tools\",\r\n    \"recordType\":\"TXT\"\r\n}"
+        },
+        "url": {
+          "raw": "localhost:3000/api/web/publicTool/page-speed-basic-metrics?url=https://hdmovie.one/",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "web",
+            "publicTool",
+            "page-speed-basic-metrics"
+          ],
+          "query": [
+            {
+              "key": "url",
+              "value": "https://hdmovie.one/"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Word Counter API",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"domain\":\"https://leasepacket.tools\",\r\n    \"recordType\":\"TXT\"\r\n}"
+        },
+        "url": {
+          "raw": "localhost:3000/api/web/publicTool/page-speed-basic-metrics?url=https://hdmovie.one/",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "web",
+            "publicTool",
+            "page-speed-basic-metrics"
+          ],
+          "query": [
+            {
+              "key": "url",
+              "value": "https://hdmovie.one/"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Lorem Ipsum Generator",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"quantity\": 1,\r\n  \"paragraphLength\": \"medium\",\r\n  \"formatType\": \"paragraphs\",\r\n  \"startWithLorem\": true,\r\n  \"htmlElements\": {\r\n    \"links\": true,\r\n    \"boldItalic\": true,\r\n    \"headers\": true,\r\n    \"unorderedList\": false,\r\n    \"orderedList\": false,\r\n    \"descriptionList\": false,\r\n    \"blockquotes\": false,\r\n    \"preCode\": false,\r\n    \"turnOffHtmlElements\": false\r\n  }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:3000/api/web/publicTool/lorem-ipsum-generator",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "web",
+            "publicTool",
+            "lorem-ipsum-generator"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "HTACCESS Redirect Generator",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"quantity\": 1,\r\n  \"paragraphLength\": \"medium\",\r\n  \"formatType\": \"paragraphs\",\r\n  \"startWithLorem\": true,\r\n  \"htmlElements\": {\r\n    \"links\": true,\r\n    \"boldItalic\": true,\r\n    \"headers\": true,\r\n    \"unorderedList\": false,\r\n    \"orderedList\": false,\r\n    \"descriptionList\": false,\r\n    \"blockquotes\": false,\r\n    \"preCode\": false,\r\n    \"turnOffHtmlElements\": false\r\n  }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:3000/api/web/publicTool/lorem-ipsum-generator",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "web",
+            "publicTool",
+            "lorem-ipsum-generator"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
