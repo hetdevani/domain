@@ -31,6 +31,7 @@ const PageSpeedPage = lazy(() => import('../pages/tools/PageSpeedPage'));
 const WordCounterPage = lazy(() => import('../pages/tools/WordCounterPage'));
 const LoremIpsumPage = lazy(() => import('../pages/tools/LoremIpsumPage'));
 const HtaccessRedirectPage = lazy(() => import('../pages/tools/HtaccessRedirectPage'));
+const SmtpTestPage = lazy(() => import('../pages/tools/SmtpTestPage'));
 
 const ProtectedRoute: React.FC<{
     children: React.ReactNode;
@@ -73,6 +74,7 @@ const AppRoutes: React.FC = () => {
             <Route path="/tools/word-counter" element={<WordCounterPage />} />
             <Route path="/tools/lorem-ipsum" element={<LoremIpsumPage />} />
             <Route path="/tools/htaccess-redirect" element={<HtaccessRedirectPage />} />
+            <Route path="/tools/smtp-test" element={<SmtpTestPage />} />
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>

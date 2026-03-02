@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
     Box, Typography, Container, TextField, Button, Paper,
-    CircularProgress, Accordion, AccordionSummary, AccordionDetails, Chip
+    CircularProgress, Accordion, AccordionSummary, AccordionDetails,
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, ChevronDown, AlertCircle, CheckCircle, XCircle } from 'lucide-react';

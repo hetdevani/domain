@@ -26,15 +26,13 @@ const StatCard: React.FC<{ label: string; value: string | number; color: string 
 
 const WordCounterPage: React.FC = () => {
     const [text, setText] = useState('');
-    const [url, setUrl] = useState('');
-    const [mode, setMode] = useState<'text' | 'url'>('text');
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
 
-    // Live local stats for text mode
+    // Live local stats
     const localStats = React.useMemo(() => {
-        if (mode !== 'text' || !text) return null;
+        if (!text) return null;
         const words = text.trim() ? text.trim().split(/\s+/).length : 0;
         const chars = text.length;
         const charsNoSpace = text.replace(/\s/g, '').length;
@@ -42,23 +40,17 @@ const WordCounterPage: React.FC = () => {
         const paragraphs = text.trim() ? text.trim().split(/\n\s*\n/).length : 0;
         const readingTime = Math.ceil(words / 225);
         return { words, chars, charsNoSpace, sentences, paragraphs, readingTime };
-    }, [text, mode]);
+    }, [text]);
 
     const handleCheck = async () => {
-        if (mode === 'text' && !text) return;
-        if (mode === 'url' && !url) return;
+        if (!text) return;
         setLoading(true); setError(null); setResult(null);
         try {
-            let res;
-            if (mode === 'url') {
-                res = await fetch(`${API_BASE}/word-counter?url=${encodeURIComponent(url)}`);
-            } else {
-                res = await fetch(`${API_BASE}/word-counter`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text }),
-                });
-            }
+            const res = await fetch(`${API_BASE}/word-counter`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text }),
+            });
             const data = await res.json();
             if (data.status === 'success' || data.status === 200 || data.code === 'SUCCESS') setResult(data.data);
             else setError(data.message || 'Request failed');
@@ -68,9 +60,6 @@ const WordCounterPage: React.FC = () => {
             setLoading(false);
         }
     };
-
-    const displayStats = result || localStats;
-    const showLive = mode === 'text' && !result && localStats;
 
     return (
         <ToolPageLayout>
@@ -88,58 +77,36 @@ const WordCounterPage: React.FC = () => {
 
             <Container maxWidth="md" sx={{ pb: 8 }}>
                 {/* Mode Toggle */}
-                <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
+                {/* <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
                     {(['text', 'url'] as const).map((m) => (
                         <Button key={m} variant={mode === m ? 'contained' : 'outlined'} onClick={() => { setMode(m); setResult(null); setError(null); }}
                             sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 600, ...(mode === m ? { bgcolor: '#2ECC71', '&:hover': { bgcolor: '#27ae60' } } : { color: 'rgba(255,255,255,0.5)', borderColor: 'rgba(255,255,255,0.15)', '&:hover': { borderColor: '#2ECC71', color: '#2ECC71' } }) }}>
                             {m === 'text' ? 'Paste Text' : 'From URL'}
                         </Button>
                     ))}
-                </Box>
+                </Box> */}
 
                 <Paper elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
-                    {mode === 'text' ? (
-                        <>
-                            <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#e2e8f0' }}>Paste Your Text</Typography>
-                            <TextField
-                                fullWidth multiline rows={8} label="Text to analyze"
-                                placeholder="Paste or type your text here…"
-                                value={text} onChange={(e) => setText(e.target.value)}
-                                InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)' } }}
-                                sx={{ mb: 2, '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(46,204,113,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#2ECC71' } } }}
-                            />
-                            {/* Live stats */}
-                            {localStats && (
-                                <Grid container spacing={1.5} sx={{ mb: 2 }}>
-                                    <Grid size={{ xs: 6, sm: 3 }}><StatCard label="Words" value={localStats.words} color="#2ECC71" /></Grid>
-                                    <Grid size={{ xs: 6, sm: 3 }}><StatCard label="Characters" value={localStats.chars} color="#3498DB" /></Grid>
-                                    <Grid size={{ xs: 6, sm: 3 }}><StatCard label="Sentences" value={localStats.sentences} color="#9B59B6" /></Grid>
-                                    <Grid size={{ xs: 6, sm: 3 }}><StatCard label="Read Time" value={`${localStats.readingTime}m`} color="#F39C12" /></Grid>
-                                </Grid>
-                            )}
-                            <Button variant="contained" fullWidth onClick={handleCheck} disabled={loading || !text}
-                                sx={{ bgcolor: '#2ECC71', py: 1.5, fontWeight: 700, borderRadius: '10px', '&:hover': { bgcolor: '#27ae60' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
-                                {loading ? <CircularProgress size={22} color="inherit" /> : 'Analyze Text'}
-                            </Button>
-                        </>
-                    ) : (
-                        <>
-                            <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#e2e8f0' }}>Analyze from URL</Typography>
-                            <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-                                <TextField
-                                    fullWidth label="Website URL" placeholder="https://example.com/blog/post"
-                                    value={url} onChange={(e) => setUrl(e.target.value)}
-                                    onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                                    InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)' } }}
-                                    sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(46,204,113,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#2ECC71' } } }}
-                                />
-                                <Button variant="contained" onClick={handleCheck} disabled={loading || !url}
-                                    sx={{ bgcolor: '#2ECC71', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, '&:hover': { bgcolor: '#27ae60' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
-                                    {loading ? <CircularProgress size={22} color="inherit" /> : 'Analyze'}
-                                </Button>
-                            </Box>
-                        </>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#e2e8f0' }}>Paste Your Text</Typography>
+                    <TextField
+                        fullWidth multiline rows={8} label="Text to analyze"
+                        placeholder="Paste or type your text here…"
+                        value={text} onChange={(e) => setText(e.target.value)}
+                        slotProps={{ inputLabel: { sx: { color: 'rgba(255,255,255,0.4)' } } }}
+                        sx={{ mb: 2, '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(46,204,113,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#2ECC71' } } }}
+                    />
+                    {localStats && (
+                        <Grid container spacing={1.5} sx={{ mb: 2 }}>
+                            <Grid size={{ xs: 6, sm: 3 }}><StatCard label="Words" value={localStats.words} color="#2ECC71" /></Grid>
+                            <Grid size={{ xs: 6, sm: 3 }}><StatCard label="Characters" value={localStats.chars} color="#3498DB" /></Grid>
+                            <Grid size={{ xs: 6, sm: 3 }}><StatCard label="Sentences" value={localStats.sentences} color="#9B59B6" /></Grid>
+                            <Grid size={{ xs: 6, sm: 3 }}><StatCard label="Read Time" value={`${localStats.readingTime}m`} color="#F39C12" /></Grid>
+                        </Grid>
                     )}
+                    <Button variant="contained" fullWidth onClick={handleCheck} disabled={loading || !text}
+                        sx={{ bgcolor: '#2ECC71', py: 1.5, fontWeight: 700, borderRadius: '10px', '&:hover': { bgcolor: '#27ae60' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
+                        {loading ? <CircularProgress size={22} color="inherit" /> : 'Analyze Text'}
+                    </Button>
                 </Paper>
 
                 <AnimatePresence>

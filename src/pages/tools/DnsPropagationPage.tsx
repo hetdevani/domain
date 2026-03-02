@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import {
     Box, Typography, Container, TextField, Button, Paper,
     CircularProgress, Select, MenuItem, FormControl, InputLabel,
-    Accordion, AccordionSummary, AccordionDetails, Grid, LinearProgress, Tooltip
+    Accordion, AccordionSummary, AccordionDetails, Grid, LinearProgress
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Globe, ChevronDown, CheckCircle, XCircle, AlertCircle, Clock, Wifi } from 'lucide-react';
+import { Globe, ChevronDown, CheckCircle, XCircle, AlertCircle, Clock } from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
 
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;

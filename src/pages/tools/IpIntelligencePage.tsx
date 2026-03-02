@@ -4,7 +4,7 @@ import {
     CircularProgress, Grid, Accordion, AccordionSummary, AccordionDetails, Chip
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, ChevronDown, AlertCircle, Globe, Wifi, Building, Clock, CheckCircle, XCircle, ExternalLink } from 'lucide-react';
+import { MapPin, ChevronDown, AlertCircle, Globe, Wifi, Building, Clock, CheckCircle, XCircle } from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
 
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;
