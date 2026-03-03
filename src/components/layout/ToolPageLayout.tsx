@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import LandingNavbar from './LandingNavbar';
 
 interface ToolPageLayoutProps {
@@ -19,6 +19,11 @@ const ToolPageLayout: React.FC<ToolPageLayoutProps> = ({ children }) => {
             <LandingNavbar />
             <Box sx={{ pt: '64px', position: 'relative', zIndex: 1 }}>
                 {children}
+            </Box>
+            <Box sx={{ py: 6, px: 1, textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)', position: 'relative', zIndex: 1 }}>
+                <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.4)' }}>
+                    © {new Date().getFullYear()} Lease Packet Tools.
+                </Typography>
             </Box>
         </Box>
     );

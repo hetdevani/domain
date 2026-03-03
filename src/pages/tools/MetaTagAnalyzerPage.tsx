@@ -66,7 +66,7 @@ const MetaTagAnalyzerPage: React.FC = () => {
         const SectionHeader = ({ label, color }: { label: string; color: string }) => (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
                 <Box sx={{ width: 6, height: 20, bgcolor: color, borderRadius: '3px' }} />
-                <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.5)', fontWeight: 700, letterSpacing: '0.1em' }}>{label}</Typography>
+                <Typography variant="overline" sx={{ color: '#ffffff', fontWeight: 700, letterSpacing: '0.1em' }}>{label}</Typography>
             </Box>
         );
 
@@ -82,32 +82,32 @@ const MetaTagAnalyzerPage: React.FC = () => {
                 {/* Stats */}
                 <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
                     <Box sx={{ p: 2.5, bgcolor: 'rgba(46,204,113,0.08)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: '12px' }}>
-                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block' }}>Title Length</Typography>
+                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block' }}>Title Length</Typography>
                         <Typography variant="h5" sx={{ color: titleLen > 0 && titleLen <= 60 ? '#2ECC71' : titleLen > 60 ? '#F39C12' : '#E74C3C', fontWeight: 900 }}>
-                            {titleLen}<Typography component="span" variant="caption" sx={{ color: 'rgba(255,255,255,0.4)' }}>/60</Typography>
+                            {titleLen}<Typography component="span" variant="caption" sx={{ color: 'rgba(255,255,255,0.6)' }}>/60</Typography>
                         </Typography>
                     </Box>
                     <Box sx={{ p: 2.5, bgcolor: 'rgba(52,152,219,0.08)', border: '1px solid rgba(52,152,219,0.2)', borderRadius: '12px' }}>
-                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block' }}>Description Length</Typography>
+                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block' }}>Description Length</Typography>
                         <Typography variant="h5" sx={{ color: descLen > 0 && descLen <= 160 ? '#2ECC71' : descLen > 160 ? '#F39C12' : '#E74C3C', fontWeight: 900 }}>
-                            {descLen}<Typography component="span" variant="caption" sx={{ color: 'rgba(255,255,255,0.4)' }}>/160</Typography>
+                            {descLen}<Typography component="span" variant="caption" sx={{ color: 'rgba(255,255,255,0.6)' }}>/160</Typography>
                         </Typography>
                     </Box>
                     <Box sx={{ p: 2.5, bgcolor: 'rgba(243,156,18,0.08)', border: '1px solid rgba(243,156,18,0.2)', borderRadius: '12px' }}>
-                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block' }}>Total Meta Tags</Typography>
+                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block' }}>Total Meta Tags</Typography>
                         <Typography variant="h5" sx={{ color: '#F39C12', fontWeight: 900 }}>{result.totalMetaTags ?? allTags.length}</Typography>
                     </Box>
                     {result.responseTimeMs != null && (
                         <Box sx={{ p: 2.5, bgcolor: 'rgba(155,89,182,0.08)', border: '1px solid rgba(155,89,182,0.2)', borderRadius: '12px' }}>
-                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block' }}>Response Time</Typography>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block' }}>Response Time</Typography>
                             <Typography variant="h5" sx={{ color: '#9B59B6', fontWeight: 900 }}>
-                                {result.responseTimeMs}<Typography component="span" variant="caption" sx={{ color: 'rgba(255,255,255,0.4)' }}>ms</Typography>
+                                {result.responseTimeMs}<Typography component="span" variant="caption" sx={{ color: 'rgba(255,255,255,0.6)' }}>ms</Typography>
                             </Typography>
                         </Box>
                     )}
                     {result.statusCode != null && (
                         <Box sx={{ p: 2.5, bgcolor: 'rgba(46,204,113,0.08)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: '12px' }}>
-                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block' }}>HTTP Status</Typography>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block' }}>HTTP Status</Typography>
                             <Typography variant="h5" sx={{ color: result.statusCode === 200 ? '#2ECC71' : '#F39C12', fontWeight: 900 }}>{result.statusCode}</Typography>
                         </Box>
                     )}
@@ -116,7 +116,7 @@ const MetaTagAnalyzerPage: React.FC = () => {
                 {/* Social share image preview */}
                 {socialImage && (
                     <Box sx={{ mb: 3, p: 2, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px' }}>
-                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.07em', fontSize: '0.7rem', mb: 1, display: 'block' }}>Social Share Preview Image</Typography>
+                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.07em', fontSize: '0.7rem', mb: 1, display: 'block' }}>Social Share Preview Image</Typography>
                         <Box component="img" src={socialImage} alt="OG Image" sx={{ maxWidth: '100%', maxHeight: 200, borderRadius: '8px', objectFit: 'cover', display: 'block' }} onError={(e: any) => { e.target.style.display = 'none'; }} />
                     </Box>
                 )}
@@ -186,8 +186,8 @@ const MetaTagAnalyzerPage: React.FC = () => {
                             fullWidth label="Website URL" placeholder="https://example.com"
                             value={url} onChange={(e) => setUrl(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)' } }}
-                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(243,156,18,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#F39C12' } } }}
+                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)', '&.Mui-focused': { color: '#fff' } } }}
+                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', height: '56px', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(243,156,18,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#F39C12' } } }}
                         />
                         <Button variant="contained" onClick={handleCheck} disabled={loading || !url}
                             sx={{ bgcolor: '#F39C12', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, '&:hover': { bgcolor: '#e67e22' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>

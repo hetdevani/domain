@@ -95,8 +95,8 @@ const DnsPropagationPage: React.FC = () => {
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5, flexWrap: 'wrap', gap: 1 }}>
                         <Typography sx={{ fontWeight: 700, color: '#e2e8f0' }}>
                             Propagation Status for{' '}
-                            <Box component="span" sx={{ color: '#2ECC71', fontFamily: 'monospace' }}>{result.domain}</Box>
-                            {' '}<Box component="span" sx={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace', fontSize: '0.85em' }}>{result.recordType}</Box>
+                            <Box component="span" sx={{marginLeft: .5, color: '#2ECC71', fontFamily: 'monospace' }}>{result.domain}</Box>
+                            {' '} <Box component="span" sx={{ marginLeft: .5, color: 'rgba(255,255,255,0.6)', fontFamily: 'monospace', fontSize: '0.85em' }}>{result.recordType}</Box>
                         </Typography>
                         <Typography sx={{ color: pctColor, fontWeight: 900, fontSize: '1.4rem' }}>{pct}%</Typography>
                     </Box>
@@ -122,7 +122,7 @@ const DnsPropagationPage: React.FC = () => {
                             </Typography>
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Globe size={15} color="rgba(255,255,255,0.4)" />
+                            <Globe size={15} color="rgba(255,255,255,0.6)" />
                             <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)' }}>
                                 <Box component="span" sx={{ fontWeight: 700, color: '#e2e8f0' }}>{total}</Box> Servers Checked
                             </Typography>
@@ -153,10 +153,10 @@ const DnsPropagationPage: React.FC = () => {
                                             <Typography sx={{ fontSize: '1rem', flexShrink: 0 }}>{flag}</Typography>
                                             <Box sx={{ minWidth: 0 }}>
                                                 <Typography sx={{ color: '#e2e8f0', fontWeight: 700, fontSize: '0.82rem', lineHeight: 1.2 }}>
-                                                    {resolver.name || `Server ${idx + 1}`}
-                                                </Typography>
-                                                <Typography sx={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.72rem' }}>
                                                     {resolver.countryName || resolver.continentName || ''}
+                                                </Typography>
+                                                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem' }}>
+                                                    {resolver.name || `Server ${idx + 1}`}
                                                 </Typography>
                                             </Box>
                                         </Box>
@@ -167,7 +167,7 @@ const DnsPropagationPage: React.FC = () => {
                                     </Box>
 
                                     {/* Resolver IP */}
-                                    <Typography sx={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.72rem', fontFamily: 'monospace', mb: 0.75 }}>
+                                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', fontFamily: 'monospace', mb: 0.75 }}>
                                         {resolver.ip} · {resolver.provider}
                                     </Typography>
 
@@ -196,8 +196,8 @@ const DnsPropagationPage: React.FC = () => {
                                     {/* Response time */}
                                     {server.responseTimeMs != null && (
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
-                                            <Clock size={11} color="rgba(255,255,255,0.25)" />
-                                            <Typography sx={{ color: 'rgba(255,255,255,0.28)', fontSize: '0.7rem' }}>
+                                            <Clock size={11} color="rgba(255,255,255,0.4)" />
+                                            <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem' }}>
                                                 {server.responseTimeMs} ms
                                             </Typography>
                                         </Box>
@@ -240,11 +240,12 @@ const DnsPropagationPage: React.FC = () => {
                             value={domain}
                             onChange={(e) => setDomain(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)' } }}
+                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.6)', '&.Mui-focused': { color: '#fff' } } }}
                             sx={{
                                 '& .MuiOutlinedInput-root': {
                                     color: '#fff',
                                     bgcolor: 'rgba(0,0,0,0.2)',
+                                    height: '56px',
                                     '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
                                     '&:hover fieldset': { borderColor: 'rgba(46,204,113,0.5)' },
                                     '&.Mui-focused fieldset': { borderColor: '#2ECC71' },
@@ -252,7 +253,7 @@ const DnsPropagationPage: React.FC = () => {
                             }}
                         />
                         <FormControl sx={{ minWidth: { xs: '100%', sm: 150 } }}>
-                            <InputLabel sx={{ color: 'rgba(255,255,255,0.4)' }}>Record Type</InputLabel>
+                            <InputLabel sx={{ color: 'rgba(255,255,255,0.6)', '&.Mui-focused': { color: '#fff' } }}>Record Type</InputLabel>
                             <Select
                                 value={recordType}
                                 label="Record Type"

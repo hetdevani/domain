@@ -40,6 +40,7 @@ const inputSx = {
     '& .MuiOutlinedInput-root': {
         color: '#fff',
         bgcolor: 'rgba(0,0,0,0.2)',
+        height: '56px',
         '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
         '&:hover fieldset': { borderColor: `${ACCENT}60` },
         '&.Mui-focused fieldset': { borderColor: ACCENT },
@@ -229,7 +230,7 @@ const SmtpTestPage: React.FC = () => {
                                 }}
                             >
                                 <Typography sx={{ color: port === p.port ? ACCENT : '#e2e8f0', fontWeight: 700, fontSize: '0.82rem' }}>{p.label}</Typography>
-                                <Typography sx={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.68rem' }}>{p.desc}</Typography>
+                                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.68rem' }}>{p.desc}</Typography>
                             </Box>
                         ))}
                     </Box>
@@ -279,7 +280,7 @@ const SmtpTestPage: React.FC = () => {
                                     }}
                                 >
                                     <Typography sx={{ color: active ? ACCENT : '#e2e8f0', fontWeight: 700, fontSize: '0.88rem' }}>{s.label}</Typography>
-                                    <Typography sx={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.7rem', mt: 0.3 }}>{s.desc}</Typography>
+                                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.7rem', mt: 0.3 }}>{s.desc}</Typography>
                                 </Box>
                             );
                         })}
@@ -327,11 +328,11 @@ const SmtpTestPage: React.FC = () => {
                         onClick={() => setShowAdvanced(!showAdvanced)}
                         sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, cursor: 'pointer', width: 'fit-content' }}
                     >
-                        <Settings size={15} color="rgba(255,255,255,0.4)" />
-                        <Typography sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.4)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                        <Settings size={15} color="rgba(255,255,255,0.6)" />
+                        <Typography sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                             Advanced Options
                         </Typography>
-                        <ChevronDown size={14} color="rgba(255,255,255,0.4)" style={{ transition: 'transform 0.2s', transform: showAdvanced ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+                        <ChevronDown size={14} color="rgba(255,255,255,0.6)" style={{ transition: 'transform 0.2s', transform: showAdvanced ? 'rotate(180deg)' : 'rotate(0deg)' }} />
                     </Box>
                     <Collapse in={showAdvanced}>
                         <Box sx={{ p: 2.5, bgcolor: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', mb: 4 }}>
@@ -390,7 +391,7 @@ const SmtpTestPage: React.FC = () => {
                         sx={{
                             bgcolor: ACCENT, py: 1.6, fontWeight: 700, borderRadius: '10px', fontSize: '1rem',
                             '&:hover': { filter: 'brightness(0.88)', bgcolor: ACCENT },
-                            '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' },
+                            '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)' },
                         }}
                     >
                         {loading ? <CircularProgress size={22} color="inherit" /> : 'Run SMTP Test'}

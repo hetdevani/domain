@@ -41,17 +41,17 @@ const DnsResultViewer: React.FC<{ data: any }> = ({ data }) => {
                             <Box sx={{ px: 1.5, py: 0.5, bgcolor: `${cfg.color}25`, borderRadius: '6px', border: `1px solid ${cfg.color}40` }}>
                                 <Typography sx={{ color: cfg.color, fontWeight: 800, fontFamily: 'monospace', fontSize: '0.8rem' }}>{type}</Typography>
                             </Box>
-                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)' }}>{data[type].length} record{data[type].length > 1 ? 's' : ''}</Typography>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,1)' }}>{data[type].length} record{data[type].length > 1 ? 's' : ''}</Typography>
                         </Box>
                         <Box sx={{ display: 'grid', gridTemplateColumns: cfg.gridCols, gap: 2, px: 3, py: 1, bgcolor: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                             {cfg.columns.map((col, ci) => (
-                                <Typography key={ci} sx={{ color: 'rgba(255,255,255,0.28)', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.09em', fontWeight: 600, textAlign: ci === cfg.columns.length - 1 ? 'right' : 'left' }}>{col}</Typography>
+                                <Typography key={ci} sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.09em', fontWeight: 600, textAlign: ci === cfg.columns.length - 1 ? 'right' : 'left' }}>{col}</Typography>
                             ))}
                         </Box>
                         {data[type].map((record: any, idx: number) => (
                             <Box key={idx} sx={{ display: 'grid', gridTemplateColumns: cfg.gridCols, gap: 2, px: 3, py: 1.5, alignItems: 'center', bgcolor: idx % 2 === 0 ? 'rgba(0,0,0,0.12)' : 'transparent', borderBottom: idx < data[type].length - 1 ? '1px solid rgba(255,255,255,0.03)' : 'none' }}>
                                 {cfg.getCells(record).map((cell, ci) => (
-                                    <Typography key={ci} component="span" sx={{ fontFamily: cell.mono ? 'monospace' : 'inherit', fontSize: cell.mono ? '0.83rem' : '0.875rem', color: cell.dim ? 'rgba(255,255,255,0.28)' : (cell.badge ? cfg.color : '#e2e8f0'), fontWeight: cell.dim ? 400 : (cell.badge ? 700 : 500), textAlign: cell.right ? 'right' : 'left', wordBreak: cell.wrap ? 'break-all' : 'normal' }}>{cell.text}</Typography>
+                                    <Typography key={ci} component="span" sx={{ fontFamily: cell.mono ? 'monospace' : 'inherit', fontSize: cell.mono ? '0.83rem' : '0.875rem', color: cell.dim ? 'rgba(255,255,255,0.6)' : (cell.badge ? cfg.color : '#e2e8f0'), fontWeight: cell.dim ? 400 : (cell.badge ? 700 : 500), textAlign: cell.right ? 'right' : 'left', wordBreak: cell.wrap ? 'break-all' : 'normal' }}>{cell.text}</Typography>
                                 ))}
                             </Box>
                         ))}
@@ -105,11 +105,11 @@ const DnsLookupPage: React.FC = () => {
                             fullWidth label="Domain Name" placeholder="example.com"
                             value={domain} onChange={(e) => setDomain(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)' } }}
-                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(155,89,182,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#9B59B6' } } }}
+                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)', '&.Mui-focused': { color: '#fff' } } }}
+                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', height: '56px', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(155,89,182,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#9B59B6' } } }}
                         />
                         <Button variant="contained" onClick={handleCheck} disabled={loading || !domain}
-                            sx={{ bgcolor: '#9B59B6', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, '&:hover': { bgcolor: '#8e44ad' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
+                            sx={{ bgcolor: '#9B59B6', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, whiteSpace: 'nowrap', '&:hover': { bgcolor: '#8e44ad' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
                             {loading ? <CircularProgress size={22} color="inherit" /> : 'Lookup DNS'}
                         </Button>
                     </Box>
@@ -127,7 +127,7 @@ const DnsLookupPage: React.FC = () => {
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                             <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                                <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>DNS Records for <Box component="span" sx={{ color: '#9B59B6', fontFamily: 'monospace' }}>{domain}</Box></Typography>
+                                <Typography variant="h6" sx={{color: '#ffffff', fontWeight: 700, mb: 3 }}>DNS Records for <Box component="span" sx={{ color: '#9B59B6', fontFamily: 'monospace', ml: 1}}>{domain}</Box></Typography>
                                 <DnsResultViewer data={result} />
                             </Paper>
                         </motion.div>

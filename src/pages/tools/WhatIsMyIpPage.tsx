@@ -39,7 +39,7 @@ const InfoCard: React.FC<{
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
             {icon && <Box sx={{ color, opacity: 0.7, display: 'flex', flexShrink: 0 }}>{icon}</Box>}
             <Typography variant="caption" sx={{
-                color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase',
                 letterSpacing: '0.07em', fontSize: '0.7rem', fontWeight: 700,
             }}>
                 {label}
@@ -119,7 +119,7 @@ const WhatIsMyIpPage: React.FC = () => {
                     textAlign: 'center',
                 }}>
                     <Typography variant="caption" sx={{
-                        color: 'rgba(255,255,255,0.4)', display: 'block', mb: 1,
+                        color: 'rgba(255,255,255,0.6)', display: 'block', mb: 1,
                         textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: '0.75rem',
                     }}>
                         Your Detected Public IP
@@ -146,7 +146,7 @@ const WhatIsMyIpPage: React.FC = () => {
                     </Box>
                     <Box sx={{ mt: 2 }}>
                         <Button size="small" startIcon={<RefreshCw size={13} />} onClick={fetchMyIp}
-                            sx={{ color: 'rgba(255,255,255,0.4)', textTransform: 'none', fontSize: '0.8rem', '&:hover': { color: '#1ABC9C' } }}>
+                            sx={{ color: 'rgba(255,255,255,0.6)', textTransform: 'none', fontSize: '0.8rem', '&:hover': { color: '#1ABC9C' } }}>
                             Refresh
                         </Button>
                     </Box>

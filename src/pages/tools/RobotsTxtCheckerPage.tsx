@@ -56,7 +56,7 @@ const RobotsTxtCheckerPage: React.FC = () => {
                     )}
                     {sitemaps.length > 0 && (
                         <Box sx={{ p: 2.5, bgcolor: 'rgba(52,152,219,0.08)', border: '1px solid rgba(52,152,219,0.2)', borderRadius: '12px' }}>
-                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block' }}>Sitemaps</Typography>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block' }}>Sitemaps</Typography>
                             <Typography variant="h5" sx={{ color: '#3498DB', fontWeight: 900 }}>{sitemaps.length}</Typography>
                         </Box>
                     )}
@@ -65,7 +65,7 @@ const RobotsTxtCheckerPage: React.FC = () => {
                 {/* Sitemaps */}
                 {sitemaps.length > 0 && (
                     <Box sx={{ mb: 3 }}>
-                        <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1 }}>Declared Sitemaps</Typography>
+                        <Typography variant="overline" sx={{ color: '#ffffff', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1 }}>Declared Sitemaps</Typography>
                         {sitemaps.map((s, i) => (
                             <Box key={i} sx={{ p: 2, bgcolor: 'rgba(52,152,219,0.05)', border: '1px solid rgba(52,152,219,0.15)', borderRadius: '8px', mb: 1 }}>
                                 <Typography sx={{ color: '#3498DB', fontFamily: 'monospace', fontSize: '0.85rem', wordBreak: 'break-all' }}>{s}</Typography>
@@ -77,7 +77,7 @@ const RobotsTxtCheckerPage: React.FC = () => {
                 {/* Parsed Rules */}
                 {rules.length > 0 && (
                     <Box sx={{ mb: 3 }}>
-                        <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>Parsed Rules</Typography>
+                        <Typography variant="overline" sx={{ color: '#ffffff', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>Parsed Rules</Typography>
                         {rules.map((rule, i) => (
                             <Box key={i} sx={{ p: 2.5, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px', mb: 1.5 }}>
                                 <Typography sx={{ color: '#E67E22', fontFamily: 'monospace', fontSize: '0.8rem', mb: 1 }}>User-agent: {rule.userAgent || rule.agent || '*'}</Typography>
@@ -101,7 +101,7 @@ const RobotsTxtCheckerPage: React.FC = () => {
                 {/* Raw Content */}
                 {raw && (
                     <Box>
-                        <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1 }}>Raw Content</Typography>
+                        <Typography variant="overline" sx={{ color: '#ffffff', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1 }}>Raw Content</Typography>
                         <Box sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', fontFamily: 'monospace', fontSize: '0.82rem', color: '#a8b5c8', whiteSpace: 'pre-wrap', maxHeight: 400, overflow: 'auto', lineHeight: 1.7 }}>
                             {raw}
                         </Box>
@@ -133,8 +133,8 @@ const RobotsTxtCheckerPage: React.FC = () => {
                             fullWidth label="Website URL" placeholder="https://example.com"
                             value={url} onChange={(e) => setUrl(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)' } }}
-                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(230,126,34,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#E67E22' } } }}
+                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)', '&.Mui-focused': { color: '#fff' } } }}
+                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', height: '56px', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(230,126,34,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#E67E22' } } }}
                         />
                         <Button variant="contained" onClick={handleCheck} disabled={loading || !url}
                             sx={{ bgcolor: '#E67E22', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, '&:hover': { bgcolor: '#d35400' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
@@ -155,7 +155,7 @@ const RobotsTxtCheckerPage: React.FC = () => {
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                             <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                                <Typography variant="h6" sx={{color: '#ffffff', fontWeight: 700, mb: 3 }}>robots.txt for <Box component="span" sx={{ color: '#E67E22', fontFamily: 'monospace', fontSize: '0.9em' }}>{url}</Box></Typography>
+                                <Typography variant="h6" sx={{color: '#ffffff', fontWeight: 700, mb: 3 }}>robots.txt for <Box component="span" sx={{ color: '#E67E22', fontFamily: 'monospace', fontSize: '0.9em', ml: 1 }}>{url}</Box></Typography>
                                 {renderResult()}
                             </Paper>
                         </motion.div>

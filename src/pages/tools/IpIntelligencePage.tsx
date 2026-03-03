@@ -23,7 +23,7 @@ const InfoCard: React.FC<{ label: string; value?: string | number; icon?: React.
     <Box sx={{ p: 2.5, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', height: '100%' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
             {icon && <Box sx={{ color, opacity: 0.7, display: 'flex' }}>{icon}</Box>}
-            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.07em', fontSize: '0.7rem', fontWeight: 700 }}>
+            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.07em', fontSize: '0.7rem', fontWeight: 700 }}>
                 {label}
             </Typography>
         </Box>
@@ -87,7 +87,7 @@ const IpIntelligencePage: React.FC = () => {
                                 <Globe size={28} color="#3498DB" />
                             </Box>
                             <Box>
-                                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block', mb: 0.25 }}>
+                                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block', mb: 0.25 }}>
                                     {result.detectedFrom === 'request' ? 'Auto-detected IP' : 'Queried IP'}
                                     {result.ipVersion && <Box component="span" sx={{ ml: 1, color: '#3498DB' }}>· {result.ipVersion}</Box>}
                                 </Typography>
@@ -95,7 +95,7 @@ const IpIntelligencePage: React.FC = () => {
                                     {resolvedIp}
                                 </Typography>
                                 {result.ip !== resolvedIp && result.ip && (
-                                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>
+                                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'monospace' }}>
                                         Input: {result.ip}
                                     </Typography>
                                 )}
@@ -113,7 +113,7 @@ const IpIntelligencePage: React.FC = () => {
                 </Box>
 
                 {/* Geo Info Grid */}
-                <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>
+                <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>
                     Location Details
                 </Typography>
                 <Grid container spacing={2} sx={{ mb: 3 }}>
@@ -138,7 +138,7 @@ const IpIntelligencePage: React.FC = () => {
                 </Grid>
 
                 {/* Network Info */}
-                <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>
+                <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>
                     Network Details
                 </Typography>
                 <Grid container spacing={2} sx={{ mb: 3 }}>
@@ -156,7 +156,7 @@ const IpIntelligencePage: React.FC = () => {
                 {/* Provider Results */}
                 {providers.length > 0 && (
                     <>
-                        <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>
+                        <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>
                             Data Providers ({providers.length})
                         </Typography>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -251,10 +251,10 @@ const IpIntelligencePage: React.FC = () => {
                             value={ip}
                             onChange={(e) => setIp(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)' } }}
+                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.6)', '&.Mui-focused': { color: '#fff' } } }}
                             sx={{
                                 '& .MuiOutlinedInput-root': {
-                                    color: '#fff', bgcolor: 'rgba(0,0,0,0.2)',
+                                    color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', height: '56px',
                                     '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
                                     '&:hover fieldset': { borderColor: 'rgba(52,152,219,0.5)' },
                                     '&.Mui-focused fieldset': { borderColor: '#3498DB' },

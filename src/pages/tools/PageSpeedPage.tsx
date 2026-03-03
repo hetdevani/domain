@@ -196,14 +196,14 @@ const PageSpeedPage: React.FC = () => {
                 <Box sx={{ display: 'flex', gap: 3, mb: 4, alignItems: 'center', flexWrap: 'wrap', p: 3, bgcolor: 'rgba(0,0,0,0.2)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
                     {perfScore !== null && <ScoreRing score={perfScore} />}
                     <Box sx={{ flex: 1, minWidth: 200 }}>
-                        <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, mb: 0.5 }}>Analyzed URL</Typography>
+                        <Typography sx={{ color: '#ffffff', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, mb: 0.5 }}>Analyzed URL</Typography>
                         <Typography sx={{ color: '#a8c5e8', fontFamily: 'monospace', fontSize: '0.88rem', wordBreak: 'break-all', mb: 2 }}>{url}</Typography>
                         {/* Score legend */}
                         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                             {[{ color: '#2ECC71', label: '90–100 Good' }, { color: '#F39C12', label: '50–89 Needs Improvement' }, { color: '#E74C3C', label: '0–49 Poor' }].map(item => (
                                 <Box key={item.label} sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
                                     <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: item.color }} />
-                                    <Typography sx={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)' }}>{item.label}</Typography>
+                                    <Typography sx={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)' }}>{item.label}</Typography>
                                 </Box>
                             ))}
                         </Box>
@@ -255,7 +255,7 @@ const PageSpeedPage: React.FC = () => {
                 {/* Fallback raw JSON */}
                 {!hasAnyMetric && (
                     <Box sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px' }}>
-                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block', mb: 1 }}>Raw Response</Typography>
+                        <Typography variant="caption" sx={{ color: '#ffffff', display: 'block', mb: 1 }}>Raw Response</Typography>
                         <Box component="pre" sx={{ color: '#a8b5c8', fontSize: '0.8rem', overflow: 'auto', maxHeight: 300, m: 0 }}>
                             {JSON.stringify(result, null, 2)}
                         </Box>
@@ -287,11 +287,11 @@ const PageSpeedPage: React.FC = () => {
                             fullWidth label="Website URL" placeholder="https://example.com"
                             value={url} onChange={(e) => setUrl(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                            slotProps={{ inputLabel: { sx: { color: 'rgba(255,255,255,0.4)' } } }}
-                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: `${ACCENT}80` }, '&.Mui-focused fieldset': { borderColor: ACCENT } } }}
+                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)', '&.Mui-focused': { color: '#fff' } } }}
+                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', height: '56px', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: `${ACCENT}80` }, '&.Mui-focused fieldset': { borderColor: ACCENT } } }}
                         />
                         <Button variant="contained" onClick={handleCheck} disabled={loading || !url}
-                            sx={{ bgcolor: ACCENT, px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 160, '&:hover': { filter: 'brightness(0.88)', bgcolor: ACCENT }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
+                            sx={{ bgcolor: ACCENT, px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 160, whiteSpace: 'nowrap', '&:hover': { filter: 'brightness(0.88)', bgcolor: ACCENT }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
                             {loading ? <><CircularProgress size={18} color="inherit" sx={{ mr: 1 }} />Analyzing…</> : 'Analyze Speed'}
                         </Button>
                     </Box>

@@ -61,16 +61,16 @@ const SitemapCheckerPage: React.FC = () => {
                         </Typography>
                     </Box>
                     <Box sx={{ p: 2.5, bgcolor: 'rgba(142,68,173,0.08)', border: '1px solid rgba(142,68,173,0.2)', borderRadius: '12px' }}>
-                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block' }}>Total URLs</Typography>
+                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block' }}>Total URLs</Typography>
                         <Typography variant="h5" sx={{ color: '#8E44AD', fontWeight: 900 }}>{totalUrls}</Typography>
                     </Box>
                     <Box sx={{ p: 2.5, bgcolor: 'rgba(52,152,219,0.08)', border: '1px solid rgba(52,152,219,0.2)', borderRadius: '12px' }}>
-                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', display: 'block' }}>Sitemaps</Typography>
+                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block' }}>Sitemaps</Typography>
                         <Typography variant="h5" sx={{ color: '#3498DB', fontWeight: 900 }}>{sitemaps.length}</Typography>
                     </Box>
                     {result.origin && (
                         <Box sx={{ p: 2.5, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Link size={14} color="rgba(255,255,255,0.4)" />
+                            <Link size={14} color="rgba(255,255,255,0.6)" />
                             <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'monospace', fontSize: '0.82rem' }}>{result.origin}</Typography>
                         </Box>
                     )}
@@ -79,7 +79,7 @@ const SitemapCheckerPage: React.FC = () => {
                 {/* Sitemap entries */}
                 {sitemaps.length > 0 && (
                     <Box>
-                        <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>
+                        <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>
                             Sitemap Details
                         </Typography>
                         {sitemaps.map((s: any, i: number) => (
@@ -98,19 +98,19 @@ const SitemapCheckerPage: React.FC = () => {
                                 <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
                                     {s.statusCode != null && (
                                         <Box>
-                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.35)', display: 'block' }}>HTTP Status</Typography>
+                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block' }}>HTTP Status</Typography>
                                             <Typography sx={{ color: s.statusCode === 200 ? '#2ECC71' : '#F39C12', fontWeight: 700, fontSize: '0.9rem' }}>{s.statusCode}</Typography>
                                         </Box>
                                     )}
                                     {s.urlCount != null && (
                                         <Box>
-                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.35)', display: 'block' }}>URLs</Typography>
+                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block' }}>URLs</Typography>
                                             <Typography sx={{ color: '#8E44AD', fontWeight: 700, fontSize: '0.9rem' }}>{s.urlCount}</Typography>
                                         </Box>
                                     )}
                                     {s.responseTimeMs != null && (
                                         <Box>
-                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.35)', display: 'block' }}>Response Time</Typography>
+                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block' }}>Response Time</Typography>
                                             <Typography sx={{ color: '#9B59B6', fontWeight: 700, fontSize: '0.9rem' }}>{s.responseTimeMs}ms</Typography>
                                         </Box>
                                     )}
@@ -146,11 +146,11 @@ const SitemapCheckerPage: React.FC = () => {
                             fullWidth label="Sitemap URL" placeholder="https://example.com/sitemap.xml"
                             value={url} onChange={(e) => setUrl(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                            slotProps={{ inputLabel: { sx: { color: 'rgba(255,255,255,0.4)' } } }}
-                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(142,68,173,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#8E44AD' } } }}
+                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.6)', '&.Mui-focused': { color: '#fff' } } }}
+                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', height: '56px', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(142,68,173,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#8E44AD' } } }}
                         />
                         <Button variant="contained" onClick={handleCheck} disabled={loading || !url}
-                            sx={{ bgcolor: '#8E44AD', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, '&:hover': { bgcolor: '#7d3c98' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
+                            sx={{ bgcolor: '#8E44AD', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, whiteSpace: 'nowrap', '&:hover': { bgcolor: '#7d3c98' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
                             {loading ? <CircularProgress size={22} color="inherit" /> : 'Check Sitemap'}
                         </Button>
                     </Box>

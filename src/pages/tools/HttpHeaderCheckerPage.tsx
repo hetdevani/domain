@@ -66,16 +66,16 @@ const HttpHeaderCheckerPage: React.FC = () => {
 
                 {/* Security Headers Check */}
                 <Box sx={{ mb: 3 }}>
-                    <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>Security Headers Audit</Typography>
+                    <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>Security Headers Audit</Typography>
                     <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1 }}>
                         {presentSecHeaders.map(h => <Chip key={h} label={h} size="small" sx={{ bgcolor: 'rgba(46,204,113,0.1)', color: '#2ECC71', border: '1px solid rgba(46,204,113,0.2)', fontFamily: 'monospace', fontSize: '0.72rem' }} />)}
                         {missingSecHeaders.map(h => <Chip key={h} label={h} size="small" sx={{ bgcolor: 'rgba(231,76,60,0.1)', color: '#E74C3C', border: '1px solid rgba(231,76,60,0.2)', fontFamily: 'monospace', fontSize: '0.72rem' }} />)}
                     </Box>
-                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.3)' }}>Green = present, Red = missing</Typography>
+                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)' }}>Green = present, Red = missing</Typography>
                 </Box>
 
                 {/* All Headers */}
-                <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>Response Headers</Typography>
+                <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>Response Headers</Typography>
                 <Box sx={{ bgcolor: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', overflow: 'hidden' }}>
                     {Object.entries(headers).map(([key, value], idx) => (
                         <Box key={key} sx={{ display: 'flex', gap: 2, px: 3, py: 1.5, bgcolor: idx % 2 === 0 ? 'rgba(0,0,0,0.1)' : 'transparent', borderBottom: idx < Object.keys(headers).length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none', flexWrap: 'wrap' }}>
@@ -110,11 +110,11 @@ const HttpHeaderCheckerPage: React.FC = () => {
                             fullWidth label="Website URL" placeholder="https://example.com"
                             value={url} onChange={(e) => setUrl(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)' } }}
-                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(231,76,60,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#E74C3C' } } }}
+                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.6)', '&.Mui-focused': { color: '#fff' } } }}
+                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', height: '56px', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(231,76,60,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#E74C3C' } } }}
                         />
                         <Button variant="contained" onClick={handleCheck} disabled={loading || !url}
-                            sx={{ bgcolor: '#E74C3C', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, '&:hover': { bgcolor: '#c0392b' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
+                            sx={{ bgcolor: '#E74C3C', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, whiteSpace: 'nowrap', '&:hover': { bgcolor: '#c0392b' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
                             {loading ? <CircularProgress size={22} color="inherit" /> : 'Check Headers'}
                         </Button>
                     </Box>
@@ -132,7 +132,7 @@ const HttpHeaderCheckerPage: React.FC = () => {
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                             <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                                <Typography variant="h6" sx={{color: '#ffffff', fontWeight: 700, mb: 3 }}>Headers for <Box component="span" sx={{ color: '#E74C3C', fontFamily: 'monospace', fontSize: '0.9em' }}>{url}</Box></Typography>
+                                <Typography variant="h6" sx={{color: '#ffffff', fontWeight: 700, mb: 3 }}>Headers for <Box component="span" sx={{ color: '#E74C3C', fontFamily: 'monospace', fontSize: '0.9em', ml: 1 }}>{url}</Box></Typography>
                                 {renderHeaders()}
                             </Paper>
                         </motion.div>

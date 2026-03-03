@@ -20,7 +20,7 @@ const FAQS = [
 const StatCard: React.FC<{ label: string; value: string | number; color: string }> = ({ label, value, color }) => (
     <Box sx={{ p: 2.5, bgcolor: `${color}08`, border: `1px solid ${color}25`, borderRadius: '12px', textAlign: 'center' }}>
         <Typography variant="h4" sx={{ color, fontWeight: 900, lineHeight: 1 }}>{value}</Typography>
-        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.45)', mt: 0.5, display: 'block', fontSize: '0.75rem' }}>{label}</Typography>
+        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', mt: 0.5, display: 'block', fontSize: '0.75rem' }}>{label}</Typography>
     </Box>
 );
 
@@ -92,7 +92,7 @@ const WordCounterPage: React.FC = () => {
                         fullWidth multiline rows={8} label="Text to analyze"
                         placeholder="Paste or type your text here…"
                         value={text} onChange={(e) => setText(e.target.value)}
-                        slotProps={{ inputLabel: { sx: { color: 'rgba(255,255,255,0.4)' } } }}
+                        InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)', '&.Mui-focused': { color: '#fff' } } }}
                         sx={{ mb: 2, '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(46,204,113,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#2ECC71' } } }}
                     />
                     {localStats && (
@@ -121,7 +121,7 @@ const WordCounterPage: React.FC = () => {
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                             <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                                <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>Analysis Results</Typography>
+                                <Typography variant="h6" sx={{ color: '#ffffff', fontWeight: 700, mb: 3 }}>Analysis Results</Typography>
                                 <Grid container spacing={1.5}>
                                     {result.words !== undefined && <Grid size={{ xs: 6, sm: 4 }}><StatCard label="Words" value={result.words} color="#2ECC71" /></Grid>}
                                     {result.characters !== undefined && <Grid size={{ xs: 6, sm: 4 }}><StatCard label="Characters" value={result.characters} color="#3498DB" /></Grid>}
@@ -136,7 +136,7 @@ const WordCounterPage: React.FC = () => {
                                         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                                             {result.topKeywords.slice(0, 20).map((kw: any, i: number) => (
                                                 <Box key={i} sx={{ px: 2, py: 0.5, bgcolor: 'rgba(46,204,113,0.08)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: '6px' }}>
-                                                    <Typography variant="caption" sx={{ color: '#2ECC71', fontFamily: 'monospace' }}>{kw.word} <Box component="span" sx={{ color: 'rgba(255,255,255,0.4)' }}>×{kw.count}</Box></Typography>
+                                                    <Typography variant="caption" sx={{ color: '#2ECC71', fontFamily: 'monospace' }}>{kw.word} <Box component="span" sx={{ color: 'rgba(255,255,255,0.6)' }}>×{kw.count}</Box></Typography>
                                                 </Box>
                                             ))}
                                         </Box>

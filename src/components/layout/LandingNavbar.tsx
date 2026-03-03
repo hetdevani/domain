@@ -138,10 +138,10 @@ const LandingNavbar: React.FC = () => {
                                         {tool.icon}
                                     </Box>
                                     <Box>
-                                        <Typography sx={{ color: '#e2e8f0', fontWeight: 600, fontSize: '0.85rem', lineHeight: 1.2 }}>
+                                        <Typography sx={{ color: '#e2e8f0', fontWeight: 600, fontSize: '0.85rem', lineHeight: 1.4 }}>
                                             {tool.label}
                                         </Typography>
-                                        <Typography sx={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.72rem' }}>
+                                        <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.72rem' }}>
                                             {tool.desc}
                                         </Typography>
                                     </Box>
@@ -159,6 +159,7 @@ const LandingNavbar: React.FC = () => {
                             onClick={() => navigate('/dashboard')}
                             startIcon={<User size={16} />}
                             sx={{
+                                display: { xs: 'none', md: 'flex' },
                                 color: '#fff', borderColor: 'rgba(255,255,255,0.25)', px: 2.5,
                                 borderRadius: '8px', textTransform: 'none', fontWeight: 600,
                                 '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,0.08)' },
@@ -168,7 +169,7 @@ const LandingNavbar: React.FC = () => {
                         </Button>
                     ) : (
                         <>
-                            <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 1.5 }}>
+                            <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5 }}>
                                 <Button
                                     variant="outlined"
                                     onClick={() => navigate('/login')}

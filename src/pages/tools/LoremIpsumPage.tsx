@@ -98,7 +98,7 @@ const LoremIpsumPage: React.FC = () => {
                         {/* Format Type */}
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
-                                <InputLabel sx={{ color: 'rgba(255,255,255,0.4)' }}>Format</InputLabel>
+                                <InputLabel sx={{ color: 'rgba(255,255,255,0.4)', '&.Mui-focused': { color: '#fff' } }}>Format</InputLabel>
                                 <Select value={formatType} label="Format" onChange={(e) => setFormatType(e.target.value)}
                                     sx={{ color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(52,152,219,0.5)' }, '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#3498DB' }, '& .MuiSvgIcon-root': { color: 'rgba(255,255,255,0.5)' } }}
                                     MenuProps={{ PaperProps: { sx: { bgcolor: '#1a2744', border: '1px solid rgba(255,255,255,0.1)' } } }}>
@@ -110,7 +110,7 @@ const LoremIpsumPage: React.FC = () => {
                         {/* Paragraph Length */}
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
-                                <InputLabel sx={{ color: 'rgba(255,255,255,0.4)' }}>Paragraph Length</InputLabel>
+                                <InputLabel sx={{ color: 'rgba(255,255,255,0.4)', '&.Mui-focused': { color: '#fff' } }}>Paragraph Length</InputLabel>
                                 <Select value={paragraphLength} label="Paragraph Length" onChange={(e) => setParagraphLength(e.target.value)}
                                     sx={{ color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(52,152,219,0.5)' }, '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#3498DB' }, '& .MuiSvgIcon-root': { color: 'rgba(255,255,255,0.5)' } }}
                                     MenuProps={{ PaperProps: { sx: { bgcolor: '#1a2744', border: '1px solid rgba(255,255,255,0.1)' } } }}>
@@ -211,7 +211,7 @@ const LoremIpsumPage: React.FC = () => {
 
                                 {/* Text / HTML tabs (only when HTML available) */}
                                 {result.html && (
-                                    <Tabs value={viewTab} onChange={(_, v) => setViewTab(v)} sx={{ mb: 2, minHeight: 36, '& .MuiTabs-indicator': { bgcolor: '#3498DB' }, '& .MuiTab-root': { color: 'rgba(255,255,255,0.4)', minHeight: 36, textTransform: 'none', fontWeight: 600, fontSize: '0.85rem' }, '& .Mui-selected': { color: '#3498DB !important' } }}>
+                                    <Tabs value={viewTab} onChange={(_, v) => setViewTab(v)} sx={{ mb: 2, minHeight: 36, '& .MuiTabs-indicator': { bgcolor: '#3498DB' }, '& .MuiTab-root': { color: 'rgba(255,255,255,0.6)', minHeight: 36, textTransform: 'none', fontWeight: 600, fontSize: '0.85rem' }, '& .Mui-selected': { color: '#3498DB !important' } }}>
                                         <Tab label="Plain Text" />
                                         <Tab label="HTML Source" />
                                         <Tab label="HTML Preview" />

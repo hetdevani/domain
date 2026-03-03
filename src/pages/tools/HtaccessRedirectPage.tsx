@@ -80,11 +80,12 @@ const inputSx = (color = '#E74C3C') => ({
     '& .MuiOutlinedInput-root': {
         color: '#fff',
         bgcolor: 'rgba(0,0,0,0.2)',
+        height: '56px',
         '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
         '&:hover fieldset': { borderColor: `${color}80` },
         '&.Mui-focused fieldset': { borderColor: color },
     },
-    '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.4)' },
+    '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.6)' },
     '& .MuiInputLabel-root.Mui-focused': { color: color },
 });
 
@@ -163,7 +164,7 @@ const HtaccessRedirectPage: React.FC = () => {
                 <Paper elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
 
                     {/* Step 1 – Redirect Type */}
-                    <Typography sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.4)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2 }}>
+                    <Typography sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2 }}>
                         Step 1 — Choose Redirect Type
                     </Typography>
                     <Grid container spacing={1.5} sx={{ mb: 4 }}>
@@ -196,7 +197,7 @@ const HtaccessRedirectPage: React.FC = () => {
                                             <Typography sx={{ color: active ? type.color : '#e2e8f0', fontWeight: 700, fontSize: '0.9rem', lineHeight: 1.2 }}>
                                                 {type.label}
                                             </Typography>
-                                            <Typography sx={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.72rem', mt: 0.3, fontFamily: 'monospace' }}>
+                                            <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', mt: 0.3, fontFamily: 'monospace' }}>
                                                 {type.example}
                                             </Typography>
                                         </Box>
@@ -207,7 +208,7 @@ const HtaccessRedirectPage: React.FC = () => {
                     </Grid>
 
                     {/* Step 2 – URL / Path inputs */}
-                    <Typography sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.4)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2 }}>
+                    <Typography sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2 }}>
                         Step 2 — {isCustom ? 'Enter Paths' : 'Enter Your Domain'}
                     </Typography>
 
@@ -220,7 +221,7 @@ const HtaccessRedirectPage: React.FC = () => {
                                             fullWidth label="From Path" placeholder="/old-page"
                                             value={fromPath} onChange={(e) => setFromPath(e.target.value)}
                                             helperText="The old URL path to redirect from"
-                                            FormHelperTextProps={{ sx: { color: 'rgba(255,255,255,0.3)' } }}
+                                            FormHelperTextProps={{ sx: { color: 'rgba(255,255,255,0.6)' } }}
                                             sx={inputSx(selected.color)}
                                         />
                                     </Grid>
@@ -229,7 +230,7 @@ const HtaccessRedirectPage: React.FC = () => {
                                             fullWidth label="To URL" placeholder="https://example.com/new-page"
                                             value={toUrl} onChange={(e) => setToUrl(e.target.value)}
                                             helperText="The destination URL to redirect to"
-                                            FormHelperTextProps={{ sx: { color: 'rgba(255,255,255,0.3)' } }}
+                                            FormHelperTextProps={{ sx: { color: 'rgba(255,255,255,0.6)' } }}
                                             sx={inputSx(selected.color)}
                                         />
                                     </Grid>
@@ -241,7 +242,7 @@ const HtaccessRedirectPage: React.FC = () => {
                                     fullWidth label="Domain" placeholder="example.com"
                                     value={url} onChange={(e) => setUrl(e.target.value)}
                                     helperText={`Enter your domain without http:// or www — e.g. example.com`}
-                                    FormHelperTextProps={{ sx: { color: 'rgba(255,255,255,0.3)' } }}
+                                    FormHelperTextProps={{ sx: { color: 'rgba(255,255,255,0.6)' } }}
                                     sx={{ ...inputSx(selected.color), mb: 3 }}
                                 />
                             </motion.div>
@@ -249,11 +250,11 @@ const HtaccessRedirectPage: React.FC = () => {
                     </AnimatePresence>
 
                     {/* Step 3 – Redirect Code */}
-                    <Typography sx={{fontWeight: 700, color: 'rgba(255,255,255,0.4)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2 }}>
+                    <Typography sx={{fontWeight: 700, color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2 }}>
                         Step 3 — Redirect Code
                     </Typography>
                     <FormControl fullWidth sx={{ mb: 4 }}>
-                        <InputLabel sx={{ color: 'rgba(255,255,255,0.4)' }}>HTTP Redirect Code</InputLabel>
+                        <InputLabel sx={{ color: 'rgba(255,255,255,0.6)', '&.Mui-focused': { color: '#fff' } }}>HTTP Redirect Code</InputLabel>
                         <Select
                             value={code}
                             label="HTTP Redirect Code"
@@ -271,7 +272,7 @@ const HtaccessRedirectPage: React.FC = () => {
                             {REDIRECT_CODES.map(c => (
                                 <MenuItem key={c.value} value={c.value} sx={{ color: '#e2e8f0', flexDirection: 'column', alignItems: 'flex-start', '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }}>
                                     <Typography sx={{ color: '#fff', fontWeight: 600, fontSize: '0.88rem' }}>{c.label}</Typography>
-                                    <Typography sx={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>{c.desc}</Typography>
+                                    <Typography sx={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>{c.desc}</Typography>
                                 </MenuItem>
                             ))}
                         </Select>
@@ -288,7 +289,7 @@ const HtaccessRedirectPage: React.FC = () => {
                             borderRadius: '10px',
                             fontSize: '1rem',
                             '&:hover': { filter: 'brightness(0.88)', bgcolor: selected.color },
-                            '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' },
+                            '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' },
                         }}
                     >
                         {loading ? <CircularProgress size={22} color="inherit" /> : 'Generate .htaccess Rules'}
@@ -322,7 +323,7 @@ const HtaccessRedirectPage: React.FC = () => {
                                 <Box sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', fontFamily: 'monospace', fontSize: '0.85rem', color: '#a8c5e8', whiteSpace: 'pre-wrap', lineHeight: 1.9 }}>
                                     {result}
                                 </Box>
-                                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.3)', mt: 1.5, display: 'block' }}>
+                                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', mt: 1.5, display: 'block' }}>
                                     Paste these rules into your .htaccess file at the root of your web server. Make sure mod_rewrite is enabled on your Apache server.
                                 </Typography>
                             </Paper>
