@@ -48,13 +48,13 @@ const LandingNavbar: React.FC = () => {
             position="fixed"
             elevation={0}
             sx={{
-                bgcolor: 'rgba(15, 23, 42, 0.92)',
+                bgcolor: '#0A3D62',
                 backdropFilter: 'blur(12px)',
                 borderBottom: '1px solid rgba(255,255,255,0.08)',
                 zIndex: 1300,
             }}
         >
-            <Toolbar sx={{ justifyContent: 'space-between', py: 1, minHeight: '64px !important' }}>
+            <Toolbar sx={{ justifyContent: 'space-between', py: '15px', minHeight: 'unset !important' }}>
                 {/* Logo */}
                 <Box
                     sx={{ display: 'flex', alignItems: 'center', gap: 2, cursor: 'pointer' }}
@@ -99,10 +99,10 @@ const LandingNavbar: React.FC = () => {
                         PaperProps={{
                             sx: {
                                 mt: 1,
-                                bgcolor: '#0f172a',
-                                border: '1px solid rgba(255,255,255,0.1)',
+                                bgcolor: '#ffffff',
+                                border: '1px solid #e2e8f0',
                                 borderRadius: '14px',
-                                boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+                                boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
                                 minWidth: 560,
                                 py: 1,
                                 overflow: 'hidden',
@@ -112,7 +112,7 @@ const LandingNavbar: React.FC = () => {
                         <Typography
                             sx={{
                                 px: 2, py: 1,
-                                color: 'rgba(255,255,255,0.4)',
+                                color: '#94a3b8',
                                 fontSize: '0.7rem',
                                 textTransform: 'uppercase',
                                 letterSpacing: '0.1em',
@@ -121,7 +121,7 @@ const LandingNavbar: React.FC = () => {
                         >
                             Developer & SEO Tools
                         </Typography>
-                        <Divider sx={{ borderColor: 'rgba(255,255,255,0.06)', mb: 0.5 }} />
+                        <Divider sx={{ borderColor: '#f1f5f9', mb: 0.5 }} />
                         <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', px: 0.5 }}>
                             {TOOL_LINKS.map((tool) => (
                                 <MenuItem
@@ -130,18 +130,18 @@ const LandingNavbar: React.FC = () => {
                                     selected={location.pathname === tool.path}
                                     sx={{
                                         py: 1.2, px: 2, mx: 0.5, borderRadius: '8px', gap: 1.5,
-                                        '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' },
-                                        '&.Mui-selected': { bgcolor: 'rgba(46,204,113,0.08)' },
+                                        '&:hover': { bgcolor: '#f8fafc' },
+                                        '&.Mui-selected': { bgcolor: 'rgba(46,204,113,0.06)' },
                                     }}
                                 >
-                                    <Box sx={{ p: 0.7, bgcolor: `${tool.color}18`, borderRadius: '6px', display: 'flex', alignItems: 'center', color: tool.color, flexShrink: 0 }}>
+                                    <Box sx={{ p: 0.7, bgcolor: `${tool.color}15`, borderRadius: '6px', display: 'flex', alignItems: 'center', color: tool.color, flexShrink: 0 }}>
                                         {tool.icon}
                                     </Box>
                                     <Box>
-                                        <Typography sx={{ color: '#e2e8f0', fontWeight: 600, fontSize: '0.85rem', lineHeight: 1.4 }}>
+                                        <Typography sx={{ color: '#1e293b', fontWeight: 600, fontSize: '0.85rem', lineHeight: 1.4 }}>
                                             {tool.label}
                                         </Typography>
-                                        <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.72rem' }}>
+                                        <Typography sx={{ color: '#94a3b8', fontSize: '0.72rem' }}>
                                             {tool.desc}
                                         </Typography>
                                     </Box>

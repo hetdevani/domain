@@ -28,10 +28,10 @@ const LoginPage: React.FC = () => {
     const onSubmit = async (data: any) => {
         try {
             if (authStep === 'register') {
-                if (data.password !== data.confirmPassword) {
-                    toast.error('Passwords do not match');
-                    return;
-                }
+                // if (data.password !== data.confirmPassword) {
+                //     toast.error('Passwords do not match');
+                //     return;
+                // }
                 await registerUser({
                     email: data.username,
                     password: data.password,
@@ -309,7 +309,7 @@ const LoginPage: React.FC = () => {
                                         />
                                     </Box>
 
-                                    <Box sx={{ mb: 4 }}>
+                                    {/* <Box sx={{ mb: 4 }}>
                                         <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700, color: '#475569' }}>Confirm Password</Typography>
                                         <TextField
                                             {...register('confirmPassword', { required: 'Confirm Password is required' })}
@@ -319,7 +319,7 @@ const LoginPage: React.FC = () => {
                                                 startAdornment: (<InputAdornment position="start"><Lock size={18} color="#94a3b8" /></InputAdornment>),
                                             }}
                                         />
-                                    </Box>
+                                    </Box> */}
 
                                     <Button fullWidth variant="contained" size="large" type="submit" disabled={isSubmitting}
                                         sx={{ py: 1.8, fontSize: '1rem', fontWeight: 700, borderRadius: '12px', backgroundColor: '#2ECC71', boxShadow: '0 4px 14px 0 rgba(46, 204, 113, 0.39)', '&:hover': { backgroundColor: '#27ae60', transform: 'translateY(-1px)' } }}
