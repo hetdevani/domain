@@ -56,7 +56,7 @@ const RobotsTxtCheckerPage: React.FC = () => {
                     )}
                     {sitemaps.length > 0 && (
                         <Box sx={{ p: 2.5, bgcolor: 'rgba(52,152,219,0.08)', border: '1px solid rgba(52,152,219,0.2)', borderRadius: '12px' }}>
-                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block' }}>Sitemaps</Typography>
+                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block' }}>Sitemaps</Typography>
                             <Typography variant="h5" sx={{ color: '#3498DB', fontWeight: 900 }}>{sitemaps.length}</Typography>
                         </Box>
                     )}
@@ -65,7 +65,7 @@ const RobotsTxtCheckerPage: React.FC = () => {
                 {/* Sitemaps */}
                 {sitemaps.length > 0 && (
                     <Box sx={{ mb: 3 }}>
-                        <Typography variant="overline" sx={{ color: '#ffffff', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1 }}>Declared Sitemaps</Typography>
+                        <Typography variant="overline" sx={{ color: '#1e293b', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1 }}>Declared Sitemaps</Typography>
                         {sitemaps.map((s, i) => (
                             <Box key={i} sx={{ p: 2, bgcolor: 'rgba(52,152,219,0.05)', border: '1px solid rgba(52,152,219,0.15)', borderRadius: '8px', mb: 1 }}>
                                 <Typography sx={{ color: '#3498DB', fontFamily: 'monospace', fontSize: '0.85rem', wordBreak: 'break-all' }}>{s}</Typography>
@@ -77,9 +77,9 @@ const RobotsTxtCheckerPage: React.FC = () => {
                 {/* Parsed Rules */}
                 {rules.length > 0 && (
                     <Box sx={{ mb: 3 }}>
-                        <Typography variant="overline" sx={{ color: '#ffffff', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>Parsed Rules</Typography>
+                        <Typography variant="overline" sx={{ color: '#1e293b', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>Parsed Rules</Typography>
                         {rules.map((rule, i) => (
-                            <Box key={i} sx={{ p: 2.5, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px', mb: 1.5 }}>
+                            <Box key={i} sx={{ p: 2.5, bgcolor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', mb: 1.5 }}>
                                 <Typography sx={{ color: '#E67E22', fontFamily: 'monospace', fontSize: '0.8rem', mb: 1 }}>User-agent: {rule.userAgent || rule.agent || '*'}</Typography>
                                 {(rule.allow || []).map((p: string, j: number) => (
                                     <Box key={j} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
@@ -101,8 +101,8 @@ const RobotsTxtCheckerPage: React.FC = () => {
                 {/* Raw Content */}
                 {raw && (
                     <Box>
-                        <Typography variant="overline" sx={{ color: '#ffffff', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1 }}>Raw Content</Typography>
-                        <Box sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', fontFamily: 'monospace', fontSize: '0.82rem', color: '#a8b5c8', whiteSpace: 'pre-wrap', maxHeight: 400, overflow: 'auto', lineHeight: 1.7 }}>
+                        <Typography variant="overline" sx={{ color: '#1e293b', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1 }}>Raw Content</Typography>
+                        <Box sx={{ p: 3, bgcolor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '12px', fontFamily: 'monospace', fontSize: '0.82rem', color: '#475569', whiteSpace: 'pre-wrap', maxHeight: 400, overflow: 'auto', lineHeight: 1.7 }}>
                             {raw}
                         </Box>
                     </Box>
@@ -118,26 +118,26 @@ const RobotsTxtCheckerPage: React.FC = () => {
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(230,126,34,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(230,126,34,0.25)' }}>
                         <Shield size={36} color="#E67E22" />
                     </Box>
-                    <Typography variant="h2" sx={{ color: '#ffffff', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>Robots.txt Checker</Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
+                    <Typography variant="h2" sx={{ color: '#1e293b', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>Robots.txt Checker</Typography>
+                    <Typography sx={{ color: '#64748b', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
                         Fetch, validate, and analyze any website's robots.txt file. Check crawl rules, disallowed paths, allowed bots, and declared sitemaps.
                     </Typography>
                 </motion.div>
             </Box>
 
             <Container maxWidth="md" sx={{ pb: 8 }}>
-                <Paper elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#e2e8f0' }}>Check robots.txt</Typography>
+                <Paper elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#334155' }}>Check robots.txt</Typography>
                     <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                         <TextField
                             fullWidth label="Website URL" placeholder="https://example.com"
                             value={url} onChange={(e) => setUrl(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)', '&.Mui-focused': { color: '#fff' } } }}
-                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', height: '56px', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(230,126,34,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#E67E22' } } }}
+                            InputLabelProps={{ sx: { color: '#64748b', '&.Mui-focused': { color: '#1e293b' } } }}
+                            sx={{ '& .MuiOutlinedInput-root': { color: '#1e293b', bgcolor: '#f8fafc', height: '56px', '& fieldset': { borderColor: '#e2e8f0' }, '&:hover fieldset': { borderColor: 'rgba(230,126,34,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#E67E22' } } }}
                         />
                         <Button variant="contained" onClick={handleCheck} disabled={loading || !url}
-                            sx={{ bgcolor: '#E67E22', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, '&:hover': { bgcolor: '#d35400' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
+                            sx={{ bgcolor: '#E67E22', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, '&:hover': { bgcolor: '#d35400' }, '&.Mui-disabled': { bgcolor: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.3)' } }}>
                             {loading ? <CircularProgress size={22} color="inherit" /> : 'Check'}
                         </Button>
                     </Box>
@@ -154,16 +154,16 @@ const RobotsTxtCheckerPage: React.FC = () => {
                     )}
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                                <Typography variant="h6" sx={{color: '#ffffff', fontWeight: 700, mb: 3 }}>robots.txt for <Box component="span" sx={{ color: '#E67E22', fontFamily: 'monospace', fontSize: '0.9em', ml: 1 }}>{url}</Box></Typography>
+                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                                <Typography variant="h6" sx={{color: '#1e293b', fontWeight: 700, mb: 3 }}>robots.txt for <Box component="span" sx={{ color: '#E67E22', fontFamily: 'monospace', fontSize: '0.9em', ml: 1 }}>{url}</Box></Typography>
                                 {renderResult()}
                             </Paper>
                         </motion.div>
                     )}
                 </AnimatePresence>
 
-                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                    <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>How to Use</Typography>
+                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                    <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>How to Use</Typography>
                     {[
                         { step: '1', title: 'Enter Website URL', desc: 'Type the root URL of the website (e.g., https://example.com). The tool automatically fetches /robots.txt from that domain.' },
                         { step: '2', title: 'Click Check', desc: 'The tool fetches the robots.txt file, parses all directives, and extracts user-agent rules and sitemaps.' },
@@ -173,19 +173,19 @@ const RobotsTxtCheckerPage: React.FC = () => {
                             <Box sx={{ width: 32, height: 32, borderRadius: '8px', bgcolor: 'rgba(230,126,34,0.15)', border: '1px solid rgba(230,126,34,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                 <Typography sx={{ color: '#E67E22', fontWeight: 800, fontSize: '0.85rem' }}>{item.step}</Typography>
                             </Box>
-                            <Box><Typography sx={{ color: '#ffffff', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography><Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography></Box>
+                            <Box><Typography sx={{ color: '#1e293b', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography><Typography sx={{ color: '#64748b', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography></Box>
                         </Box>
                     ))}
                 </Paper>
 
-                <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
+                <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
                 {FAQS.map((faq, i) => (
-                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
-                        <AccordionSummary expandIcon={<ChevronDown size={18} color="rgba(255,255,255,0.5)" />} sx={{ px: 3, py: 1.5 }}>
-                            <Typography sx={{ fontWeight: 600, color: '#e2e8f0' }}>{faq.q}</Typography>
+                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
+                        <AccordionSummary expandIcon={<ChevronDown size={18} color="#94a3b8" />} sx={{ px: 3, py: 1.5 }}>
+                            <Typography sx={{ fontWeight: 600, color: '#334155' }}>{faq.q}</Typography>
                         </AccordionSummary>
                         <AccordionDetails sx={{ px: 3, pb: 2.5 }}>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.7 }}>{faq.a}</Typography>
+                            <Typography sx={{ color: '#64748b', lineHeight: 1.7 }}>{faq.a}</Typography>
                         </AccordionDetails>
                     </Accordion>
                 ))}

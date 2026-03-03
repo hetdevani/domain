@@ -30,7 +30,7 @@ const DNS_CFG: Record<string, { color: string; columns: string[]; gridCols: stri
 
 const DnsResultViewer: React.FC<{ data: any }> = ({ data }) => {
     const activeTypes = Object.keys(DNS_CFG).filter(type => data[type] && data[type].length > 0);
-    if (!activeTypes.length) return <Typography sx={{ color: 'rgba(255,255,255,0.4)', textAlign: 'center', py: 4 }}>No DNS records found.</Typography>;
+    if (!activeTypes.length) return <Typography sx={{ color: '#94a3b8', textAlign: 'center', py: 4 }}>No DNS records found.</Typography>;
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
             {activeTypes.map((type) => {
@@ -41,17 +41,17 @@ const DnsResultViewer: React.FC<{ data: any }> = ({ data }) => {
                             <Box sx={{ px: 1.5, py: 0.5, bgcolor: `${cfg.color}25`, borderRadius: '6px', border: `1px solid ${cfg.color}40` }}>
                                 <Typography sx={{ color: cfg.color, fontWeight: 800, fontFamily: 'monospace', fontSize: '0.8rem' }}>{type}</Typography>
                             </Box>
-                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,1)' }}>{data[type].length} record{data[type].length > 1 ? 's' : ''}</Typography>
+                            <Typography variant="caption" sx={{ color: '#334155' }}>{data[type].length} record{data[type].length > 1 ? 's' : ''}</Typography>
                         </Box>
-                        <Box sx={{ display: 'grid', gridTemplateColumns: cfg.gridCols, gap: 2, px: 3, py: 1, bgcolor: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: cfg.gridCols, gap: 2, px: 3, py: 1, bgcolor: '#f8fafc', borderBottom: '1px solid #f1f5f9' }}>
                             {cfg.columns.map((col, ci) => (
-                                <Typography key={ci} sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.09em', fontWeight: 600, textAlign: ci === cfg.columns.length - 1 ? 'right' : 'left' }}>{col}</Typography>
+                                <Typography key={ci} sx={{ color: '#64748b', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.09em', fontWeight: 600, textAlign: ci === cfg.columns.length - 1 ? 'right' : 'left' }}>{col}</Typography>
                             ))}
                         </Box>
                         {data[type].map((record: any, idx: number) => (
-                            <Box key={idx} sx={{ display: 'grid', gridTemplateColumns: cfg.gridCols, gap: 2, px: 3, py: 1.5, alignItems: 'center', bgcolor: idx % 2 === 0 ? 'rgba(0,0,0,0.12)' : 'transparent', borderBottom: idx < data[type].length - 1 ? '1px solid rgba(255,255,255,0.03)' : 'none' }}>
+                            <Box key={idx} sx={{ display: 'grid', gridTemplateColumns: cfg.gridCols, gap: 2, px: 3, py: 1.5, alignItems: 'center', bgcolor: idx % 2 === 0 ? 'rgba(0,0,0,0.02)' : 'transparent', borderBottom: idx < data[type].length - 1 ? '1px solid #f1f5f9' : 'none' }}>
                                 {cfg.getCells(record).map((cell, ci) => (
-                                    <Typography key={ci} component="span" sx={{ fontFamily: cell.mono ? 'monospace' : 'inherit', fontSize: cell.mono ? '0.83rem' : '0.875rem', color: cell.dim ? 'rgba(255,255,255,0.6)' : (cell.badge ? cfg.color : '#e2e8f0'), fontWeight: cell.dim ? 400 : (cell.badge ? 700 : 500), textAlign: cell.right ? 'right' : 'left', wordBreak: cell.wrap ? 'break-all' : 'normal' }}>{cell.text}</Typography>
+                                    <Typography key={ci} component="span" sx={{ fontFamily: cell.mono ? 'monospace' : 'inherit', fontSize: cell.mono ? '0.83rem' : '0.875rem', color: cell.dim ? '#64748b' : (cell.badge ? cfg.color : '#334155'), fontWeight: cell.dim ? 400 : (cell.badge ? 700 : 500), textAlign: cell.right ? 'right' : 'left', wordBreak: cell.wrap ? 'break-all' : 'normal' }}>{cell.text}</Typography>
                                 ))}
                             </Box>
                         ))}
@@ -90,26 +90,26 @@ const DnsLookupPage: React.FC = () => {
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(155,89,182,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(155,89,182,0.25)' }}>
                         <Search size={36} color="#9B59B6" />
                     </Box>
-                    <Typography variant="h2" sx={{ color: '#ffffff', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>DNS Lookup Tool</Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
+                    <Typography variant="h2" sx={{ color: '#1e293b', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>DNS Lookup Tool</Typography>
+                    <Typography sx={{ color: '#64748b', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
                         Query all DNS record types for any domain instantly. View A, AAAA, MX, TXT, NS, CNAME, and SOA records with their TTL values.
                     </Typography>
                 </motion.div>
             </Box>
 
             <Container maxWidth="md" sx={{ pb: 8 }}>
-                <Paper elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#e2e8f0' }}>Domain DNS Lookup</Typography>
+                <Paper elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#334155' }}>Domain DNS Lookup</Typography>
                     <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                         <TextField
                             fullWidth label="Domain Name" placeholder="example.com"
                             value={domain} onChange={(e) => setDomain(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)', '&.Mui-focused': { color: '#fff' } } }}
-                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', height: '56px', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(155,89,182,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#9B59B6' } } }}
+                            InputLabelProps={{ sx: { color: '#64748b', '&.Mui-focused': { color: '#1e293b' } } }}
+                            sx={{ '& .MuiOutlinedInput-root': { color: '#1e293b', bgcolor: '#f8fafc', height: '56px', '& fieldset': { borderColor: '#e2e8f0' }, '&:hover fieldset': { borderColor: 'rgba(155,89,182,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#9B59B6' } } }}
                         />
                         <Button variant="contained" onClick={handleCheck} disabled={loading || !domain}
-                            sx={{ bgcolor: '#9B59B6', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, whiteSpace: 'nowrap', '&:hover': { bgcolor: '#8e44ad' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
+                            sx={{ bgcolor: '#9B59B6', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, whiteSpace: 'nowrap', '&:hover': { bgcolor: '#8e44ad' }, '&.Mui-disabled': { bgcolor: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.3)' } }}>
                             {loading ? <CircularProgress size={22} color="inherit" /> : 'Lookup DNS'}
                         </Button>
                     </Box>
@@ -126,16 +126,16 @@ const DnsLookupPage: React.FC = () => {
                     )}
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                                <Typography variant="h6" sx={{color: '#ffffff', fontWeight: 700, mb: 3 }}>DNS Records for <Box component="span" sx={{ color: '#9B59B6', fontFamily: 'monospace', ml: 1}}>{domain}</Box></Typography>
+                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                                <Typography variant="h6" sx={{color: '#1e293b', fontWeight: 700, mb: 3 }}>DNS Records for <Box component="span" sx={{ color: '#9B59B6', fontFamily: 'monospace', ml: 1}}>{domain}</Box></Typography>
                                 <DnsResultViewer data={result} />
                             </Paper>
                         </motion.div>
                     )}
                 </AnimatePresence>
 
-                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                    <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>How to Use</Typography>
+                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                    <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>How to Use</Typography>
                     {[
                         { step: '1', title: 'Enter a Domain', desc: 'Type the domain you want to inspect (e.g., google.com). Subdomains like mail.google.com also work.' },
                         { step: '2', title: 'Click Lookup DNS', desc: 'Our resolver queries the domain\'s authoritative nameservers for all DNS record types.' },
@@ -145,19 +145,19 @@ const DnsLookupPage: React.FC = () => {
                             <Box sx={{ width: 32, height: 32, borderRadius: '8px', bgcolor: 'rgba(155,89,182,0.15)', border: '1px solid rgba(155,89,182,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                 <Typography sx={{ color: '#9B59B6', fontWeight: 800, fontSize: '0.85rem' }}>{item.step}</Typography>
                             </Box>
-                            <Box><Typography sx={{ color: '#ffffff', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography><Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography></Box>
+                            <Box><Typography sx={{ color: '#1e293b', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography><Typography sx={{ color: '#64748b', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography></Box>
                         </Box>
                     ))}
                 </Paper>
 
-                <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
+                <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
                 {FAQS.map((faq, i) => (
-                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
-                        <AccordionSummary expandIcon={<ChevronDown size={18} color="rgba(255,255,255,0.5)" />} sx={{ px: 3, py: 1.5 }}>
-                            <Typography sx={{ fontWeight: 600, color: '#e2e8f0' }}>{faq.q}</Typography>
+                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
+                        <AccordionSummary expandIcon={<ChevronDown size={18} color="#94a3b8" />} sx={{ px: 3, py: 1.5 }}>
+                            <Typography sx={{ fontWeight: 600, color: '#334155' }}>{faq.q}</Typography>
                         </AccordionSummary>
                         <AccordionDetails sx={{ px: 3, pb: 2.5 }}>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.7 }}>{faq.a}</Typography>
+                            <Typography sx={{ color: '#64748b', lineHeight: 1.7 }}>{faq.a}</Typography>
                         </AccordionDetails>
                     </Accordion>
                 ))}

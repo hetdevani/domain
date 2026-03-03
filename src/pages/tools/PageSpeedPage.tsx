@@ -38,7 +38,7 @@ const ScoreRing: React.FC<{ score: number }> = ({ score }) => {
         <Box sx={{ textAlign: 'center' }}>
             <Box sx={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 140, height: 140 }}>
                 <Box component="svg" viewBox="0 0 120 120" sx={{ width: 140, height: 140, position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }}>
-                    <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8" />
+                    <circle cx="60" cy="60" r="52" fill="none" stroke="#e2e8f0" strokeWidth="8" />
                     <circle cx="60" cy="60" r="52" fill="none" stroke={color} strokeWidth="8"
                         strokeDasharray={`${dash} ${circumference - dash}`}
                         strokeLinecap="round"
@@ -47,11 +47,11 @@ const ScoreRing: React.FC<{ score: number }> = ({ score }) => {
                 </Box>
                 <Box sx={{ textAlign: 'center' }}>
                     <Typography sx={{ color, fontWeight: 900, fontSize: '2rem', lineHeight: 1 }}>{score}</Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>/100</Typography>
+                    <Typography sx={{ color: '#94a3b8', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>/100</Typography>
                 </Box>
             </Box>
             <Typography sx={{ color, fontWeight: 700, fontSize: '0.85rem', mt: 1 }}>{label}</Typography>
-            <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem' }}>Performance Score</Typography>
+            <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem' }}>Performance Score</Typography>
         </Box>
     );
 };
@@ -73,7 +73,7 @@ const MetricCard: React.FC<{
     const status: 'good' | 'needs-improvement' | 'poor' = hasValue
         ? getStatus(isLowerBetter ? numVal : (100 - numVal), isLowerBetter ? good : (100 - poor), isLowerBetter ? poor : (100 - good))
         : 'poor';
-    const color = hasValue ? STATUS_COLOR[status] : 'rgba(255,255,255,0.2)';
+    const color = hasValue ? STATUS_COLOR[status] : '#cbd5e1';
 
     // Progress bar: 0% = 0, 100% = at or beyond "poor" threshold
     const barPct = hasValue ? Math.min(100, (numVal / poor) * 100) : 0;
@@ -82,8 +82,8 @@ const MetricCard: React.FC<{
         <Tooltip title={description} placement="top" arrow>
             <Box sx={{
                 p: 2.5, borderRadius: '14px',
-                bgcolor: hasValue ? `${color}08` : 'rgba(0,0,0,0.1)',
-                border: `1px solid ${hasValue ? `${color}25` : 'rgba(255,255,255,0.06)'}`,
+                bgcolor: hasValue ? `${color}08` : 'rgba(0,0,0,0.02)',
+                border: `1px solid ${hasValue ? `${color}25` : '#e2e8f0'}`,
                 height: '100%',
                 cursor: 'default',
                 transition: 'border-color 0.2s',
@@ -92,10 +92,10 @@ const MetricCard: React.FC<{
                 {/* Header */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Box sx={{ color: hasValue ? color : 'rgba(255,255,255,0.2)', display: 'flex' }}>{icon}</Box>
+                        <Box sx={{ color: hasValue ? color : '#cbd5e1', display: 'flex' }}>{icon}</Box>
                         <Box>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.9)', fontWeight: 700, fontSize: '0.82rem', lineHeight: 1.2 }}>{label}</Typography>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem' }}>{abbr}</Typography>
+                            <Typography sx={{ color: '#1e293b', fontWeight: 700, fontSize: '0.82rem', lineHeight: 1.2 }}>{label}</Typography>
+                            <Typography sx={{ color: '#94a3b8', fontSize: '0.7rem' }}>{abbr}</Typography>
                         </Box>
                     </Box>
                     {hasValue && (
@@ -108,13 +108,13 @@ const MetricCard: React.FC<{
                 </Box>
 
                 {/* Value */}
-                <Typography sx={{ color: hasValue ? color : 'rgba(255,255,255,0.2)', fontWeight: 900, fontSize: '1.8rem', fontFamily: 'monospace', lineHeight: 1, mb: 0.5 }}>
+                <Typography sx={{ color: hasValue ? color : '#cbd5e1', fontWeight: 900, fontSize: '1.8rem', fontFamily: 'monospace', lineHeight: 1, mb: 0.5 }}>
                     {hasValue ? value : '—'}
-                    {hasValue && unit && <Typography component="span" sx={{ fontSize: '0.9rem', fontWeight: 600, color: 'rgba(255,255,255,0.4)', ml: 0.5 }}>{unit}</Typography>}
+                    {hasValue && unit && <Typography component="span" sx={{ fontSize: '0.9rem', fontWeight: 600, color: '#94a3b8', ml: 0.5 }}>{unit}</Typography>}
                 </Typography>
 
                 {/* Threshold bar */}
-                <Box sx={{ mt: 2, height: 4, bgcolor: 'rgba(255,255,255,0.06)', borderRadius: '2px', overflow: 'hidden' }}>
+                <Box sx={{ mt: 2, height: 4, bgcolor: '#e2e8f0', borderRadius: '2px', overflow: 'hidden' }}>
                     <Box sx={{
                         height: '100%',
                         width: `${barPct}%`,
@@ -193,17 +193,17 @@ const PageSpeedPage: React.FC = () => {
         return (
             <Box>
                 {/* Score + URL header */}
-                <Box sx={{ display: 'flex', gap: 3, mb: 4, alignItems: 'center', flexWrap: 'wrap', p: 3, bgcolor: 'rgba(0,0,0,0.2)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <Box sx={{ display: 'flex', gap: 3, mb: 4, alignItems: 'center', flexWrap: 'wrap', p: 3, bgcolor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
                     {perfScore !== null && <ScoreRing score={perfScore} />}
                     <Box sx={{ flex: 1, minWidth: 200 }}>
-                        <Typography sx={{ color: '#ffffff', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, mb: 0.5 }}>Analyzed URL</Typography>
-                        <Typography sx={{ color: '#a8c5e8', fontFamily: 'monospace', fontSize: '0.88rem', wordBreak: 'break-all', mb: 2 }}>{url}</Typography>
+                        <Typography sx={{ color: '#1e293b', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, mb: 0.5 }}>Analyzed URL</Typography>
+                        <Typography sx={{ color: '#475569', fontFamily: 'monospace', fontSize: '0.88rem', wordBreak: 'break-all', mb: 2 }}>{url}</Typography>
                         {/* Score legend */}
                         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                             {[{ color: '#2ECC71', label: '90–100 Good' }, { color: '#F39C12', label: '50–89 Needs Improvement' }, { color: '#E74C3C', label: '0–49 Poor' }].map(item => (
                                 <Box key={item.label} sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
                                     <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: item.color }} />
-                                    <Typography sx={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)' }}>{item.label}</Typography>
+                                    <Typography sx={{ fontSize: '0.72rem', color: '#64748b' }}>{item.label}</Typography>
                                 </Box>
                             ))}
                         </Box>
@@ -215,7 +215,7 @@ const PageSpeedPage: React.FC = () => {
                     <>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                             <Zap size={14} color={ACCENT} />
-                            <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                            <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                                 Core Web Vitals
                             </Typography>
                         </Box>
@@ -233,8 +233,8 @@ const PageSpeedPage: React.FC = () => {
                         {OTHER_METRICS.some(m => m.value !== undefined && m.value !== null) && (
                             <>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                                    <Clock size={14} color="rgba(255,255,255,0.4)" />
-                                    <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                    <Clock size={14} color="#94a3b8" />
+                                    <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                                         Additional Metrics
                                     </Typography>
                                 </Box>
@@ -254,9 +254,9 @@ const PageSpeedPage: React.FC = () => {
 
                 {/* Fallback raw JSON */}
                 {!hasAnyMetric && (
-                    <Box sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px' }}>
-                        <Typography variant="caption" sx={{ color: '#ffffff', display: 'block', mb: 1 }}>Raw Response</Typography>
-                        <Box component="pre" sx={{ color: '#a8b5c8', fontSize: '0.8rem', overflow: 'auto', maxHeight: 300, m: 0 }}>
+                    <Box sx={{ p: 3, bgcolor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '12px' }}>
+                        <Typography variant="caption" sx={{ color: '#1e293b', display: 'block', mb: 1 }}>Raw Response</Typography>
+                        <Box component="pre" sx={{ color: '#475569', fontSize: '0.8rem', overflow: 'auto', maxHeight: 300, m: 0 }}>
                             {JSON.stringify(result, null, 2)}
                         </Box>
                     </Box>
@@ -272,33 +272,33 @@ const PageSpeedPage: React.FC = () => {
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: `${ACCENT}18`, borderRadius: '16px', mb: 3, border: `1px solid ${ACCENT}40` }}>
                         <Zap size={36} color={ACCENT} />
                     </Box>
-                    <Typography variant="h2" sx={{ color: '#ffffff', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>Page Speed Metrics</Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
+                    <Typography variant="h2" sx={{ color: '#1e293b', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>Page Speed Metrics</Typography>
+                    <Typography sx={{ color: '#64748b', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
                         Measure your website's Core Web Vitals and performance metrics. Check FCP, LCP, TBT, CLS, and overall performance scores.
                     </Typography>
                 </motion.div>
             </Box>
 
             <Container maxWidth="md" sx={{ pb: 8 }}>
-                <Paper elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#e2e8f0' }}>Analyze Page Speed</Typography>
+                <Paper elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#334155' }}>Analyze Page Speed</Typography>
                     <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                         <TextField
                             fullWidth label="Website URL" placeholder="https://example.com"
                             value={url} onChange={(e) => setUrl(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)', '&.Mui-focused': { color: '#fff' } } }}
-                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', height: '56px', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: `${ACCENT}80` }, '&.Mui-focused fieldset': { borderColor: ACCENT } } }}
+                            InputLabelProps={{ sx: { color: '#64748b', '&.Mui-focused': { color: '#1e293b' } } }}
+                            sx={{ '& .MuiOutlinedInput-root': { color: '#1e293b', bgcolor: '#f8fafc', height: '56px', '& fieldset': { borderColor: '#e2e8f0' }, '&:hover fieldset': { borderColor: `${ACCENT}80` }, '&.Mui-focused fieldset': { borderColor: ACCENT } } }}
                         />
                         <Button variant="contained" onClick={handleCheck} disabled={loading || !url}
-                            sx={{ bgcolor: ACCENT, px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 160, whiteSpace: 'nowrap', '&:hover': { filter: 'brightness(0.88)', bgcolor: ACCENT }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
+                            sx={{ bgcolor: ACCENT, px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 160, whiteSpace: 'nowrap', '&:hover': { filter: 'brightness(0.88)', bgcolor: ACCENT }, '&.Mui-disabled': { bgcolor: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.3)' } }}>
                             {loading ? <><CircularProgress size={18} color="inherit" sx={{ mr: 1 }} />Analyzing…</> : 'Analyze Speed'}
                         </Button>
                     </Box>
                     {loading && (
                         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <CircularProgress size={12} sx={{ color: 'rgba(255,255,255,0.3)' }} />
-                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.35)' }}>
+                            <CircularProgress size={12} sx={{ color: '#94a3b8' }} />
+                            <Typography variant="caption" sx={{ color: '#94a3b8' }}>
                                 Running performance audits — this may take 15–30 seconds…
                             </Typography>
                         </Box>
@@ -316,16 +316,16 @@ const PageSpeedPage: React.FC = () => {
                     )}
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                                <Typography variant="h6" sx={{ color: '#ffffff', fontWeight: 700, mb: 3 }}>Performance Report</Typography>
+                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                                <Typography variant="h6" sx={{ color: '#1e293b', fontWeight: 700, mb: 3 }}>Performance Report</Typography>
                                 {renderResult()}
                             </Paper>
                         </motion.div>
                     )}
                 </AnimatePresence>
 
-                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                    <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>How to Use</Typography>
+                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                    <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>How to Use</Typography>
                     {[
                         { step: '1', title: 'Enter URL', desc: 'Paste the full URL of the page you want to test. Use the actual page URL, not just the domain.' },
                         { step: '2', title: 'Click Analyze Speed', desc: 'Our server runs performance audits using real browser testing. This can take 15–30 seconds.' },
@@ -337,21 +337,21 @@ const PageSpeedPage: React.FC = () => {
                                 <Typography sx={{ color: ACCENT, fontWeight: 800, fontSize: '0.85rem' }}>{item.step}</Typography>
                             </Box>
                             <Box>
-                                <Typography sx={{ color: '#ffffff', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography>
-                                <Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography>
+                                <Typography sx={{ color: '#1e293b', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography>
+                                <Typography sx={{ color: '#64748b', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography>
                             </Box>
                         </Box>
                     ))}
                 </Paper>
 
-                <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
+                <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
                 {FAQS.map((faq, i) => (
-                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
-                        <AccordionSummary expandIcon={<ChevronDown size={18} color="rgba(255,255,255,0.5)" />} sx={{ px: 3, py: 1.5 }}>
-                            <Typography sx={{ fontWeight: 600, color: '#e2e8f0' }}>{faq.q}</Typography>
+                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
+                        <AccordionSummary expandIcon={<ChevronDown size={18} color="#94a3b8" />} sx={{ px: 3, py: 1.5 }}>
+                            <Typography sx={{ fontWeight: 600, color: '#334155' }}>{faq.q}</Typography>
                         </AccordionSummary>
                         <AccordionDetails sx={{ px: 3, pb: 2.5 }}>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.7 }}>{faq.a}</Typography>
+                            <Typography sx={{ color: '#64748b', lineHeight: 1.7 }}>{faq.a}</Typography>
                         </AccordionDetails>
                     </Accordion>
                 ))}

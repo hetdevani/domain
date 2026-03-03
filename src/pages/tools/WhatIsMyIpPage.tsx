@@ -31,22 +31,22 @@ const InfoCard: React.FC<{
 }> = ({ label, value, icon, color = '#1ABC9C', mono = false }) => (
     <Box sx={{
         p: 2.5,
-        bgcolor: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.07)',
+        bgcolor: '#f8fafc',
+        border: '1px solid #e2e8f0',
         borderRadius: '12px',
         height: '100%',
     }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
             {icon && <Box sx={{ color, opacity: 0.7, display: 'flex', flexShrink: 0 }}>{icon}</Box>}
             <Typography variant="caption" sx={{
-                color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase',
+                color: '#64748b', textTransform: 'uppercase',
                 letterSpacing: '0.07em', fontSize: '0.7rem', fontWeight: 700,
             }}>
                 {label}
             </Typography>
         </Box>
         <Typography sx={{
-            color: value ? '#e2e8f0' : 'rgba(255,255,255,0.2)',
+            color: value ? '#334155' : '#cbd5e1',
             fontWeight: value ? 600 : 400,
             wordBreak: 'break-all',
             fontFamily: mono ? 'monospace' : 'inherit',
@@ -61,7 +61,7 @@ const InfoCard: React.FC<{
 const SectionHeader: React.FC<{ icon: React.ReactNode; title: string; color: string }> = ({ icon, title, color }) => (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
         <Box sx={{ p: 0.75, bgcolor: `${color}18`, borderRadius: '8px', color, display: 'flex' }}>{icon}</Box>
-        <Typography variant="overline" sx={{ color: '#ffffff', fontWeight: 700, letterSpacing: '0.1em' }}>
+        <Typography variant="overline" sx={{ color: '#1e293b', fontWeight: 700, letterSpacing: '0.1em' }}>
             {title}
         </Typography>
     </Box>
@@ -119,7 +119,7 @@ const WhatIsMyIpPage: React.FC = () => {
                     textAlign: 'center',
                 }}>
                     <Typography variant="caption" sx={{
-                        color: 'rgba(255,255,255,0.6)', display: 'block', mb: 1,
+                        color: '#64748b', display: 'block', mb: 1,
                         textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: '0.75rem',
                     }}>
                         Your Detected Public IP
@@ -138,15 +138,15 @@ const WhatIsMyIpPage: React.FC = () => {
                             <Chip label={`IPv6: ${ipAddr.ipv6}`} size="small" sx={{ bgcolor: 'rgba(52,152,219,0.12)', color: '#3498DB', border: '1px solid rgba(52,152,219,0.25)', fontFamily: 'monospace', fontWeight: 700 }} />
                         )}
                         {ipAddr.ipv6 === 'UNKNOWN' && (
-                            <Chip label="IPv6: Not detected" size="small" sx={{ bgcolor: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.35)', border: '1px solid rgba(255,255,255,0.08)', fontWeight: 600 }} />
+                            <Chip label="IPv6: Not detected" size="small" sx={{ bgcolor: '#f1f5f9', color: '#94a3b8', border: '1px solid #e2e8f0', fontWeight: 600 }} />
                         )}
                         {loc.country && (
-                            <Chip label={`📍 ${[loc.city, loc.country].filter(Boolean).join(', ')}`} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.1)', fontWeight: 600 }} />
+                            <Chip label={`📍 ${[loc.city, loc.country].filter(Boolean).join(', ')}`} size="small" sx={{ bgcolor: '#f1f5f9', color: '#475569', border: '1px solid #e2e8f0', fontWeight: 600 }} />
                         )}
                     </Box>
                     <Box sx={{ mt: 2 }}>
                         <Button size="small" startIcon={<RefreshCw size={13} />} onClick={fetchMyIp}
-                            sx={{ color: 'rgba(255,255,255,0.6)', textTransform: 'none', fontSize: '0.8rem', '&:hover': { color: '#1ABC9C' } }}>
+                            sx={{ color: '#64748b', textTransform: 'none', fontSize: '0.8rem', '&:hover': { color: '#1ABC9C' } }}>
                             Refresh
                         </Button>
                     </Box>
@@ -181,7 +181,7 @@ const WhatIsMyIpPage: React.FC = () => {
                     </Grid>
                 </Box>
 
-                <Divider sx={{ borderColor: 'rgba(255,255,255,0.06)', mb: 3 }} />
+                <Divider sx={{ borderColor: '#e2e8f0', mb: 3 }} />
 
                 {/* ── Network ── */}
                 <Box sx={{ mb: 3 }}>
@@ -199,7 +199,7 @@ const WhatIsMyIpPage: React.FC = () => {
                     </Grid>
                 </Box>
 
-                <Divider sx={{ borderColor: 'rgba(255,255,255,0.06)', mb: 3 }} />
+                <Divider sx={{ borderColor: '#e2e8f0', mb: 3 }} />
 
                 {/* ── Browser / Client ── */}
                 <Box sx={{ mb: 3 }}>
@@ -230,7 +230,7 @@ const WhatIsMyIpPage: React.FC = () => {
                 {/* ── Providers ── */}
                 {providers.length > 0 && (
                     <>
-                        <Divider sx={{ borderColor: 'rgba(255,255,255,0.06)', mb: 3 }} />
+                        <Divider sx={{ borderColor: '#e2e8f0', mb: 3 }} />
                         <SectionHeader icon={<Globe size={16} />} title={`Geo Providers (${providers.length})`} color="#F39C12" />
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                             {providers.map((p: any, i: number) => {
@@ -238,8 +238,8 @@ const WhatIsMyIpPage: React.FC = () => {
                                 return (
                                     <Box key={i} sx={{
                                         p: 2.5,
-                                        bgcolor: 'rgba(255,255,255,0.025)',
-                                        border: '1px solid rgba(255,255,255,0.06)',
+                                        bgcolor: '#f8fafc',
+                                        border: '1px solid #e2e8f0',
                                         borderRadius: '12px',
                                     }}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: p.success && pd.country ? 1.5 : 0 }}>
@@ -273,8 +273,8 @@ const WhatIsMyIpPage: React.FC = () => {
                                                 ].filter(item => item.v).map((item) => (
                                                     <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item.l}>
                                                         <Box sx={{ display: 'flex', gap: 1 }}>
-                                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.35)', flexShrink: 0, minWidth: 56 }}>{item.l}:</Typography>
-                                                            <Typography variant="caption" sx={{ color: '#c8d6e5', fontWeight: 600, wordBreak: 'break-all' }}>{item.v}</Typography>
+                                                            <Typography variant="caption" sx={{ color: '#94a3b8', flexShrink: 0, minWidth: 56 }}>{item.l}:</Typography>
+                                                            <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, wordBreak: 'break-all' }}>{item.v}</Typography>
                                                         </Box>
                                                     </Grid>
                                                 ))}
@@ -298,10 +298,10 @@ const WhatIsMyIpPage: React.FC = () => {
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(26,188,156,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(26,188,156,0.25)' }}>
                         <Wifi size={36} color="#1ABC9C" />
                     </Box>
-                    <Typography variant="h2" sx={{color: '#ffffff', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>
+                    <Typography variant="h2" sx={{color: '#1e293b', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>
                         What Is My IP Address?
                     </Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: 640, mx: 'auto', fontSize: '1.1rem' }}>
+                    <Typography sx={{ color: '#64748b', maxWidth: 640, mx: 'auto', fontSize: '1.1rem' }}>
                         Instantly detect your public IPv4 & IPv6 address along with location, ISP, browser, OS info — fully automatic, no input needed.
                     </Typography>
                 </motion.div>
@@ -311,9 +311,9 @@ const WhatIsMyIpPage: React.FC = () => {
                 <AnimatePresence>
                     {loading && (
                         <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                            <Paper elevation={0} sx={{ p: 6, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4, textAlign: 'center' }}>
+                            <Paper elevation={0} sx={{ p: 6, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4, textAlign: 'center' }}>
                                 <CircularProgress size={40} sx={{ color: '#1ABC9C', mb: 2 }} />
-                                <Typography sx={{ color: 'rgba(255,255,255,0.5)' }}>Detecting your IP address…</Typography>
+                                <Typography sx={{ color: '#94a3b8' }}>Detecting your IP address…</Typography>
                             </Paper>
                         </motion.div>
                     )}
@@ -333,7 +333,7 @@ const WhatIsMyIpPage: React.FC = () => {
                     )}
                     {result && !loading && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
+                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
                                 {renderResult()}
                             </Paper>
                         </motion.div>
@@ -341,8 +341,8 @@ const WhatIsMyIpPage: React.FC = () => {
                 </AnimatePresence>
 
                 {/* How to Use */}
-                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                    <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>About This Tool</Typography>
+                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                    <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>About This Tool</Typography>
                     {[
                         { step: '1', title: 'Automatic IP Detection', desc: 'The tool detects your public IPv4 and IPv6 addresses the moment you open the page — no input required.' },
                         { step: '2', title: 'Location & Network Info', desc: 'If geo-data is available, you\'ll see your country, city, region, timezone, ISP, and ASN.' },
@@ -354,22 +354,22 @@ const WhatIsMyIpPage: React.FC = () => {
                                 <Typography sx={{ color: '#1ABC9C', fontWeight: 800, fontSize: '0.85rem' }}>{item.step}</Typography>
                             </Box>
                             <Box>
-                                <Typography sx={{ color: '#ffffff', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography>
-                                <Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography>
+                                <Typography sx={{ color: '#1e293b', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography>
+                                <Typography sx={{ color: '#64748b', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography>
                             </Box>
                         </Box>
                     ))}
                 </Paper>
 
                 {/* FAQs */}
-                <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
+                <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
                 {FAQS.map((faq, i) => (
-                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
-                        <AccordionSummary expandIcon={<ChevronDown size={18} color="rgba(255,255,255,0.5)" />} sx={{ px: 3, py: 1.5 }}>
-                            <Typography sx={{ fontWeight: 600, color: '#e2e8f0' }}>{faq.q}</Typography>
+                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
+                        <AccordionSummary expandIcon={<ChevronDown size={18} color="#94a3b8" />} sx={{ px: 3, py: 1.5 }}>
+                            <Typography sx={{ fontWeight: 600, color: '#334155' }}>{faq.q}</Typography>
                         </AccordionSummary>
                         <AccordionDetails sx={{ px: 3, pb: 2.5 }}>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.7 }}>{faq.a}</Typography>
+                            <Typography sx={{ color: '#64748b', lineHeight: 1.7 }}>{faq.a}</Typography>
                         </AccordionDetails>
                     </Accordion>
                 ))}

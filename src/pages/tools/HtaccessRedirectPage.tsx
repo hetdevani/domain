@@ -78,14 +78,14 @@ const FAQS = [
 
 const inputSx = (color = '#E74C3C') => ({
     '& .MuiOutlinedInput-root': {
-        color: '#fff',
-        bgcolor: 'rgba(0,0,0,0.2)',
+        color: '#1e293b',
+        bgcolor: '#f8fafc',
         height: '56px',
-        '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
+        '& fieldset': { borderColor: '#e2e8f0' },
         '&:hover fieldset': { borderColor: `${color}80` },
         '&.Mui-focused fieldset': { borderColor: color },
     },
-    '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.6)' },
+    '& .MuiInputLabel-root': { color: '#64748b' },
     '& .MuiInputLabel-root.Mui-focused': { color: color },
 });
 
@@ -151,20 +151,20 @@ const HtaccessRedirectPage: React.FC = () => {
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(231,76,60,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(231,76,60,0.25)' }}>
                         <ArrowRightLeft size={36} color="#E74C3C" />
                     </Box>
-                    <Typography variant="h2" sx={{ color: '#ffffff', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>
+                    <Typography variant="h2" sx={{ color: '#1e293b', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>
                         HTACCESS Redirect Generator
                     </Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
+                    <Typography sx={{ color: '#64748b', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
                         Generate Apache .htaccess redirect rules instantly. Choose your redirect type, enter your domain, and copy the ready-to-use rules.
                     </Typography>
                 </motion.div>
             </Box>
 
             <Container maxWidth="md" sx={{ pb: 8 }}>
-                <Paper elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
+                <Paper elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
 
                     {/* Step 1 – Redirect Type */}
-                    <Typography sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2 }}>
+                    <Typography sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2 }}>
                         Step 1 — Choose Redirect Type
                     </Typography>
                     <Grid container spacing={1.5} sx={{ mb: 4 }}>
@@ -177,8 +177,8 @@ const HtaccessRedirectPage: React.FC = () => {
                                         sx={{
                                             p: 2,
                                             borderRadius: '12px',
-                                            border: `1.5px solid ${active ? type.color : 'rgba(255,255,255,0.07)'}`,
-                                            bgcolor: active ? `${type.color}10` : 'rgba(0,0,0,0.15)',
+                                            border: `1.5px solid ${active ? type.color : '#e2e8f0'}`,
+                                            bgcolor: active ? `${type.color}10` : '#f8fafc',
                                             cursor: 'pointer',
                                             transition: 'all 0.18s',
                                             display: 'flex',
@@ -194,10 +194,10 @@ const HtaccessRedirectPage: React.FC = () => {
                                             {type.icon}
                                         </Box>
                                         <Box>
-                                            <Typography sx={{ color: active ? type.color : '#e2e8f0', fontWeight: 700, fontSize: '0.9rem', lineHeight: 1.2 }}>
+                                            <Typography sx={{ color: active ? type.color : '#334155', fontWeight: 700, fontSize: '0.9rem', lineHeight: 1.2 }}>
                                                 {type.label}
                                             </Typography>
-                                            <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', mt: 0.3, fontFamily: 'monospace' }}>
+                                            <Typography sx={{ color: '#64748b', fontSize: '0.72rem', mt: 0.3, fontFamily: 'monospace' }}>
                                                 {type.example}
                                             </Typography>
                                         </Box>
@@ -208,7 +208,7 @@ const HtaccessRedirectPage: React.FC = () => {
                     </Grid>
 
                     {/* Step 2 – URL / Path inputs */}
-                    <Typography sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2 }}>
+                    <Typography sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2 }}>
                         Step 2 — {isCustom ? 'Enter Paths' : 'Enter Your Domain'}
                     </Typography>
 
@@ -221,7 +221,7 @@ const HtaccessRedirectPage: React.FC = () => {
                                             fullWidth label="From Path" placeholder="/old-page"
                                             value={fromPath} onChange={(e) => setFromPath(e.target.value)}
                                             helperText="The old URL path to redirect from"
-                                            FormHelperTextProps={{ sx: { color: 'rgba(255,255,255,0.6)' } }}
+                                            FormHelperTextProps={{ sx: { color: '#64748b' } }}
                                             sx={inputSx(selected.color)}
                                         />
                                     </Grid>
@@ -230,7 +230,7 @@ const HtaccessRedirectPage: React.FC = () => {
                                             fullWidth label="To URL" placeholder="https://example.com/new-page"
                                             value={toUrl} onChange={(e) => setToUrl(e.target.value)}
                                             helperText="The destination URL to redirect to"
-                                            FormHelperTextProps={{ sx: { color: 'rgba(255,255,255,0.6)' } }}
+                                            FormHelperTextProps={{ sx: { color: '#64748b' } }}
                                             sx={inputSx(selected.color)}
                                         />
                                     </Grid>
@@ -242,7 +242,7 @@ const HtaccessRedirectPage: React.FC = () => {
                                     fullWidth label="Domain" placeholder="example.com"
                                     value={url} onChange={(e) => setUrl(e.target.value)}
                                     helperText={`Enter your domain without http:// or www — e.g. example.com`}
-                                    FormHelperTextProps={{ sx: { color: 'rgba(255,255,255,0.6)' } }}
+                                    FormHelperTextProps={{ sx: { color: '#64748b' } }}
                                     sx={{ ...inputSx(selected.color), mb: 3 }}
                                 />
                             </motion.div>
@@ -250,29 +250,29 @@ const HtaccessRedirectPage: React.FC = () => {
                     </AnimatePresence>
 
                     {/* Step 3 – Redirect Code */}
-                    <Typography sx={{fontWeight: 700, color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2 }}>
+                    <Typography sx={{fontWeight: 700, color: '#64748b', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2 }}>
                         Step 3 — Redirect Code
                     </Typography>
                     <FormControl fullWidth sx={{ mb: 4 }}>
-                        <InputLabel sx={{ color: 'rgba(255,255,255,0.6)', '&.Mui-focused': { color: '#fff' } }}>HTTP Redirect Code</InputLabel>
+                        <InputLabel sx={{ color: '#64748b', '&.Mui-focused': { color: '#1e293b' } }}>HTTP Redirect Code</InputLabel>
                         <Select
                             value={code}
                             label="HTTP Redirect Code"
                             onChange={(e) => setCode(Number(e.target.value))}
                             sx={{
-                                color: '#fff',
-                                bgcolor: 'rgba(0,0,0,0.2)',
-                                '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' },
+                                color: '#1e293b',
+                                bgcolor: '#f8fafc',
+                                '& .MuiOutlinedInput-notchedOutline': { borderColor: '#e2e8f0' },
                                 '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: `${selected.color}80` },
                                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: selected.color },
-                                '& .MuiSvgIcon-root': { color: 'rgba(255,255,255,0.5)' },
+                                '& .MuiSvgIcon-root': { color: '#94a3b8' },
                             }}
-                            MenuProps={{ PaperProps: { sx: { bgcolor: '#1a2744', border: '1px solid rgba(255,255,255,0.1)' } } }}
+                            MenuProps={{ PaperProps: { sx: { bgcolor: '#ffffff', border: '1px solid #e2e8f0' } } }}
                         >
                             {REDIRECT_CODES.map(c => (
-                                <MenuItem key={c.value} value={c.value} sx={{ color: '#e2e8f0', flexDirection: 'column', alignItems: 'flex-start', '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }}>
-                                    <Typography sx={{ color: '#fff', fontWeight: 600, fontSize: '0.88rem' }}>{c.label}</Typography>
-                                    <Typography sx={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>{c.desc}</Typography>
+                                <MenuItem key={c.value} value={c.value} sx={{ color: '#334155', flexDirection: 'column', alignItems: 'flex-start', '&:hover': { bgcolor: '#f1f5f9' } }}>
+                                    <Typography sx={{ color: '#1e293b', fontWeight: 600, fontSize: '0.88rem' }}>{c.label}</Typography>
+                                    <Typography sx={{ fontSize: '0.75rem', color: '#64748b' }}>{c.desc}</Typography>
                                 </MenuItem>
                             ))}
                         </Select>
@@ -289,7 +289,7 @@ const HtaccessRedirectPage: React.FC = () => {
                             borderRadius: '10px',
                             fontSize: '1rem',
                             '&:hover': { filter: 'brightness(0.88)', bgcolor: selected.color },
-                            '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' },
+                            '&.Mui-disabled': { bgcolor: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.3)' },
                         }}
                     >
                         {loading ? <CircularProgress size={22} color="inherit" /> : 'Generate .htaccess Rules'}
@@ -308,22 +308,22 @@ const HtaccessRedirectPage: React.FC = () => {
                     )}
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
+                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                    <Typography variant="h6" sx={{ fontWeight: 700, color: '#e2e8f0' }}>Generated .htaccess Rules</Typography>
+                                    <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e293b' }}>Generated .htaccess Rules</Typography>
                                     <Button
                                         size="small"
                                         startIcon={copied ? <Check size={14} /> : <Copy size={14} />}
                                         onClick={handleCopy}
-                                        sx={{ color: copied ? '#2ECC71' : 'rgba(255,255,255,0.5)', textTransform: 'none', borderRadius: '8px', '&:hover': { color: '#E74C3C' } }}
+                                        sx={{ color: copied ? '#2ECC71' : '#94a3b8', textTransform: 'none', borderRadius: '8px', '&:hover': { color: '#E74C3C' } }}
                                     >
                                         {copied ? 'Copied!' : 'Copy'}
                                     </Button>
                                 </Box>
-                                <Box sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', fontFamily: 'monospace', fontSize: '0.85rem', color: '#a8c5e8', whiteSpace: 'pre-wrap', lineHeight: 1.9 }}>
+                                <Box sx={{ p: 3, bgcolor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '12px', fontFamily: 'monospace', fontSize: '0.85rem', color: '#475569', whiteSpace: 'pre-wrap', lineHeight: 1.9 }}>
                                     {result}
                                 </Box>
-                                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', mt: 1.5, display: 'block' }}>
+                                <Typography variant="caption" sx={{ color: '#64748b', mt: 1.5, display: 'block' }}>
                                     Paste these rules into your .htaccess file at the root of your web server. Make sure mod_rewrite is enabled on your Apache server.
                                 </Typography>
                             </Paper>
@@ -332,8 +332,8 @@ const HtaccessRedirectPage: React.FC = () => {
                 </AnimatePresence>
 
                 {/* How to Use */}
-                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                    <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>How to Use</Typography>
+                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                    <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>How to Use</Typography>
                     {[
                         { step: '1', title: 'Choose Redirect Type', desc: 'Select the kind of redirect you need — www/non-www, HTTP/HTTPS, or a custom path redirect.' },
                         { step: '2', title: 'Enter Your Domain or Paths', desc: 'For domain-level redirects, enter your domain (e.g. example.com). For custom, enter the old path and new destination URL.' },
@@ -345,22 +345,22 @@ const HtaccessRedirectPage: React.FC = () => {
                                 <Typography sx={{ color: '#E74C3C', fontWeight: 800, fontSize: '0.85rem' }}>{item.step}</Typography>
                             </Box>
                             <Box>
-                                <Typography sx={{ color: '#ffffff', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography>
-                                <Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography>
+                                <Typography sx={{ color: '#1e293b', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography>
+                                <Typography sx={{ color: '#64748b', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography>
                             </Box>
                         </Box>
                     ))}
                 </Paper>
 
                 {/* FAQ */}
-                <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
+                <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
                 {FAQS.map((faq, i) => (
-                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
-                        <AccordionSummary expandIcon={<ChevronDown size={18} color="rgba(255,255,255,0.5)" />} sx={{ px: 3, py: 1.5 }}>
-                            <Typography sx={{ fontWeight: 600, color: '#e2e8f0' }}>{faq.q}</Typography>
+                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
+                        <AccordionSummary expandIcon={<ChevronDown size={18} color="#94a3b8" />} sx={{ px: 3, py: 1.5 }}>
+                            <Typography sx={{ fontWeight: 600, color: '#334155' }}>{faq.q}</Typography>
                         </AccordionSummary>
                         <AccordionDetails sx={{ px: 3, pb: 2.5 }}>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.7 }}>{faq.a}</Typography>
+                            <Typography sx={{ color: '#64748b', lineHeight: 1.7 }}>{faq.a}</Typography>
                         </AccordionDetails>
                     </Accordion>
                 ))}

@@ -38,20 +38,20 @@ const FAQS = [
 
 const inputSx = {
     '& .MuiOutlinedInput-root': {
-        color: '#fff',
-        bgcolor: 'rgba(0,0,0,0.2)',
+        color: '#1e293b',
+        bgcolor: '#f8fafc',
         height: '56px',
-        '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
+        '& fieldset': { borderColor: '#e2e8f0' },
         '&:hover fieldset': { borderColor: `${ACCENT}60` },
         '&.Mui-focused fieldset': { borderColor: ACCENT },
     },
-    '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.4)' },
+    '& .MuiInputLabel-root': { color: '#64748b' },
     '& .MuiInputLabel-root.Mui-focused': { color: ACCENT },
-    '& .MuiFormHelperText-root': { color: 'rgba(255,255,255,0.3)' },
+    '& .MuiFormHelperText-root': { color: '#94a3b8' },
 };
 
 const SectionLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <Typography sx={{ fontWeight: 700, color: '#ffffff', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0 }}>
+    <Typography sx={{ fontWeight: 700, color: '#334155', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0 }}>
         {children}
     </Typography>
 );
@@ -179,17 +179,17 @@ const SmtpTestPage: React.FC = () => {
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: `${ACCENT}18`, borderRadius: '16px', mb: 3, border: `1px solid ${ACCENT}40` }}>
                         <Mail size={36} color={ACCENT} />
                     </Box>
-                    <Typography variant="h2" sx={{ color: '#ffffff', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>
+                    <Typography variant="h2" sx={{ color: '#1e293b', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>
                         SMTP Test Tool
                     </Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
+                    <Typography sx={{ color: '#64748b', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
                         Test your SMTP server connectivity, validate credentials, and send a real test email to verify your mail server configuration.
                     </Typography>
                 </motion.div>
             </Box>
 
             <Container maxWidth="md" sx={{ pb: 8 }}>
-                <Paper elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
+                <Paper elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
 
                     {/* Server Settings */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
@@ -223,14 +223,14 @@ const SmtpTestPage: React.FC = () => {
                                 onClick={() => setPort(p.port)}
                                 sx={{
                                     px: 2, py: 0.8, borderRadius: '8px', cursor: 'pointer',
-                                    border: `1.5px solid ${port === p.port ? ACCENT : 'rgba(255,255,255,0.1)'}`,
-                                    bgcolor: port === p.port ? `${ACCENT}15` : 'rgba(0,0,0,0.15)',
+                                    border: `1.5px solid ${port === p.port ? ACCENT : '#e2e8f0'}`,
+                                    bgcolor: port === p.port ? `${ACCENT}15` : '#f8fafc',
                                     transition: 'all 0.15s',
                                     '&:hover': { border: `1.5px solid ${ACCENT}60` },
                                 }}
                             >
-                                <Typography sx={{ color: port === p.port ? ACCENT : '#e2e8f0', fontWeight: 700, fontSize: '0.82rem' }}>{p.label}</Typography>
-                                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.68rem' }}>{p.desc}</Typography>
+                                <Typography sx={{ color: port === p.port ? ACCENT : '#334155', fontWeight: 700, fontSize: '0.82rem' }}>{p.label}</Typography>
+                                <Typography sx={{ color: '#64748b', fontSize: '0.68rem' }}>{p.desc}</Typography>
                             </Box>
                         ))}
                     </Box>
@@ -273,14 +273,14 @@ const SmtpTestPage: React.FC = () => {
                                     onClick={() => setSecurityType(s.value)}
                                     sx={{
                                         px: 2.5, py: 1.2, borderRadius: '10px', cursor: 'pointer', flex: '1 1 auto', minWidth: 90, textAlign: 'center',
-                                        border: `1.5px solid ${active ? ACCENT : 'rgba(255,255,255,0.08)'}`,
-                                        bgcolor: active ? `${ACCENT}12` : 'rgba(0,0,0,0.15)',
+                                        border: `1.5px solid ${active ? ACCENT : '#e2e8f0'}`,
+                                        bgcolor: active ? `${ACCENT}12` : '#f8fafc',
                                         transition: 'all 0.15s',
                                         '&:hover': { border: `1.5px solid ${ACCENT}50`, bgcolor: `${ACCENT}08` },
                                     }}
                                 >
-                                    <Typography sx={{ color: active ? ACCENT : '#e2e8f0', fontWeight: 700, fontSize: '0.88rem' }}>{s.label}</Typography>
-                                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.7rem', mt: 0.3 }}>{s.desc}</Typography>
+                                    <Typography sx={{ color: active ? ACCENT : '#334155', fontWeight: 700, fontSize: '0.88rem' }}>{s.label}</Typography>
+                                    <Typography sx={{ color: '#64748b', fontSize: '0.7rem', mt: 0.3 }}>{s.desc}</Typography>
                                 </Box>
                             );
                         })}
@@ -291,7 +291,7 @@ const SmtpTestPage: React.FC = () => {
                         <Lock size={15} color={ACCENT} />
                         <SectionLabel>Authentication</SectionLabel>
                     </Box>
-                    <Box sx={{ p: 2.5, bgcolor: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', mb: 4 }}>
+                    <Box sx={{ p: 2.5, bgcolor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', mb: 4 }}>
                         <FormControlLabel
                             control={
                                 <Switch
@@ -300,7 +300,7 @@ const SmtpTestPage: React.FC = () => {
                                     sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: ACCENT }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: ACCENT } }}
                                 />
                             }
-                            label={<Typography sx={{ color: '#e2e8f0', fontWeight: 600, fontSize: '0.9rem' }}>Use Authentication</Typography>}
+                            label={<Typography sx={{ color: '#334155', fontWeight: 600, fontSize: '0.9rem' }}>Use Authentication</Typography>}
                             sx={{ mb: useAuthentication ? 2 : 0 }}
                         />
                         <Collapse in={useAuthentication}>
@@ -328,14 +328,14 @@ const SmtpTestPage: React.FC = () => {
                         onClick={() => setShowAdvanced(!showAdvanced)}
                         sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, cursor: 'pointer', width: 'fit-content' }}
                     >
-                        <Settings size={15} color="rgba(255,255,255,0.6)" />
-                        <Typography sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                        <Settings size={15} color="#64748b" />
+                        <Typography sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                             Advanced Options
                         </Typography>
-                        <ChevronDown size={14} color="rgba(255,255,255,0.6)" style={{ transition: 'transform 0.2s', transform: showAdvanced ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+                        <ChevronDown size={14} color="#64748b" style={{ transition: 'transform 0.2s', transform: showAdvanced ? 'rotate(180deg)' : 'rotate(0deg)' }} />
                     </Box>
                     <Collapse in={showAdvanced}>
-                        <Box sx={{ p: 2.5, bgcolor: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', mb: 4 }}>
+                        <Box sx={{ p: 2.5, bgcolor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', mb: 4 }}>
                             <Grid container spacing={2} alignItems="center">
                                 <Grid size={{ xs: 12, sm: 4 }}>
                                     <TextField
@@ -356,8 +356,8 @@ const SmtpTestPage: React.FC = () => {
                                         }
                                         label={
                                             <Box>
-                                                <Typography sx={{ color: '#e2e8f0', fontWeight: 600, fontSize: '0.88rem' }}>Skip Send</Typography>
-                                                <Typography sx={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.72rem' }}>Test connection only</Typography>
+                                                <Typography sx={{ color: '#334155', fontWeight: 600, fontSize: '0.88rem' }}>Skip Send</Typography>
+                                                <Typography sx={{ color: '#94a3b8', fontSize: '0.72rem' }}>Test connection only</Typography>
                                             </Box>
                                         }
                                     />
@@ -373,8 +373,8 @@ const SmtpTestPage: React.FC = () => {
                                         }
                                         label={
                                             <Box>
-                                                <Typography sx={{ color: '#e2e8f0', fontWeight: 600, fontSize: '0.88rem' }}>Allow Self-Signed</Typography>
-                                                <Typography sx={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.72rem' }}>Skip cert validation</Typography>
+                                                <Typography sx={{ color: '#334155', fontWeight: 600, fontSize: '0.88rem' }}>Allow Self-Signed</Typography>
+                                                <Typography sx={{ color: '#94a3b8', fontSize: '0.72rem' }}>Skip cert validation</Typography>
                                             </Box>
                                         }
                                     />
@@ -391,7 +391,7 @@ const SmtpTestPage: React.FC = () => {
                         sx={{
                             bgcolor: ACCENT, py: 1.6, fontWeight: 700, borderRadius: '10px', fontSize: '1rem',
                             '&:hover': { filter: 'brightness(0.88)', bgcolor: ACCENT },
-                            '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)' },
+                            '&.Mui-disabled': { bgcolor: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.3)' },
                         }}
                     >
                         {loading ? <CircularProgress size={22} color="inherit" /> : 'Run SMTP Test'}
@@ -412,7 +412,7 @@ const SmtpTestPage: React.FC = () => {
                     {/* Result */}
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: `1px solid ${overallSuccess ? 'rgba(46,204,113,0.2)' : 'rgba(231,76,60,0.2)'}`, borderRadius: '20px', mb: 4 }}>
+                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: `1px solid ${overallSuccess ? 'rgba(46,204,113,0.2)' : 'rgba(231,76,60,0.2)'}`, borderRadius: '20px', mb: 4 }}>
                                 {/* Header */}
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
                                     {overallSuccess
@@ -429,7 +429,7 @@ const SmtpTestPage: React.FC = () => {
                                     </Box>
                                 </Box>
 
-                                <Divider sx={{ borderColor: 'rgba(255,255,255,0.06)', mb: 3 }} />
+                                <Divider sx={{ borderColor: '#e2e8f0', mb: 3 }} />
 
                                 {/* Result items */}
                                 {resultItems.length > 0 ? (
@@ -438,9 +438,9 @@ const SmtpTestPage: React.FC = () => {
                                             <Box key={i} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, p: 2, bgcolor: `${STATUS_COLOR[item.status]}08`, border: `1px solid ${STATUS_COLOR[item.status]}25`, borderRadius: '10px' }}>
                                                 <Box sx={{ mt: 0.2, flexShrink: 0 }}>{STATUS_ICON[item.status]}</Box>
                                                 <Box>
-                                                    <Typography sx={{ color: '#e2e8f0', fontWeight: 700, fontSize: '0.88rem' }}>{item.label}</Typography>
+                                                    <Typography sx={{ color: '#1e293b', fontWeight: 700, fontSize: '0.88rem' }}>{item.label}</Typography>
                                                     {item.detail && (
-                                                        <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', mt: 0.3 }}>{item.detail}</Typography>
+                                                        <Typography sx={{ color: '#64748b', fontSize: '0.8rem', mt: 0.3 }}>{item.detail}</Typography>
                                                     )}
                                                 </Box>
                                             </Box>
@@ -448,7 +448,7 @@ const SmtpTestPage: React.FC = () => {
                                     </Box>
                                 ) : (
                                     /* Fallback: raw JSON */
-                                    <Box sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', fontFamily: 'monospace', fontSize: '0.82rem', color: '#a8c5e8', whiteSpace: 'pre-wrap', lineHeight: 1.8 }}>
+                                    <Box sx={{ p: 3, bgcolor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '12px', fontFamily: 'monospace', fontSize: '0.82rem', color: '#475569', whiteSpace: 'pre-wrap', lineHeight: 1.8 }}>
                                         {JSON.stringify(result, null, 2)}
                                     </Box>
                                 )}
@@ -458,8 +458,8 @@ const SmtpTestPage: React.FC = () => {
                 </AnimatePresence>
 
                 {/* How to Use */}
-                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                    <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>How to Use</Typography>
+                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                    <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>How to Use</Typography>
                     {[
                         { step: '1', title: 'Enter SMTP Server & Port', desc: 'Input your mail server hostname (e.g. smtp.gmail.com) and select or type the port. Use the presets for common configurations.' },
                         { step: '2', title: 'Set Email Addresses', desc: 'Provide a From address (your sending email) and a To address where the test email should be delivered.' },
@@ -471,22 +471,22 @@ const SmtpTestPage: React.FC = () => {
                                 <Typography sx={{ color: ACCENT, fontWeight: 800, fontSize: '0.85rem' }}>{item.step}</Typography>
                             </Box>
                             <Box>
-                                <Typography sx={{ color: '#ffffff', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography>
-                                <Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography>
+                                <Typography sx={{ color: '#1e293b', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography>
+                                <Typography sx={{ color: '#64748b', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography>
                             </Box>
                         </Box>
                     ))}
                 </Paper>
 
                 {/* FAQ */}
-                <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
+                <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
                 {FAQS.map((faq, i) => (
-                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
-                        <AccordionSummary expandIcon={<ChevronDown size={18} color="rgba(255,255,255,0.5)" />} sx={{ px: 3, py: 1.5 }}>
-                            <Typography sx={{ fontWeight: 600, color: '#e2e8f0' }}>{faq.q}</Typography>
+                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
+                        <AccordionSummary expandIcon={<ChevronDown size={18} color="#94a3b8" />} sx={{ px: 3, py: 1.5 }}>
+                            <Typography sx={{ fontWeight: 600, color: '#334155' }}>{faq.q}</Typography>
                         </AccordionSummary>
                         <AccordionDetails sx={{ px: 3, pb: 2.5 }}>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.7 }}>{faq.a}</Typography>
+                            <Typography sx={{ color: '#64748b', lineHeight: 1.7 }}>{faq.a}</Typography>
                         </AccordionDetails>
                     </Accordion>
                 ))}

@@ -60,27 +60,27 @@ const HttpHeaderCheckerPage: React.FC = () => {
                 {statusCode && (
                     <Box sx={{ p: 3, bgcolor: `${statusColor}10`, border: `1px solid ${statusColor}30`, borderRadius: '12px', display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
                         <Typography variant="h3" sx={{ color: statusColor, fontWeight: 900, fontFamily: 'monospace' }}>{statusCode}</Typography>
-                        <Typography sx={{ color: 'rgba(255,255,255,0.6)' }}>HTTP Status Code</Typography>
+                        <Typography sx={{ color: '#64748b' }}>HTTP Status Code</Typography>
                     </Box>
                 )}
 
                 {/* Security Headers Check */}
                 <Box sx={{ mb: 3 }}>
-                    <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>Security Headers Audit</Typography>
+                    <Typography variant="overline" sx={{ color: '#64748b', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>Security Headers Audit</Typography>
                     <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1 }}>
                         {presentSecHeaders.map(h => <Chip key={h} label={h} size="small" sx={{ bgcolor: 'rgba(46,204,113,0.1)', color: '#2ECC71', border: '1px solid rgba(46,204,113,0.2)', fontFamily: 'monospace', fontSize: '0.72rem' }} />)}
                         {missingSecHeaders.map(h => <Chip key={h} label={h} size="small" sx={{ bgcolor: 'rgba(231,76,60,0.1)', color: '#E74C3C', border: '1px solid rgba(231,76,60,0.2)', fontFamily: 'monospace', fontSize: '0.72rem' }} />)}
                     </Box>
-                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)' }}>Green = present, Red = missing</Typography>
+                    <Typography variant="caption" sx={{ color: '#94a3b8' }}>Green = present, Red = missing</Typography>
                 </Box>
 
                 {/* All Headers */}
-                <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>Response Headers</Typography>
-                <Box sx={{ bgcolor: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', overflow: 'hidden' }}>
+                <Typography variant="overline" sx={{ color: '#64748b', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>Response Headers</Typography>
+                <Box sx={{ bgcolor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden' }}>
                     {Object.entries(headers).map(([key, value], idx) => (
-                        <Box key={key} sx={{ display: 'flex', gap: 2, px: 3, py: 1.5, bgcolor: idx % 2 === 0 ? 'rgba(0,0,0,0.1)' : 'transparent', borderBottom: idx < Object.keys(headers).length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none', flexWrap: 'wrap' }}>
+                        <Box key={key} sx={{ display: 'flex', gap: 2, px: 3, py: 1.5, bgcolor: idx % 2 === 0 ? 'rgba(0,0,0,0.02)' : 'transparent', borderBottom: idx < Object.keys(headers).length - 1 ? '1px solid #e2e8f0' : 'none', flexWrap: 'wrap' }}>
                             <Typography sx={{ color: SECURITY_HEADERS.includes(key.toLowerCase()) ? '#2ECC71' : '#9B59B6', fontFamily: 'monospace', fontSize: '0.8rem', fontWeight: 700, minWidth: 220, flexShrink: 0 }}>{key}</Typography>
-                            <Typography sx={{ color: '#e2e8f0', fontFamily: 'monospace', fontSize: '0.8rem', flex: 1, wordBreak: 'break-all' }}>{String(value)}</Typography>
+                            <Typography sx={{ color: '#334155', fontFamily: 'monospace', fontSize: '0.8rem', flex: 1, wordBreak: 'break-all' }}>{String(value)}</Typography>
                         </Box>
                     ))}
                 </Box>
@@ -95,26 +95,26 @@ const HttpHeaderCheckerPage: React.FC = () => {
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(231,76,60,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(231,76,60,0.25)' }}>
                         <Server size={36} color="#E74C3C" />
                     </Box>
-                    <Typography variant="h2" sx={{ color: '#ffffff', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>HTTP Header Checker</Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
+                    <Typography variant="h2" sx={{ color: '#1e293b', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>HTTP Header Checker</Typography>
+                    <Typography sx={{ color: '#64748b', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
                         Inspect HTTP response headers for any URL. Check security headers, cache policies, redirects, and server information instantly.
                     </Typography>
                 </motion.div>
             </Box>
 
             <Container maxWidth="md" sx={{ pb: 8 }}>
-                <Paper elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#e2e8f0' }}>Check HTTP Headers</Typography>
+                <Paper elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#334155' }}>Check HTTP Headers</Typography>
                     <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                         <TextField
                             fullWidth label="Website URL" placeholder="https://example.com"
                             value={url} onChange={(e) => setUrl(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.6)', '&.Mui-focused': { color: '#fff' } } }}
-                            sx={{ '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', height: '56px', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(231,76,60,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#E74C3C' } } }}
+                            InputLabelProps={{ sx: { color: '#64748b', '&.Mui-focused': { color: '#1e293b' } } }}
+                            sx={{ '& .MuiOutlinedInput-root': { color: '#1e293b', bgcolor: '#f8fafc', height: '56px', '& fieldset': { borderColor: '#e2e8f0' }, '&:hover fieldset': { borderColor: 'rgba(231,76,60,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#E74C3C' } } }}
                         />
                         <Button variant="contained" onClick={handleCheck} disabled={loading || !url}
-                            sx={{ bgcolor: '#E74C3C', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, whiteSpace: 'nowrap', '&:hover': { bgcolor: '#c0392b' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
+                            sx={{ bgcolor: '#E74C3C', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, whiteSpace: 'nowrap', '&:hover': { bgcolor: '#c0392b' }, '&.Mui-disabled': { bgcolor: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.3)' } }}>
                             {loading ? <CircularProgress size={22} color="inherit" /> : 'Check Headers'}
                         </Button>
                     </Box>
@@ -131,16 +131,16 @@ const HttpHeaderCheckerPage: React.FC = () => {
                     )}
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                                <Typography variant="h6" sx={{color: '#ffffff', fontWeight: 700, mb: 3 }}>Headers for <Box component="span" sx={{ color: '#E74C3C', fontFamily: 'monospace', fontSize: '0.9em', ml: 1 }}>{url}</Box></Typography>
+                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                                <Typography variant="h6" sx={{color: '#1e293b', fontWeight: 700, mb: 3 }}>Headers for <Box component="span" sx={{ color: '#E74C3C', fontFamily: 'monospace', fontSize: '0.9em', ml: 1 }}>{url}</Box></Typography>
                                 {renderHeaders()}
                             </Paper>
                         </motion.div>
                     )}
                 </AnimatePresence>
 
-                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                    <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>How to Use</Typography>
+                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                    <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>How to Use</Typography>
                     {[
                         { step: '1', title: 'Enter URL', desc: 'Paste a full URL including https:// (e.g., https://example.com). The tool follows redirects and reports the final headers.' },
                         { step: '2', title: 'Check Headers', desc: 'Click the button — our server makes an HTTP request and returns all response headers.' },
@@ -151,19 +151,19 @@ const HttpHeaderCheckerPage: React.FC = () => {
                             <Box sx={{ width: 32, height: 32, borderRadius: '8px', bgcolor: 'rgba(231,76,60,0.15)', border: '1px solid rgba(231,76,60,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                 <Typography sx={{ color: '#E74C3C', fontWeight: 800, fontSize: '0.85rem' }}>{item.step}</Typography>
                             </Box>
-                            <Box><Typography sx={{ color: '#ffffff', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography><Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography></Box>
+                            <Box><Typography sx={{ color: '#1e293b', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography><Typography sx={{ color: '#64748b', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography></Box>
                         </Box>
                     ))}
                 </Paper>
 
-                <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
+                <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
                 {FAQS.map((faq, i) => (
-                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
-                        <AccordionSummary expandIcon={<ChevronDown size={18} color="rgba(255,255,255,0.5)" />} sx={{ px: 3, py: 1.5 }}>
-                            <Typography sx={{ fontWeight: 600, color: '#e2e8f0' }}>{faq.q}</Typography>
+                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
+                        <AccordionSummary expandIcon={<ChevronDown size={18} color="#94a3b8" />} sx={{ px: 3, py: 1.5 }}>
+                            <Typography sx={{ fontWeight: 600, color: '#334155' }}>{faq.q}</Typography>
                         </AccordionSummary>
                         <AccordionDetails sx={{ px: 3, pb: 2.5 }}>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.7 }}>{faq.a}</Typography>
+                            <Typography sx={{ color: '#64748b', lineHeight: 1.7 }}>{faq.a}</Typography>
                         </AccordionDetails>
                     </Accordion>
                 ))}

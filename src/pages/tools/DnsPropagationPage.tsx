@@ -77,7 +77,7 @@ const DnsPropagationPage: React.FC = () => {
 
         if (!servers.length) {
             return (
-                <Typography sx={{ color: 'rgba(255,255,255,0.5)', textAlign: 'center', py: 4 }}>
+                <Typography sx={{ color: '#94a3b8', textAlign: 'center', py: 4 }}>
                     No propagation data returned.
                 </Typography>
             );
@@ -91,12 +91,12 @@ const DnsPropagationPage: React.FC = () => {
         return (
             <Box>
                 {/* Summary Bar */}
-                <Box sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '14px', mb: 3 }}>
+                <Box sx={{ p: 3, bgcolor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', mb: 3 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5, flexWrap: 'wrap', gap: 1 }}>
-                        <Typography sx={{ fontWeight: 700, color: '#e2e8f0' }}>
+                        <Typography sx={{ fontWeight: 700, color: '#334155' }}>
                             Propagation Status for{' '}
                             <Box component="span" sx={{marginLeft: .5, color: '#2ECC71', fontFamily: 'monospace' }}>{result.domain}</Box>
-                            {' '} <Box component="span" sx={{ marginLeft: .5, color: 'rgba(255,255,255,0.6)', fontFamily: 'monospace', fontSize: '0.85em' }}>{result.recordType}</Box>
+                            {' '} <Box component="span" sx={{ marginLeft: .5, color: '#64748b', fontFamily: 'monospace', fontSize: '0.85em' }}>{result.recordType}</Box>
                         </Typography>
                         <Typography sx={{ color: pctColor, fontWeight: 900, fontSize: '1.4rem' }}>{pct}%</Typography>
                     </Box>
@@ -104,27 +104,27 @@ const DnsPropagationPage: React.FC = () => {
                         variant="determinate"
                         value={pct}
                         sx={{
-                            height: 8, borderRadius: 4, bgcolor: 'rgba(255,255,255,0.07)',
+                            height: 8, borderRadius: 4, bgcolor: '#e2e8f0',
                             '& .MuiLinearProgress-bar': { bgcolor: pctColor, borderRadius: 4 },
                         }}
                     />
                     <Box sx={{ display: 'flex', gap: 3, mt: 2, flexWrap: 'wrap' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <CheckCircle size={15} color="#2ECC71" />
-                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)' }}>
+                            <Typography variant="caption" sx={{ color: '#64748b' }}>
                                 <Box component="span" sx={{ color: '#2ECC71', fontWeight: 700 }}>{propagatedCount}</Box> Propagated
                             </Typography>
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <XCircle size={15} color="#E74C3C" />
-                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)' }}>
+                            <Typography variant="caption" sx={{ color: '#64748b' }}>
                                 <Box component="span" sx={{ color: '#E74C3C', fontWeight: 700 }}>{summary.notPropagated ?? (total - propagatedCount)}</Box> Pending
                             </Typography>
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Globe size={15} color="rgba(255,255,255,0.6)" />
-                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)' }}>
-                                <Box component="span" sx={{ fontWeight: 700, color: '#e2e8f0' }}>{total}</Box> Servers Checked
+                            <Globe size={15} color="#64748b" />
+                            <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                <Box component="span" sx={{ fontWeight: 700, color: '#334155' }}>{total}</Box> Servers Checked
                             </Typography>
                         </Box>
                     </Box>
@@ -152,10 +152,10 @@ const DnsPropagationPage: React.FC = () => {
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
                                             <Typography sx={{ fontSize: '1rem', flexShrink: 0 }}>{flag}</Typography>
                                             <Box sx={{ minWidth: 0 }}>
-                                                <Typography sx={{ color: '#e2e8f0', fontWeight: 700, fontSize: '0.82rem', lineHeight: 1.2 }}>
+                                                <Typography sx={{ color: '#334155', fontWeight: 700, fontSize: '0.82rem', lineHeight: 1.2 }}>
                                                     {resolver.countryName || resolver.continentName || ''}
                                                 </Typography>
-                                                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem' }}>
+                                                <Typography sx={{ color: '#64748b', fontSize: '0.72rem' }}>
                                                     {resolver.name || `Server ${idx + 1}`}
                                                 </Typography>
                                             </Box>
@@ -167,7 +167,7 @@ const DnsPropagationPage: React.FC = () => {
                                     </Box>
 
                                     {/* Resolver IP */}
-                                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.72rem', fontFamily: 'monospace', mb: 0.75 }}>
+                                    <Typography sx={{ color: '#64748b', fontSize: '0.72rem', fontFamily: 'monospace', mb: 0.75 }}>
                                         {resolver.ip} · {resolver.provider}
                                     </Typography>
 
@@ -196,8 +196,8 @@ const DnsPropagationPage: React.FC = () => {
                                     {/* Response time */}
                                     {server.responseTimeMs != null && (
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
-                                            <Clock size={11} color="rgba(255,255,255,0.4)" />
-                                            <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem' }}>
+                                            <Clock size={11} color="#94a3b8" />
+                                            <Typography sx={{ color: '#94a3b8', fontSize: '0.7rem' }}>
                                                 {server.responseTimeMs} ms
                                             </Typography>
                                         </Box>
@@ -219,10 +219,10 @@ const DnsPropagationPage: React.FC = () => {
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(46,204,113,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(46,204,113,0.2)' }}>
                         <Globe size={36} color="#2ECC71" />
                     </Box>
-                    <Typography variant="h2" sx={{ color: '#ffffff', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>
+                    <Typography variant="h2" sx={{ color: '#1e293b', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>
                         DNS Propagation Checker
                     </Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
+                    <Typography sx={{ color: '#64748b', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
                         Verify how quickly your DNS changes spread across global nameservers. Check any record type from multiple worldwide locations in real-time.
                     </Typography>
                 </motion.div>
@@ -230,8 +230,8 @@ const DnsPropagationPage: React.FC = () => {
 
             <Container maxWidth="lg" sx={{ pb: 8 }}>
                 {/* Form */}
-                <Paper elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#e2e8f0' }}>Check DNS Propagation</Typography>
+                <Paper elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#334155' }}>Check DNS Propagation</Typography>
                     <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' }, mb: 2 }}>
                         <TextField
                             fullWidth
@@ -240,36 +240,36 @@ const DnsPropagationPage: React.FC = () => {
                             value={domain}
                             onChange={(e) => setDomain(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.6)', '&.Mui-focused': { color: '#fff' } } }}
+                            InputLabelProps={{ sx: { color: '#64748b', '&.Mui-focused': { color: '#1e293b' } } }}
                             sx={{
                                 '& .MuiOutlinedInput-root': {
-                                    color: '#fff',
-                                    bgcolor: 'rgba(0,0,0,0.2)',
+                                    color: '#1e293b',
+                                    bgcolor: '#f8fafc',
                                     height: '56px',
-                                    '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
+                                    '& fieldset': { borderColor: '#e2e8f0' },
                                     '&:hover fieldset': { borderColor: 'rgba(46,204,113,0.5)' },
                                     '&.Mui-focused fieldset': { borderColor: '#2ECC71' },
                                 },
                             }}
                         />
                         <FormControl sx={{ minWidth: { xs: '100%', sm: 150 } }}>
-                            <InputLabel sx={{ color: 'rgba(255,255,255,0.6)', '&.Mui-focused': { color: '#fff' } }}>Record Type</InputLabel>
+                            <InputLabel sx={{ color: '#64748b', '&.Mui-focused': { color: '#1e293b' } }}>Record Type</InputLabel>
                             <Select
                                 value={recordType}
                                 label="Record Type"
                                 onChange={(e) => setRecordType(e.target.value)}
                                 sx={{
-                                    color: '#fff',
-                                    bgcolor: 'rgba(0,0,0,0.2)',
-                                    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' },
+                                    color: '#1e293b',
+                                    bgcolor: '#f8fafc',
+                                    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#e2e8f0' },
                                     '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(46,204,113,0.5)' },
                                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#2ECC71' },
-                                    '& .MuiSvgIcon-root': { color: 'rgba(255,255,255,0.5)' },
+                                    '& .MuiSvgIcon-root': { color: '#94a3b8' },
                                 }}
-                                MenuProps={{ PaperProps: { sx: { bgcolor: '#1a2744', border: '1px solid rgba(255,255,255,0.1)' } } }}
+                                MenuProps={{ PaperProps: { sx: { bgcolor: '#ffffff', border: '1px solid #e2e8f0' } } }}
                             >
                                 {RECORD_TYPES.map((t) => (
-                                    <MenuItem key={t} value={t} sx={{ color: '#e2e8f0', fontFamily: 'monospace', fontWeight: 700, '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }}>{t}</MenuItem>
+                                    <MenuItem key={t} value={t} sx={{ color: '#334155', fontFamily: 'monospace', fontWeight: 700, '&:hover': { bgcolor: '#f1f5f9' } }}>{t}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
@@ -282,7 +282,7 @@ const DnsPropagationPage: React.FC = () => {
                         sx={{
                             bgcolor: '#2ECC71', py: 1.5, fontWeight: 700, borderRadius: '10px', fontSize: '1rem',
                             '&:hover': { bgcolor: '#27ae60' },
-                            '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' },
+                            '&.Mui-disabled': { bgcolor: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.3)' },
                         }}
                     >
                         {loading ? <><CircularProgress size={20} color="inherit" sx={{ mr: 1.5 }} />Checking propagation…</> : 'Check Propagation'}
@@ -301,7 +301,7 @@ const DnsPropagationPage: React.FC = () => {
                     )}
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
+                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
                                 {renderResults()}
                             </Paper>
                         </motion.div>
@@ -309,8 +309,8 @@ const DnsPropagationPage: React.FC = () => {
                 </AnimatePresence>
 
                 {/* How to Use */}
-                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                    <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>How to Use</Typography>
+                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                    <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>How to Use</Typography>
                     {[
                         { step: '1', title: 'Enter Domain', desc: 'Type or paste the domain name you want to check (e.g., example.com or sub.example.com).' },
                         { step: '2', title: 'Select Record Type', desc: 'Choose the DNS record type you recently changed — A for IP, MX for mail, TXT for verification codes, etc.' },
@@ -322,22 +322,22 @@ const DnsPropagationPage: React.FC = () => {
                                 <Typography sx={{ color: '#2ECC71', fontWeight: 800, fontSize: '0.85rem' }}>{item.step}</Typography>
                             </Box>
                             <Box>
-                                <Typography sx={{ color: '#ffffff', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography>
-                                <Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography>
+                                <Typography sx={{ color: '#1e293b', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography>
+                                <Typography sx={{ color: '#64748b', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography>
                             </Box>
                         </Box>
                     ))}
                 </Paper>
 
                 {/* FAQs */}
-                <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
+                <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
                 {FAQS.map((faq, i) => (
-                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
-                        <AccordionSummary expandIcon={<ChevronDown size={18} color="rgba(255,255,255,0.5)" />} sx={{ px: 3, py: 1.5 }}>
-                            <Typography sx={{ fontWeight: 600, color: '#e2e8f0' }}>{faq.q}</Typography>
+                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
+                        <AccordionSummary expandIcon={<ChevronDown size={18} color="#94a3b8" />} sx={{ px: 3, py: 1.5 }}>
+                            <Typography sx={{ fontWeight: 600, color: '#334155' }}>{faq.q}</Typography>
                         </AccordionSummary>
                         <AccordionDetails sx={{ px: 3, pb: 2.5 }}>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.7 }}>{faq.a}</Typography>
+                            <Typography sx={{ color: '#64748b', lineHeight: 1.7 }}>{faq.a}</Typography>
                         </AccordionDetails>
                     </Accordion>
                 ))}

@@ -20,7 +20,7 @@ const FAQS = [
 const StatCard: React.FC<{ label: string; value: string | number; color: string }> = ({ label, value, color }) => (
     <Box sx={{ p: 2.5, bgcolor: `${color}08`, border: `1px solid ${color}25`, borderRadius: '12px', textAlign: 'center' }}>
         <Typography variant="h4" sx={{ color, fontWeight: 900, lineHeight: 1 }}>{value}</Typography>
-        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', mt: 0.5, display: 'block', fontSize: '0.75rem' }}>{label}</Typography>
+        <Typography variant="caption" sx={{ color: '#64748b', mt: 0.5, display: 'block', fontSize: '0.75rem' }}>{label}</Typography>
     </Box>
 );
 
@@ -68,8 +68,8 @@ const WordCounterPage: React.FC = () => {
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(46,204,113,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(46,204,113,0.25)' }}>
                         <Type size={36} color="#2ECC71" />
                     </Box>
-                    <Typography variant="h2" sx={{ color: '#ffffff', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>Word Counter</Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
+                    <Typography variant="h2" sx={{ color: '#1e293b', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>Word Counter</Typography>
+                    <Typography sx={{ color: '#64748b', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
                         Count words, characters, sentences, and paragraphs. Get estimated reading time and keyword density for any text or URL.
                     </Typography>
                 </motion.div>
@@ -86,14 +86,14 @@ const WordCounterPage: React.FC = () => {
                     ))}
                 </Box> */}
 
-                <Paper elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#e2e8f0' }}>Paste Your Text</Typography>
+                <Paper elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#334155' }}>Paste Your Text</Typography>
                     <TextField
                         fullWidth multiline rows={8} label="Text to analyze"
                         placeholder="Paste or type your text here…"
                         value={text} onChange={(e) => setText(e.target.value)}
-                        InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.4)', '&.Mui-focused': { color: '#fff' } } }}
-                        sx={{ mb: 2, '& .MuiOutlinedInput-root': { color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover fieldset': { borderColor: 'rgba(46,204,113,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#2ECC71' } } }}
+                        InputLabelProps={{ sx: { color: '#64748b', '&.Mui-focused': { color: '#1e293b' } } }}
+                        sx={{ mb: 2, '& .MuiOutlinedInput-root': { color: '#1e293b', bgcolor: '#f8fafc', '& fieldset': { borderColor: '#e2e8f0' }, '&:hover fieldset': { borderColor: 'rgba(46,204,113,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#2ECC71' } } }}
                     />
                     {localStats && (
                         <Grid container spacing={1.5} sx={{ mb: 2 }}>
@@ -104,7 +104,7 @@ const WordCounterPage: React.FC = () => {
                         </Grid>
                     )}
                     <Button variant="contained" fullWidth onClick={handleCheck} disabled={loading || !text}
-                        sx={{ bgcolor: '#2ECC71', py: 1.5, fontWeight: 700, borderRadius: '10px', '&:hover': { bgcolor: '#27ae60' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
+                        sx={{ bgcolor: '#2ECC71', py: 1.5, fontWeight: 700, borderRadius: '10px', '&:hover': { bgcolor: '#27ae60' }, '&.Mui-disabled': { bgcolor: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.3)' } }}>
                         {loading ? <CircularProgress size={22} color="inherit" /> : 'Analyze Text'}
                     </Button>
                 </Paper>
@@ -120,8 +120,8 @@ const WordCounterPage: React.FC = () => {
                     )}
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                                <Typography variant="h6" sx={{ color: '#ffffff', fontWeight: 700, mb: 3 }}>Analysis Results</Typography>
+                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                                <Typography variant="h6" sx={{ color: '#1e293b', fontWeight: 700, mb: 3 }}>Analysis Results</Typography>
                                 <Grid container spacing={1.5}>
                                     {result.words !== undefined && <Grid size={{ xs: 6, sm: 4 }}><StatCard label="Words" value={result.words} color="#2ECC71" /></Grid>}
                                     {result.characters !== undefined && <Grid size={{ xs: 6, sm: 4 }}><StatCard label="Characters" value={result.characters} color="#3498DB" /></Grid>}
@@ -132,11 +132,11 @@ const WordCounterPage: React.FC = () => {
                                 </Grid>
                                 {result.topKeywords && (
                                     <Box sx={{ mt: 3 }}>
-                                        <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>Top Keywords</Typography>
+                                        <Typography variant="overline" sx={{ color: '#94a3b8', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>Top Keywords</Typography>
                                         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                                             {result.topKeywords.slice(0, 20).map((kw: any, i: number) => (
                                                 <Box key={i} sx={{ px: 2, py: 0.5, bgcolor: 'rgba(46,204,113,0.08)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: '6px' }}>
-                                                    <Typography variant="caption" sx={{ color: '#2ECC71', fontFamily: 'monospace' }}>{kw.word} <Box component="span" sx={{ color: 'rgba(255,255,255,0.6)' }}>×{kw.count}</Box></Typography>
+                                                    <Typography variant="caption" sx={{ color: '#2ECC71', fontFamily: 'monospace' }}>{kw.word} <Box component="span" sx={{ color: '#64748b' }}>×{kw.count}</Box></Typography>
                                                 </Box>
                                             ))}
                                         </Box>
@@ -147,8 +147,8 @@ const WordCounterPage: React.FC = () => {
                     )}
                 </AnimatePresence>
 
-                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                    <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>How to Use</Typography>
+                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                    <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>How to Use</Typography>
                     {[
                         { step: '1', title: 'Choose Input Mode', desc: 'Use "Paste Text" to type or paste content directly, or "From URL" to fetch and analyze a web page automatically.' },
                         { step: '2', title: 'Live Statistics', desc: 'When pasting text, word and character counts update live as you type — no need to click analyze for basic stats.' },
@@ -158,19 +158,19 @@ const WordCounterPage: React.FC = () => {
                             <Box sx={{ width: 32, height: 32, borderRadius: '8px', bgcolor: 'rgba(46,204,113,0.15)', border: '1px solid rgba(46,204,113,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                 <Typography sx={{ color: '#2ECC71', fontWeight: 800, fontSize: '0.85rem' }}>{item.step}</Typography>
                             </Box>
-                            <Box><Typography sx={{ color: '#ffffff', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography><Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography></Box>
+                            <Box><Typography sx={{ color: '#1e293b', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography><Typography sx={{ color: '#64748b', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography></Box>
                         </Box>
                     ))}
                 </Paper>
 
-                <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
+                <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
                 {FAQS.map((faq, i) => (
-                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
-                        <AccordionSummary expandIcon={<ChevronDown size={18} color="rgba(255,255,255,0.5)" />} sx={{ px: 3, py: 1.5 }}>
-                            <Typography sx={{ fontWeight: 600, color: '#e2e8f0' }}>{faq.q}</Typography>
+                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
+                        <AccordionSummary expandIcon={<ChevronDown size={18} color="#94a3b8" />} sx={{ px: 3, py: 1.5 }}>
+                            <Typography sx={{ fontWeight: 600, color: '#334155' }}>{faq.q}</Typography>
                         </AccordionSummary>
                         <AccordionDetails sx={{ px: 3, pb: 2.5 }}>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.7 }}>{faq.a}</Typography>
+                            <Typography sx={{ color: '#64748b', lineHeight: 1.7 }}>{faq.a}</Typography>
                         </AccordionDetails>
                     </Accordion>
                 ))}

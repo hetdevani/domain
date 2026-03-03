@@ -20,14 +20,14 @@ const FAQS = [
 const InfoCard: React.FC<{ label: string; value?: string | number; icon?: React.ReactNode; color?: string; mono?: boolean }> = ({
     label, value, icon, color = '#3498DB', mono = false,
 }) => (
-    <Box sx={{ p: 2.5, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', height: '100%' }}>
+    <Box sx={{ p: 2.5, bgcolor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', height: '100%' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
             {icon && <Box sx={{ color, opacity: 0.7, display: 'flex' }}>{icon}</Box>}
-            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.07em', fontSize: '0.7rem', fontWeight: 700 }}>
+            <Typography variant="caption" sx={{ color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.07em', fontSize: '0.7rem', fontWeight: 700 }}>
                 {label}
             </Typography>
         </Box>
-        <Typography sx={{ color: '#e2e8f0', fontWeight: 600, wordBreak: 'break-all', fontFamily: mono ? 'monospace' : 'inherit', fontSize: mono ? '0.85rem' : '0.95rem' }}>
+        <Typography sx={{ color: '#334155', fontWeight: 600, wordBreak: 'break-all', fontFamily: mono ? 'monospace' : 'inherit', fontSize: mono ? '0.85rem' : '0.95rem' }}>
             {value !== undefined && value !== null && value !== '' ? String(value) : 'N/A'}
         </Typography>
     </Box>
@@ -87,15 +87,15 @@ const IpIntelligencePage: React.FC = () => {
                                 <Globe size={28} color="#3498DB" />
                             </Box>
                             <Box>
-                                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block', mb: 0.25 }}>
+                                <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mb: 0.25 }}>
                                     {result.detectedFrom === 'request' ? 'Auto-detected IP' : 'Queried IP'}
                                     {result.ipVersion && <Box component="span" sx={{ ml: 1, color: '#3498DB' }}>· {result.ipVersion}</Box>}
                                 </Typography>
-                                <Typography variant="h4" sx={{ color: '#fff', fontWeight: 900, fontFamily: 'monospace', lineHeight: 1 }}>
+                                <Typography variant="h4" sx={{ color: '#1e293b', fontWeight: 900, fontFamily: 'monospace', lineHeight: 1 }}>
                                     {resolvedIp}
                                 </Typography>
                                 {result.ip !== resolvedIp && result.ip && (
-                                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'monospace' }}>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontFamily: 'monospace' }}>
                                         Input: {result.ip}
                                     </Typography>
                                 )}
@@ -113,7 +113,7 @@ const IpIntelligencePage: React.FC = () => {
                 </Box>
 
                 {/* Geo Info Grid */}
-                <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>
+                <Typography variant="overline" sx={{ color: '#64748b', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>
                     Location Details
                 </Typography>
                 <Grid container spacing={2} sx={{ mb: 3 }}>
@@ -138,7 +138,7 @@ const IpIntelligencePage: React.FC = () => {
                 </Grid>
 
                 {/* Network Info */}
-                <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>
+                <Typography variant="overline" sx={{ color: '#64748b', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>
                     Network Details
                 </Typography>
                 <Grid container spacing={2} sx={{ mb: 3 }}>
@@ -156,7 +156,7 @@ const IpIntelligencePage: React.FC = () => {
                 {/* Provider Results */}
                 {providers.length > 0 && (
                     <>
-                        <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>
+                        <Typography variant="overline" sx={{ color: '#64748b', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 1.5 }}>
                             Data Providers ({providers.length})
                         </Typography>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -165,8 +165,8 @@ const IpIntelligencePage: React.FC = () => {
                                 return (
                                     <Box key={i} sx={{
                                         p: 2.5,
-                                        bgcolor: 'rgba(255,255,255,0.025)',
-                                        border: '1px solid rgba(255,255,255,0.06)',
+                                        bgcolor: '#f8fafc',
+                                        border: '1px solid #e2e8f0',
                                         borderRadius: '12px',
                                     }}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: p.success ? 1.5 : 0 }}>
@@ -174,7 +174,7 @@ const IpIntelligencePage: React.FC = () => {
                                                 ? <CheckCircle size={16} color="#2ECC71" />
                                                 : <XCircle size={16} color="#E74C3C" />
                                             }
-                                            <Typography sx={{ fontWeight: 700, color: '#e2e8f0', textTransform: 'capitalize' }}>
+                                            <Typography sx={{ fontWeight: 700, color: '#334155', textTransform: 'capitalize' }}>
                                                 {p.provider}
                                             </Typography>
                                             <Chip
@@ -202,8 +202,8 @@ const IpIntelligencePage: React.FC = () => {
                                                 ].map((item) => item.v ? (
                                                     <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item.l}>
                                                         <Box sx={{ display: 'flex', gap: 1 }}>
-                                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.35)', flexShrink: 0, minWidth: 64 }}>{item.l}:</Typography>
-                                                            <Typography variant="caption" sx={{ color: '#c8d6e5', fontWeight: 600, wordBreak: 'break-all' }}>{item.v}</Typography>
+                                                            <Typography variant="caption" sx={{ color: '#94a3b8', flexShrink: 0, minWidth: 64 }}>{item.l}:</Typography>
+                                                            <Typography variant="caption" sx={{ color: '#475569', fontWeight: 600, wordBreak: 'break-all' }}>{item.v}</Typography>
                                                         </Box>
                                                     </Grid>
                                                 ) : null)}
@@ -227,10 +227,10 @@ const IpIntelligencePage: React.FC = () => {
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(52,152,219,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(52,152,219,0.25)' }}>
                         <MapPin size={36} color="#3498DB" />
                     </Box>
-                    <Typography variant="h2" sx={{ color: '#ffffff', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>
+                    <Typography variant="h2" sx={{ color: '#1e293b', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>
                         IP Intelligence Tool
                     </Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
+                    <Typography sx={{ color: '#64748b', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
                         Instantly geolocate any IP address and uncover detailed information including ISP, organization, timezone, and geographic coordinates.
                     </Typography>
                 </motion.div>
@@ -238,9 +238,9 @@ const IpIntelligencePage: React.FC = () => {
 
             <Container maxWidth="md" sx={{ pb: 8 }}>
                 {/* Form */}
-                <Paper elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1, color: '#e2e8f0' }}>IP Address Lookup</Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.875rem', mb: 3 }}>
+                <Paper elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1, color: '#334155' }}>IP Address Lookup</Typography>
+                    <Typography sx={{ color: '#94a3b8', fontSize: '0.875rem', mb: 3 }}>
                         Leave blank to detect your own public IP address automatically.
                     </Typography>
                     <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
@@ -251,11 +251,11 @@ const IpIntelligencePage: React.FC = () => {
                             value={ip}
                             onChange={(e) => setIp(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                            InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.6)', '&.Mui-focused': { color: '#fff' } } }}
+                            InputLabelProps={{ sx: { color: '#64748b', '&.Mui-focused': { color: '#1e293b' } } }}
                             sx={{
                                 '& .MuiOutlinedInput-root': {
-                                    color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', height: '56px',
-                                    '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
+                                    color: '#1e293b', bgcolor: '#f8fafc', height: '56px',
+                                    '& fieldset': { borderColor: '#e2e8f0' },
                                     '&:hover fieldset': { borderColor: 'rgba(52,152,219,0.5)' },
                                     '&.Mui-focused fieldset': { borderColor: '#3498DB' },
                                 },
@@ -268,7 +268,7 @@ const IpIntelligencePage: React.FC = () => {
                             sx={{
                                 bgcolor: '#3498DB', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140,
                                 '&:hover': { bgcolor: '#2980b9' },
-                                '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' },
+                                '&.Mui-disabled': { bgcolor: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.3)' },
                             }}
                         >
                             {loading ? <CircularProgress size={22} color="inherit" /> : 'Lookup IP'}
@@ -288,7 +288,7 @@ const IpIntelligencePage: React.FC = () => {
                     )}
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
+                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
                                 {renderResult()}
                             </Paper>
                         </motion.div>
@@ -296,8 +296,8 @@ const IpIntelligencePage: React.FC = () => {
                 </AnimatePresence>
 
                 {/* How to Use */}
-                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                    <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>How to Use</Typography>
+                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                    <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>How to Use</Typography>
                     {[
                         { step: '1', title: 'Enter an IP or Hostname', desc: 'Type any IPv4/IPv6 address or leave blank to auto-detect your own public IP. Hostnames like google.com are also supported.' },
                         { step: '2', title: 'Click Lookup IP', desc: 'The tool queries multiple geo-IP providers and returns the most accurate location data available.' },
@@ -308,22 +308,22 @@ const IpIntelligencePage: React.FC = () => {
                                 <Typography sx={{ color: '#3498DB', fontWeight: 800, fontSize: '0.85rem' }}>{item.step}</Typography>
                             </Box>
                             <Box>
-                                <Typography sx={{ color: '#ffffff', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography>
-                                <Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography>
+                                <Typography sx={{ color: '#1e293b', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography>
+                                <Typography sx={{ color: '#64748b', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography>
                             </Box>
                         </Box>
                     ))}
                 </Paper>
 
                 {/* FAQs */}
-                <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
+                <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
                 {FAQS.map((faq, i) => (
-                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
-                        <AccordionSummary expandIcon={<ChevronDown size={18} color="rgba(255,255,255,0.5)" />} sx={{ px: 3, py: 1.5 }}>
-                            <Typography sx={{ fontWeight: 600, color: '#e2e8f0' }}>{faq.q}</Typography>
+                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
+                        <AccordionSummary expandIcon={<ChevronDown size={18} color="#94a3b8" />} sx={{ px: 3, py: 1.5 }}>
+                            <Typography sx={{ fontWeight: 600, color: '#334155' }}>{faq.q}</Typography>
                         </AccordionSummary>
                         <AccordionDetails sx={{ px: 3, pb: 2.5 }}>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.7 }}>{faq.a}</Typography>
+                            <Typography sx={{ color: '#64748b', lineHeight: 1.7 }}>{faq.a}</Typography>
                         </AccordionDetails>
                     </Accordion>
                 ))}

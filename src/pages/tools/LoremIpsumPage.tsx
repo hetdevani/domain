@@ -83,26 +83,26 @@ const LoremIpsumPage: React.FC = () => {
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(52,152,219,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(52,152,219,0.25)' }}>
                         <AlignLeft size={36} color="#3498DB" />
                     </Box>
-                    <Typography variant="h2" sx={{ color: '#ffffff', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>Lorem Ipsum Generator</Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
+                    <Typography variant="h2" sx={{ color: '#1e293b', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>Lorem Ipsum Generator</Typography>
+                    <Typography sx={{ color: '#64748b', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
                         Generate placeholder text with full control over quantity, format, and HTML elements. Perfect for design mockups and development.
                     </Typography>
                 </motion.div>
             </Box>
 
             <Container maxWidth="md" sx={{ pb: 8 }}>
-                <Paper elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#e2e8f0' }}>Generator Settings</Typography>
+                <Paper elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#334155' }}>Generator Settings</Typography>
 
                     <Grid container spacing={3}>
                         {/* Format Type */}
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
-                                <InputLabel sx={{ color: 'rgba(255,255,255,0.4)', '&.Mui-focused': { color: '#fff' } }}>Format</InputLabel>
+                                <InputLabel sx={{ color: '#64748b', '&.Mui-focused': { color: '#1e293b' } }}>Format</InputLabel>
                                 <Select value={formatType} label="Format" onChange={(e) => setFormatType(e.target.value)}
-                                    sx={{ color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(52,152,219,0.5)' }, '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#3498DB' }, '& .MuiSvgIcon-root': { color: 'rgba(255,255,255,0.5)' } }}
-                                    MenuProps={{ PaperProps: { sx: { bgcolor: '#1a2744', border: '1px solid rgba(255,255,255,0.1)' } } }}>
-                                    {['paragraphs', 'sentences', 'words'].map(f => <MenuItem key={f} value={f} sx={{ color: '#e2e8f0', textTransform: 'capitalize', '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }}>{f}</MenuItem>)}
+                                    sx={{ color: '#1e293b', bgcolor: '#f8fafc', '& .MuiOutlinedInput-notchedOutline': { borderColor: '#e2e8f0' }, '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(52,152,219,0.5)' }, '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#3498DB' }, '& .MuiSvgIcon-root': { color: '#94a3b8' } }}
+                                    MenuProps={{ PaperProps: { sx: { bgcolor: '#ffffff', border: '1px solid #e2e8f0' } } }}>
+                                    {['paragraphs', 'sentences', 'words'].map(f => <MenuItem key={f} value={f} sx={{ color: '#334155', textTransform: 'capitalize', '&:hover': { bgcolor: '#f1f5f9' } }}>{f}</MenuItem>)}
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -110,11 +110,11 @@ const LoremIpsumPage: React.FC = () => {
                         {/* Paragraph Length */}
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
-                                <InputLabel sx={{ color: 'rgba(255,255,255,0.4)', '&.Mui-focused': { color: '#fff' } }}>Paragraph Length</InputLabel>
+                                <InputLabel sx={{ color: '#64748b', '&.Mui-focused': { color: '#1e293b' } }}>Paragraph Length</InputLabel>
                                 <Select value={paragraphLength} label="Paragraph Length" onChange={(e) => setParagraphLength(e.target.value)}
-                                    sx={{ color: '#fff', bgcolor: 'rgba(0,0,0,0.2)', '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' }, '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(52,152,219,0.5)' }, '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#3498DB' }, '& .MuiSvgIcon-root': { color: 'rgba(255,255,255,0.5)' } }}
-                                    MenuProps={{ PaperProps: { sx: { bgcolor: '#1a2744', border: '1px solid rgba(255,255,255,0.1)' } } }}>
-                                    {['short', 'medium', 'long'].map(l => <MenuItem key={l} value={l} sx={{ color: '#e2e8f0', textTransform: 'capitalize', '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }}>{l}</MenuItem>)}
+                                    sx={{ color: '#1e293b', bgcolor: '#f8fafc', '& .MuiOutlinedInput-notchedOutline': { borderColor: '#e2e8f0' }, '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(52,152,219,0.5)' }, '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#3498DB' }, '& .MuiSvgIcon-root': { color: '#94a3b8' } }}
+                                    MenuProps={{ PaperProps: { sx: { bgcolor: '#ffffff', border: '1px solid #e2e8f0' } } }}>
+                                    {['short', 'medium', 'long'].map(l => <MenuItem key={l} value={l} sx={{ color: '#334155', textTransform: 'capitalize', '&:hover': { bgcolor: '#f1f5f9' } }}>{l}</MenuItem>)}
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -123,17 +123,17 @@ const LoremIpsumPage: React.FC = () => {
                         <Grid size={{ xs: 12 }}>
                             <Box sx={{ px: 1 }}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>Quantity</Typography>
+                                    <Typography sx={{ color: '#64748b', fontSize: '0.875rem' }}>Quantity</Typography>
                                     <Typography sx={{ color: '#3498DB', fontWeight: 700 }}>{quantity} {formatType}</Typography>
                                 </Box>
                                 <Slider value={quantity} min={1} max={formatType === 'words' ? 500 : 10} onChange={(_, v) => setQuantity(v as number)}
-                                    sx={{ color: '#3498DB', '& .MuiSlider-thumb': { bgcolor: '#3498DB' }, '& .MuiSlider-rail': { bgcolor: 'rgba(255,255,255,0.1)' } }} />
+                                    sx={{ color: '#3498DB', '& .MuiSlider-thumb': { bgcolor: '#3498DB' }, '& .MuiSlider-rail': { bgcolor: '#e2e8f0' } }} />
                             </Box>
                         </Grid>
 
                         {/* Toggles */}
                         <Grid size={{ xs: 12 }}>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', mb: 1.5, textTransform: 'uppercase', letterSpacing: '0.07em', fontWeight: 700 }}>Options</Typography>
+                            <Typography sx={{ color: '#94a3b8', fontSize: '0.8rem', mb: 1.5, textTransform: 'uppercase', letterSpacing: '0.07em', fontWeight: 700 }}>Options</Typography>
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                                 {[
                                     { label: 'Start with Lorem', value: startWithLorem, onChange: setStartWithLorem },
@@ -143,16 +143,16 @@ const LoremIpsumPage: React.FC = () => {
                                     { label: 'Unordered List', value: htmlUl, onChange: setHtmlUl },
                                     { label: 'Ordered List', value: htmlOl, onChange: setHtmlOl },
                                 ].map((item) => (
-                                    <FormControlLabel key={item.label} label={<Typography sx={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.85rem' }}>{item.label}</Typography>}
+                                    <FormControlLabel key={item.label} label={<Typography sx={{ color: '#475569', fontSize: '0.85rem' }}>{item.label}</Typography>}
                                         control={<Switch size="small" checked={item.value} onChange={(e) => item.onChange(e.target.checked)} sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#3498DB' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#3498DB' } }} />}
-                                        sx={{ m: 0.5, p: 1, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px' }} />
+                                        sx={{ m: 0.5, p: 1, bgcolor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }} />
                                 ))}
                             </Box>
                         </Grid>
                     </Grid>
 
                     <Button variant="contained" fullWidth onClick={handleGenerate} disabled={loading}
-                        sx={{ mt: 3, bgcolor: '#3498DB', py: 1.5, fontWeight: 700, borderRadius: '10px', fontSize: '1rem', '&:hover': { bgcolor: '#2980b9' }, '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' } }}>
+                        sx={{ mt: 3, bgcolor: '#3498DB', py: 1.5, fontWeight: 700, borderRadius: '10px', fontSize: '1rem', '&:hover': { bgcolor: '#2980b9' }, '&.Mui-disabled': { bgcolor: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.3)' } }}>
                         {loading ? <CircularProgress size={22} color="inherit" /> : 'Generate Lorem Ipsum'}
                     </Button>
                 </Paper>
@@ -168,12 +168,12 @@ const LoremIpsumPage: React.FC = () => {
                     )}
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
+                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
                                 {/* Header */}
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                    <Typography variant="h6" sx={{ color: '#ffffff', fontWeight: 700 }}>Generated Text</Typography>
+                                    <Typography variant="h6" sx={{ color: '#1e293b', fontWeight: 700 }}>Generated Text</Typography>
                                     <Button size="small" startIcon={copied ? <Check size={14} /> : <Copy size={14} />} onClick={handleCopy}
-                                        sx={{ color: copied ? '#2ECC71' : 'rgba(255,255,255,0.5)', textTransform: 'none', borderRadius: '8px', '&:hover': { color: '#3498DB' } }}>
+                                        sx={{ color: copied ? '#2ECC71' : '#94a3b8', textTransform: 'none', borderRadius: '8px', '&:hover': { color: '#3498DB' } }}>
                                         {copied ? 'Copied!' : 'Copy'}
                                     </Button>
                                 </Box>
@@ -201,8 +201,8 @@ const LoremIpsumPage: React.FC = () => {
                                         </Box>
                                     )}
                                     {result.text && (
-                                        <Box sx={{ px: 1.5, py: 0.5, bgcolor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px' }}>
-                                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>
+                                        <Box sx={{ px: 1.5, py: 0.5, bgcolor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '6px' }}>
+                                            <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
                                                 {result.text.split(/\s+/).filter(Boolean).length} words
                                             </Typography>
                                         </Box>
@@ -211,7 +211,7 @@ const LoremIpsumPage: React.FC = () => {
 
                                 {/* Text / HTML tabs (only when HTML available) */}
                                 {result.html && (
-                                    <Tabs value={viewTab} onChange={(_, v) => setViewTab(v)} sx={{ mb: 2, minHeight: 36, '& .MuiTabs-indicator': { bgcolor: '#3498DB' }, '& .MuiTab-root': { color: 'rgba(255,255,255,0.6)', minHeight: 36, textTransform: 'none', fontWeight: 600, fontSize: '0.85rem' }, '& .Mui-selected': { color: '#3498DB !important' } }}>
+                                    <Tabs value={viewTab} onChange={(_, v) => setViewTab(v)} sx={{ mb: 2, minHeight: 36, '& .MuiTabs-indicator': { bgcolor: '#3498DB' }, '& .MuiTab-root': { color: '#64748b', minHeight: 36, textTransform: 'none', fontWeight: 600, fontSize: '0.85rem' }, '& .Mui-selected': { color: '#3498DB !important' } }}>
                                         <Tab label="Plain Text" />
                                         <Tab label="HTML Source" />
                                         <Tab label="HTML Preview" />
@@ -220,21 +220,21 @@ const LoremIpsumPage: React.FC = () => {
 
                                 {/* Plain text view */}
                                 {(viewTab === 0 || !result.html) && (
-                                    <Box sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', color: '#c8d6e5', fontSize: '0.9rem', lineHeight: 1.8, maxHeight: 500, overflow: 'auto', whiteSpace: 'pre-wrap' }}>
+                                    <Box sx={{ p: 3, bgcolor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', color: '#334155', fontSize: '0.9rem', lineHeight: 1.8, maxHeight: 500, overflow: 'auto', whiteSpace: 'pre-wrap' }}>
                                         {result.text || ''}
                                     </Box>
                                 )}
 
                                 {/* HTML source view */}
                                 {viewTab === 1 && result.html && (
-                                    <Box sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', fontFamily: 'monospace', fontSize: '0.8rem', color: '#a8b5c8', lineHeight: 1.7, maxHeight: 500, overflow: 'auto', whiteSpace: 'pre-wrap' }}>
+                                    <Box sx={{ p: 3, bgcolor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '12px', fontFamily: 'monospace', fontSize: '0.8rem', color: '#475569', lineHeight: 1.7, maxHeight: 500, overflow: 'auto', whiteSpace: 'pre-wrap' }}>
                                         {result.html}
                                     </Box>
                                 )}
 
                                 {/* HTML rendered preview */}
                                 {viewTab === 2 && result.html && (
-                                    <Box sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', color: '#c8d6e5', fontSize: '0.9rem', lineHeight: 1.8, maxHeight: 500, overflow: 'auto', '& h1,& h2,& h3': { color: '#fff', mt: 2, mb: 1 }, '& b,& strong': { color: '#fff' }, '& i,& em': { color: '#94a3b8' }, '& a': { color: '#3498DB' }, '& ul,& ol': { pl: 3 } }}
+                                    <Box sx={{ p: 3, bgcolor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', color: '#334155', fontSize: '0.9rem', lineHeight: 1.8, maxHeight: 500, overflow: 'auto', '& h1,& h2,& h3': { color: '#1e293b', mt: 2, mb: 1 }, '& b,& strong': { color: '#1e293b' }, '& i,& em': { color: '#64748b' }, '& a': { color: '#3498DB' }, '& ul,& ol': { pl: 3 } }}
                                         dangerouslySetInnerHTML={{ __html: result.html }} />
                                 )}
                             </Paper>
@@ -242,8 +242,8 @@ const LoremIpsumPage: React.FC = () => {
                     )}
                 </AnimatePresence>
 
-                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', mb: 4 }}>
-                    <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>How to Use</Typography>
+                <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
+                    <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>How to Use</Typography>
                     {[
                         { step: '1', title: 'Choose Format', desc: 'Select whether to generate paragraphs (for body text), sentences (for specific amounts), or individual words.' },
                         { step: '2', title: 'Set Quantity', desc: 'Drag the slider to choose how many paragraphs, sentences, or words you need.' },
@@ -254,19 +254,19 @@ const LoremIpsumPage: React.FC = () => {
                             <Box sx={{ width: 32, height: 32, borderRadius: '8px', bgcolor: 'rgba(52,152,219,0.15)', border: '1px solid rgba(52,152,219,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                 <Typography sx={{ color: '#3498DB', fontWeight: 800, fontSize: '0.85rem' }}>{item.step}</Typography>
                             </Box>
-                            <Box><Typography sx={{ color: '#ffffff', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography><Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography></Box>
+                            <Box><Typography sx={{ color: '#1e293b', fontWeight: 700, mb: 0.5 }}>{item.title}</Typography><Typography sx={{ color: '#64748b', fontSize: '0.9rem', lineHeight: 1.6 }}>{item.desc}</Typography></Box>
                         </Box>
                     ))}
                 </Paper>
 
-                <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
+                <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>Frequently Asked Questions</Typography>
                 {FAQS.map((faq, i) => (
-                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
-                        <AccordionSummary expandIcon={<ChevronDown size={18} color="rgba(255,255,255,0.5)" />} sx={{ px: 3, py: 1.5 }}>
-                            <Typography sx={{ fontWeight: 600, color: '#e2e8f0' }}>{faq.q}</Typography>
+                    <Accordion key={i} disableGutters elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px !important', mb: 1.5, '&:before': { display: 'none' } }}>
+                        <AccordionSummary expandIcon={<ChevronDown size={18} color="#94a3b8" />} sx={{ px: 3, py: 1.5 }}>
+                            <Typography sx={{ fontWeight: 600, color: '#334155' }}>{faq.q}</Typography>
                         </AccordionSummary>
                         <AccordionDetails sx={{ px: 3, pb: 2.5 }}>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.7 }}>{faq.a}</Typography>
+                            <Typography sx={{ color: '#64748b', lineHeight: 1.7 }}>{faq.a}</Typography>
                         </AccordionDetails>
                     </Accordion>
                 ))}
