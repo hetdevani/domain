@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {
     Box, Typography, Container, TextField, Button, Paper,
-    CircularProgress, Accordion, AccordionSummary, AccordionDetails, Grid, Tooltip
+    CircularProgress, Accordion, AccordionSummary, AccordionDetails, Grid, Chip, Tabs, Tab
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, ChevronDown, AlertCircle, Clock, Eye, MousePointer, LayoutDashboard, Timer, Gauge, Server } from 'lucide-react';
+import { Zap, ChevronDown, AlertCircle, Monitor, Smartphone, Clock, Server, CheckCircle, AlertTriangle, Info } from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
 
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;
@@ -21,130 +21,62 @@ const FAQS = [
 const getScoreColor = (score: number) =>
     score >= 90 ? '#2ECC71' : score >= 50 ? '#F39C12' : '#E74C3C';
 
-const getStatus = (value: number, good: number, poor: number): 'good' | 'needs-improvement' | 'poor' =>
-    value <= good ? 'good' : value <= poor ? 'needs-improvement' : 'poor';
+const getScoreLabel = (score: number) =>
+    score >= 90 ? 'Good' : score >= 50 ? 'Needs Work' : 'Poor';
 
-const STATUS_LABEL: Record<string, string> = { good: 'Good', 'needs-improvement': 'Needs Improvement', poor: 'Poor' };
-const STATUS_COLOR: Record<string, string> = { good: '#2ECC71', 'needs-improvement': '#F39C12', poor: '#E74C3C' };
-
-// Big circular score gauge
-const ScoreRing: React.FC<{ score: number }> = ({ score }) => {
+// Circular score gauge
+const ScoreRing: React.FC<{ score: number; label: string; size?: number }> = ({ score, label, size = 100 }) => {
     const color = getScoreColor(score);
-    const pct = Math.min(100, Math.max(0, score));
-    const circumference = 2 * Math.PI * 52;
-    const dash = (pct / 100) * circumference;
-    const label = score >= 90 ? 'Good' : score >= 50 ? 'Needs Work' : 'Poor';
+    const r = 38;
+    const circumference = 2 * Math.PI * r;
+    const dash = (Math.min(100, score) / 100) * circumference;
     return (
         <Box sx={{ textAlign: 'center' }}>
-            <Box sx={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 140, height: 140 }}>
-                <Box component="svg" viewBox="0 0 120 120" sx={{ width: 140, height: 140, position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }}>
-                    <circle cx="60" cy="60" r="52" fill="none" stroke="#e2e8f0" strokeWidth="8" />
-                    <circle cx="60" cy="60" r="52" fill="none" stroke={color} strokeWidth="8"
+            <Box sx={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: size, height: size }}>
+                <Box component="svg" viewBox="0 0 90 90" sx={{ width: size, height: size, position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }}>
+                    <circle cx="45" cy="45" r={r} fill="none" stroke="#e2e8f0" strokeWidth="7" />
+                    <circle cx="45" cy="45" r={r} fill="none" stroke={color} strokeWidth="7"
                         strokeDasharray={`${dash} ${circumference - dash}`}
                         strokeLinecap="round"
                         style={{ transition: 'stroke-dasharray 0.8s ease' }}
                     />
                 </Box>
-                <Box sx={{ textAlign: 'center' }}>
-                    <Typography sx={{ color, fontWeight: 900, fontSize: '2rem', lineHeight: 1 }}>{score}</Typography>
-                    <Typography sx={{ color: '#94a3b8', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>/100</Typography>
-                </Box>
+                <Typography sx={{ color, fontWeight: 900, fontSize: size >= 100 ? '1.5rem' : '1.1rem', lineHeight: 1 }}>{score}</Typography>
             </Box>
-            <Typography sx={{ color, fontWeight: 700, fontSize: '0.85rem', mt: 1 }}>{label}</Typography>
-            <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem' }}>Performance Score</Typography>
+            <Typography sx={{ color: '#475569', fontWeight: 600, fontSize: '0.78rem', mt: 0.75, lineHeight: 1.2 }}>{label}</Typography>
+            <Typography sx={{ color, fontWeight: 700, fontSize: '0.68rem' }}>{getScoreLabel(score)}</Typography>
         </Box>
     );
 };
 
-// Individual metric card
-const MetricCard: React.FC<{
-    label: string;
-    abbr: string;
-    value?: string | number;
-    unit?: string;
-    good: number;
-    poor: number;
-    icon: React.ReactNode;
-    description: string;
-    isLowerBetter?: boolean;
-}> = ({ label, abbr, value, unit, good, poor, icon, description, isLowerBetter = true }) => {
-    const numVal = value !== undefined ? parseFloat(String(value)) : NaN;
-    const hasValue = !isNaN(numVal) && value !== undefined && value !== null;
-    const status: 'good' | 'needs-improvement' | 'poor' = hasValue
-        ? getStatus(isLowerBetter ? numVal : (100 - numVal), isLowerBetter ? good : (100 - poor), isLowerBetter ? poor : (100 - good))
-        : 'poor';
-    const color = hasValue ? STATUS_COLOR[status] : '#cbd5e1';
-
-    // Progress bar: 0% = 0, 100% = at or beyond "poor" threshold
-    const barPct = hasValue ? Math.min(100, (numVal / poor) * 100) : 0;
-
-    return (
-        <Tooltip title={description} placement="top" arrow>
-            <Box sx={{
-                p: 2.5, borderRadius: '14px',
-                bgcolor: hasValue ? `${color}08` : 'rgba(0,0,0,0.02)',
-                border: `1px solid ${hasValue ? `${color}25` : '#e2e8f0'}`,
-                height: '100%',
-                cursor: 'default',
-                transition: 'border-color 0.2s',
-                '&:hover': { border: `1px solid ${color}50` },
-            }}>
-                {/* Header */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Box sx={{ color: hasValue ? color : '#cbd5e1', display: 'flex' }}>{icon}</Box>
-                        <Box>
-                            <Typography sx={{ color: '#1e293b', fontWeight: 700, fontSize: '0.82rem', lineHeight: 1.2 }}>{label}</Typography>
-                            <Typography sx={{ color: '#94a3b8', fontSize: '0.7rem' }}>{abbr}</Typography>
-                        </Box>
-                    </Box>
-                    {hasValue && (
-                        <Box sx={{ px: 1.2, py: 0.4, bgcolor: `${color}18`, border: `1px solid ${color}35`, borderRadius: '20px', flexShrink: 0 }}>
-                            <Typography sx={{ color, fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                {STATUS_LABEL[status]}
-                            </Typography>
-                        </Box>
-                    )}
-                </Box>
-
-                {/* Value */}
-                <Typography sx={{ color: hasValue ? color : '#cbd5e1', fontWeight: 900, fontSize: '1.8rem', fontFamily: 'monospace', lineHeight: 1, mb: 0.5 }}>
-                    {hasValue ? value : '—'}
-                    {hasValue && unit && <Typography component="span" sx={{ fontSize: '0.9rem', fontWeight: 600, color: '#94a3b8', ml: 0.5 }}>{unit}</Typography>}
-                </Typography>
-
-                {/* Threshold bar */}
-                <Box sx={{ mt: 2, height: 4, bgcolor: '#e2e8f0', borderRadius: '2px', overflow: 'hidden' }}>
-                    <Box sx={{
-                        height: '100%',
-                        width: `${barPct}%`,
-                        bgcolor: color,
-                        borderRadius: '2px',
-                        transition: 'width 0.8s ease',
-                    }} />
-                </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 0.5 }}>
-                    <Typography sx={{ fontSize: '0.62rem', color: '#2ECC71' }}>Good ≤{good}{unit}</Typography>
-                    <Typography sx={{ fontSize: '0.62rem', color: '#E74C3C' }}>{'Poor >'}{poor}{unit}</Typography>
-                </Box>
-            </Box>
-        </Tooltip>
-    );
+const SEVERITY_CONFIG: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
+    good: { color: '#2ECC71', bg: 'rgba(46,204,113,0.08)', icon: <CheckCircle size={15} color="#2ECC71" /> },
+    'needs-improvement': { color: '#F39C12', bg: 'rgba(243,156,18,0.08)', icon: <AlertTriangle size={15} color="#F39C12" /> },
+    poor: { color: '#E74C3C', bg: 'rgba(231,76,60,0.08)', icon: <AlertCircle size={15} color="#E74C3C" /> },
+    info: { color: '#3498DB', bg: 'rgba(52,152,219,0.08)', icon: <Info size={15} color="#3498DB" /> },
 };
+
+const MetricPill: React.FC<{ label: string; value: string; color?: string }> = ({ label, value, color = '#1e293b' }) => (
+    <Box sx={{ p: 2, bgcolor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', textAlign: 'center' }}>
+        <Typography sx={{ color, fontWeight: 800, fontSize: '1.3rem', fontFamily: 'monospace', lineHeight: 1 }}>{value}</Typography>
+        <Typography sx={{ color: '#94a3b8', fontSize: '0.72rem', mt: 0.5, fontWeight: 500 }}>{label}</Typography>
+    </Box>
+);
 
 const PageSpeedPage: React.FC = () => {
     const [url, setUrl] = useState('');
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
+    const [strategy, setStrategy] = useState<'desktop' | 'mobile'>('desktop');
 
     const handleCheck = async () => {
         if (!url) return;
-        setLoading(true); setError(null); setResult(null);
+        setLoading(true); setError(null); setResult(null); setStrategy('desktop');
         try {
-            const res = await fetch(`${API_BASE}/page-speed-basic-metrics?url=${encodeURIComponent(url)}`);
+            const res = await fetch(`${API_BASE}/pagespeed?url=${encodeURIComponent(url)}`);
             const data = await res.json();
-            if (data.status === 'success' || data.status === 200 || data.code === 'SUCCESS') setResult(data.data);
+            if (data.success === true) setResult(data);
             else setError(data.message || 'Request failed');
         } catch {
             setError('Failed to reach the server. Please try again.');
@@ -155,110 +87,173 @@ const PageSpeedPage: React.FC = () => {
 
     const renderResult = () => {
         if (!result) return null;
-        const metrics = result.metrics || result;
 
-        // Extract performance score
-        const perfScore: number | null =
-            typeof result.performanceScore === 'number' ? result.performanceScore :
-            typeof result.score === 'number' ? result.score :
-            result.scores?.performance !== undefined ? Math.round(result.scores.performance * (result.scores.performance <= 1 ? 100 : 1)) :
-            result.categories?.performance?.score !== undefined ? Math.round(result.categories.performance.score * 100) :
-            null;
+        const view = result[strategy] ?? result;
+        const scores = view.scores ?? {};
+        const labMetrics = view.labMetrics ?? {};
+        const timings = view.timings ?? {};
+        const diagnostics = view.diagnostics ?? result.diagnostics ?? {};
+        const insights: any[] = view.insights ?? [];
+        const passedAudits: number = view.passedAudits ?? 0;
 
-        // Resolve metric values, handling both nested and flat API shapes
-        const fcp = metrics.fcp ?? metrics.firstContentfulPaint;
-        const lcp = metrics.lcp ?? metrics.largestContentfulPaint;
-        const tbt = metrics.tbt ?? metrics.totalBlockingTime;
-        const cls = metrics.cls ?? metrics.cumulativeLayoutShift;
-        const tti = metrics.tti ?? metrics.timeToInteractive;
-        const si  = metrics.si  ?? metrics.speedIndex;
-        const ttfb = metrics.ttfb ?? metrics.timeToFirstByte;
-
-        const hasAnyMetric = [fcp, lcp, tbt, cls, tti, si, ttfb].some(v => v !== undefined && v !== null);
-
-        const CORE_METRICS = [
-            { label: 'First Contentful Paint', abbr: 'FCP', value: fcp, unit: 's', good: 1.8, poor: 3, icon: <Eye size={16} />, description: 'Time until the browser renders the first piece of DOM content. Good: < 1.8s' },
-            { label: 'Largest Contentful Paint', abbr: 'LCP', value: lcp, unit: 's', good: 2.5, poor: 4, icon: <LayoutDashboard size={16} />, description: 'Time until the largest content element is visible. Core Web Vital. Good: < 2.5s' },
-            { label: 'Total Blocking Time', abbr: 'TBT', value: tbt, unit: 'ms', good: 200, poor: 600, icon: <MousePointer size={16} />, description: 'Total time the main thread is blocked, delaying interaction. Good: < 200ms' },
-            { label: 'Cumulative Layout Shift', abbr: 'CLS', value: cls, unit: '', good: 0.1, poor: 0.25, icon: <Gauge size={16} />, description: 'Measures visual stability — how much the page shifts during load. Core Web Vital. Good: < 0.1' },
+        const SCORE_ITEMS = [
+            { label: 'Performance', key: 'performance' },
+            { label: 'Accessibility', key: 'accessibility' },
+            { label: 'Best Practices', key: 'bestPractices' },
+            { label: 'SEO', key: 'seo' },
         ];
 
-        const OTHER_METRICS = [
-            { label: 'Time to Interactive', abbr: 'TTI', value: tti, unit: 's', good: 3.8, poor: 7.3, icon: <Timer size={16} />, description: 'Time until the page is fully interactive. Good: < 3.8s' },
-            { label: 'Speed Index', abbr: 'SI', value: si, unit: 's', good: 3.4, poor: 5.8, icon: <Zap size={16} />, description: 'How quickly content is visually populated. Good: < 3.4s' },
-            { label: 'Time to First Byte', abbr: 'TTFB', value: ttfb, unit: 'ms', good: 800, poor: 1800, icon: <Server size={16} />, description: 'Time until the first byte of the response is received. Good: < 800ms' },
-            { label: 'First Input Delay', abbr: 'FID', value: metrics.fid ?? metrics.firstInputDelay, unit: 'ms', good: 100, poor: 300, icon: <Clock size={16} />, description: 'Time from first interaction to browser response. Core Web Vital. Good: < 100ms' },
+        const LAB_ITEMS = [
+            { label: 'First Contentful Paint', abbr: 'FCP', key: 'FCP' },
+            { label: 'Largest Contentful Paint', abbr: 'LCP', key: 'LCP' },
+            { label: 'Cumulative Layout Shift', abbr: 'CLS', key: 'CLS' },
+            { label: 'Total Blocking Time', abbr: 'TBT', key: 'TBT' },
+            { label: 'Speed Index', abbr: 'SI', key: 'speedIndex' },
+            { label: 'Time to First Byte', abbr: 'TTFB', key: 'TTFB' },
+        ];
+
+        const TIMING_ITEMS = [
+            { label: 'DNS Lookup', key: 'dnsLookupMs', unit: 'ms' },
+            { label: 'TTFB', key: 'ttfbMs', unit: 'ms' },
+            { label: 'Download Time', key: 'downloadTimeMs', unit: 'ms' },
+            { label: 'Total Load', key: 'totalLoadMs', unit: 'ms' },
         ];
 
         return (
             <Box>
-                {/* Score + URL header */}
-                <Box sx={{ display: 'flex', gap: 3, mb: 4, alignItems: 'center', flexWrap: 'wrap', p: 3, bgcolor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-                    {perfScore !== null && <ScoreRing score={perfScore} />}
-                    <Box sx={{ flex: 1, minWidth: 200 }}>
-                        <Typography sx={{ color: '#1e293b', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, mb: 0.5 }}>Analyzed URL</Typography>
-                        <Typography sx={{ color: '#475569', fontFamily: 'monospace', fontSize: '0.88rem', wordBreak: 'break-all', mb: 2 }}>{url}</Typography>
-                        {/* Score legend */}
-                        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                            {[{ color: '#2ECC71', label: '90–100 Good' }, { color: '#F39C12', label: '50–89 Needs Improvement' }, { color: '#E74C3C', label: '0–49 Poor' }].map(item => (
-                                <Box key={item.label} sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: item.color }} />
-                                    <Typography sx={{ fontSize: '0.72rem', color: '#64748b' }}>{item.label}</Typography>
-                                </Box>
-                            ))}
-                        </Box>
+                {/* Strategy Tabs */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
+                    <Box>
+                        <Typography sx={{ color: '#94a3b8', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, mb: 0.5 }}>Analyzed URL</Typography>
+                        <Typography sx={{ color: '#475569', fontFamily: 'monospace', fontSize: '0.85rem', wordBreak: 'break-all' }}>{result.url}</Typography>
+                    </Box>
+                    <Tabs
+                        value={strategy}
+                        onChange={(_e, v) => setStrategy(v)}
+                        sx={{
+                            minHeight: 36,
+                            bgcolor: '#f1f5f9', borderRadius: '10px', p: 0.5,
+                            '& .MuiTab-root': { minHeight: 32, py: 0.5, px: 2, borderRadius: '8px', textTransform: 'none', fontWeight: 600, fontSize: '0.82rem', color: '#64748b' },
+                            '& .Mui-selected': { color: '#1e293b !important', bgcolor: '#fff', boxShadow: '0 1px 4px rgba(0,0,0,0.1)' },
+                            '& .MuiTabs-indicator': { display: 'none' },
+                        }}
+                    >
+                        <Tab icon={<Monitor size={14} />} iconPosition="start" label="Desktop" value="desktop" />
+                        <Tab icon={<Smartphone size={14} />} iconPosition="start" label="Mobile" value="mobile" />
+                    </Tabs>
+                </Box>
+
+                {/* Score Rings */}
+                <Box sx={{ p: 3, bgcolor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', mb: 3 }}>
+                    <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2.5 }}>Lighthouse Scores</Typography>
+                    <Grid container spacing={2}>
+                        {SCORE_ITEMS.map(({ label, key }) => (
+                            scores[key] !== undefined ? (
+                                <Grid key={key} size={{ xs: 3 }}>
+                                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                        <ScoreRing score={scores[key]} label={label} size={100} />
+                                    </Box>
+                                </Grid>
+                            ) : null
+                        ))}
+                    </Grid>
+                    <Box sx={{ display: 'flex', gap: 2.5, mt: 2.5, flexWrap: 'wrap' }}>
+                        {[{ color: '#2ECC71', label: '90–100 Good' }, { color: '#F39C12', label: '50–89 Needs Work' }, { color: '#E74C3C', label: '0–49 Poor' }].map(item => (
+                            <Box key={item.label} sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: item.color }} />
+                                <Typography sx={{ fontSize: '0.72rem', color: '#64748b' }}>{item.label}</Typography>
+                            </Box>
+                        ))}
                     </Box>
                 </Box>
 
-                {/* Core Web Vitals */}
-                {hasAnyMetric && (
-                    <>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                            <Zap size={14} color={ACCENT} />
-                            <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                                Core Web Vitals
-                            </Typography>
-                        </Box>
-                        <Grid container spacing={2} sx={{ mb: 3 }}>
-                            {CORE_METRICS.map((m) => (
-                                m.value !== undefined && m.value !== null ? (
-                                    <Grid key={m.abbr} size={{ xs: 12, sm: 6 }}>
-                                        <MetricCard {...m} />
+                {/* Lab Metrics */}
+                {Object.keys(labMetrics).length > 0 && (
+                    <Box sx={{ mb: 3 }}>
+                        <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 1.5 }}>
+                            Lab Metrics
+                        </Typography>
+                        <Grid container spacing={1.5}>
+                            {LAB_ITEMS.map(({ label, abbr, key }) => (
+                                labMetrics[key] !== undefined ? (
+                                    <Grid key={key} size={{ xs: 6, sm: 4 }}>
+                                        <MetricPill label={`${abbr} — ${label}`} value={labMetrics[key]} />
                                     </Grid>
                                 ) : null
                             ))}
                         </Grid>
-
-                        {/* Other Metrics */}
-                        {OTHER_METRICS.some(m => m.value !== undefined && m.value !== null) && (
-                            <>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                                    <Clock size={14} color="#94a3b8" />
-                                    <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                                        Additional Metrics
-                                    </Typography>
-                                </Box>
-                                <Grid container spacing={2} sx={{ mb: 3 }}>
-                                    {OTHER_METRICS.map((m) => (
-                                        m.value !== undefined && m.value !== null ? (
-                                            <Grid key={m.abbr} size={{ xs: 12, sm: 6 }}>
-                                                <MetricCard {...m} />
-                                            </Grid>
-                                        ) : null
-                                    ))}
-                                </Grid>
-                            </>
-                        )}
-                    </>
+                    </Box>
                 )}
 
-                {/* Fallback raw JSON */}
-                {!hasAnyMetric && (
-                    <Box sx={{ p: 3, bgcolor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '12px' }}>
-                        <Typography variant="caption" sx={{ color: '#1e293b', display: 'block', mb: 1 }}>Raw Response</Typography>
-                        <Box component="pre" sx={{ color: '#475569', fontSize: '0.8rem', overflow: 'auto', maxHeight: 300, m: 0 }}>
-                            {JSON.stringify(result, null, 2)}
+                {/* Timings */}
+                {Object.keys(timings).length > 0 && (
+                    <Box sx={{ mb: 3 }}>
+                        <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Clock size={13} /> Network Timings
+                        </Typography>
+                        <Grid container spacing={1.5}>
+                            {TIMING_ITEMS.map(({ label, key, unit }) => (
+                                timings[key] !== undefined ? (
+                                    <Grid key={key} size={{ xs: 6, sm: 3 }}>
+                                        <MetricPill label={label} value={`${timings[key]} ${unit}`} color="#0A3D62" />
+                                    </Grid>
+                                ) : null
+                            ))}
+                            {timings.bodyBytesRead !== undefined && (
+                                <Grid size={{ xs: 6, sm: 3 }}>
+                                    <MetricPill label="Body Size" value={`${(timings.bodyBytesRead / 1024).toFixed(1)} KB`} color="#0A3D62" />
+                                </Grid>
+                            )}
+                        </Grid>
+                    </Box>
+                )}
+
+                {/* Diagnostics */}
+                {Object.keys(diagnostics).length > 0 && (
+                    <Box sx={{ mb: 3 }}>
+                        <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Server size={13} /> Server Diagnostics
+                        </Typography>
+                        <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+                            {Object.entries(diagnostics).map(([k, v]) => (
+                                <Box key={k} sx={{ px: 2, py: 1, bgcolor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                                    <Typography sx={{ color: '#94a3b8', fontSize: '0.65rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{k}</Typography>
+                                    <Typography sx={{ color: '#1e293b', fontWeight: 700, fontSize: '0.85rem', fontFamily: 'monospace' }}>{String(v)}</Typography>
+                                </Box>
+                            ))}
                         </Box>
+                    </Box>
+                )}
+
+                {/* Insights */}
+                {insights.length > 0 && (
+                    <Box sx={{ mb: 2 }}>
+                        <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 1.5 }}>
+                            Insights & Opportunities
+                        </Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                            {insights.map((insight: any, i: number) => {
+                                const cfg = SEVERITY_CONFIG[insight.severity] ?? SEVERITY_CONFIG.info;
+                                return (
+                                    <Box key={i} sx={{ p: 2, bgcolor: cfg.bg, border: `1px solid ${cfg.color}25`, borderRadius: '10px', display: 'flex', gap: 1.5, alignItems: 'flex-start' }}>
+                                        <Box sx={{ flexShrink: 0, mt: 0.2 }}>{cfg.icon}</Box>
+                                        <Box>
+                                            <Typography sx={{ color: '#1e293b', fontWeight: 700, fontSize: '0.85rem', mb: 0.25 }}>{insight.title}</Typography>
+                                            <Typography sx={{ color: '#64748b', fontSize: '0.8rem', lineHeight: 1.5 }}>{insight.description}</Typography>
+                                        </Box>
+                                        <Chip label={insight.severity} size="small" sx={{ ml: 'auto', flexShrink: 0, bgcolor: `${cfg.color}15`, color: cfg.color, border: `1px solid ${cfg.color}30`, fontWeight: 700, fontSize: '0.65rem', height: 22 }} />
+                                    </Box>
+                                );
+                            })}
+                        </Box>
+                    </Box>
+                )}
+
+                {/* Passed audits */}
+                {passedAudits > 0 && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1.5, bgcolor: 'rgba(46,204,113,0.06)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: '10px' }}>
+                        <CheckCircle size={16} color="#2ECC71" />
+                        <Typography sx={{ color: '#2ECC71', fontWeight: 700, fontSize: '0.85rem' }}>{passedAudits} audits passed</Typography>
                     </Box>
                 )}
             </Box>
@@ -274,7 +269,7 @@ const PageSpeedPage: React.FC = () => {
                     </Box>
                     <Typography variant="h2" sx={{ color: '#1e293b', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>Page Speed Metrics</Typography>
                     <Typography sx={{ color: '#64748b', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
-                        Measure your website's Core Web Vitals and performance metrics. Check FCP, LCP, TBT, CLS, and overall performance scores.
+                        Measure your website's Core Web Vitals and Lighthouse scores for both Desktop and Mobile.
                     </Typography>
                 </motion.div>
             </Box>
@@ -299,7 +294,7 @@ const PageSpeedPage: React.FC = () => {
                         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                             <CircularProgress size={12} sx={{ color: '#94a3b8' }} />
                             <Typography variant="caption" sx={{ color: '#94a3b8' }}>
-                                Running performance audits — this may take 15–30 seconds…
+                                Running Lighthouse audits — this may take 15–30 seconds…
                             </Typography>
                         </Box>
                     )}
@@ -327,10 +322,10 @@ const PageSpeedPage: React.FC = () => {
                 <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
                     <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>How to Use</Typography>
                     {[
-                        { step: '1', title: 'Enter URL', desc: 'Paste the full URL of the page you want to test. Use the actual page URL, not just the domain.' },
-                        { step: '2', title: 'Click Analyze Speed', desc: 'Our server runs performance audits using real browser testing. This can take 15–30 seconds.' },
-                        { step: '3', title: 'Review Core Web Vitals', desc: 'Green metrics are good. Yellow needs improvement. Red metrics require attention and will hurt SEO rankings.' },
-                        { step: '4', title: 'Optimize', desc: 'Use the results to prioritize optimizations. Focus on LCP and TBT first as they have the biggest SEO impact.' },
+                        { step: '1', title: 'Enter URL', desc: 'Paste the full URL of the page you want to test.' },
+                        { step: '2', title: 'Click Analyze Speed', desc: 'Our server runs Lighthouse audits for both Desktop and Mobile. This can take 15–30 seconds.' },
+                        { step: '3', title: 'Switch Desktop / Mobile', desc: 'Use the tabs to compare performance scores and metrics between desktop and mobile results.' },
+                        { step: '4', title: 'Review & Optimize', desc: 'Check Insights for actionable recommendations. Focus on LCP and TBT for the biggest SEO impact.' },
                     ].map((item) => (
                         <Box key={item.step} sx={{ display: 'flex', gap: 2.5, mb: 2.5 }}>
                             <Box sx={{ width: 32, height: 32, borderRadius: '8px', bgcolor: `${ACCENT}25`, border: `1px solid ${ACCENT}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

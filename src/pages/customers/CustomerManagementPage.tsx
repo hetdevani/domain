@@ -114,6 +114,9 @@ const CustomerManagementPage: React.FC = () => {
                 onCreate={handleCreate}
                 searchPlaceholder="Search customers by name or email..."
                 searchKeys={['name', 'email']}
+                filterConfig={[
+                    { key: 'isActive', label: 'Status', type: 'select', options: [{ label: 'Active', value: true }, { label: 'Inactive', value: false }] }
+                ]}
                 renderExtraActions={(row) => (
                     <>
                         <Tooltip title="Manage Permissions">

@@ -17,7 +17,13 @@ import {
     InputAdornment,
     Button,
     alpha,
-    TableSortLabel
+    TableSortLabel,
+    Popover,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    Badge
 } from '@mui/material';
 import {
     Search,
@@ -29,6 +35,13 @@ import {
     Edit,
     Trash2
 } from 'lucide-react';
+
+export interface FilterField {
+    key: string;
+    label: string;
+    type: 'select';
+    options: { label: string; value: any }[];
+}
 
 export interface Column {
     id: string;
@@ -53,6 +66,7 @@ interface DynamicTableProps {
     actions?: boolean;
     renderExtraActions?: (row: any) => React.ReactNode;
     titleComponent?: React.ReactNode;
+    filterConfig?: FilterField[];
 }
 
 const DynamicTable: React.FC<DynamicTableProps> = ({
@@ -68,7 +82,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     searchKeys = ['name'],
     actions = true,
     renderExtraActions,
-    titleComponent
+    titleComponent,
+    filterConfig = []
 }) => {
     const [data, setData] = useState<any[]>([]);
     const [total, setTotal] = useState(0);
@@ -78,6 +93,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     const [search, setSearch] = useState('');
     const [filters, setFilters] = useState<any>({});
     const [sortBy, setSortBy] = useState<Record<string, number>>({ createdAt: -1 });
+    const [filterAnchor, setFilterAnchor] = useState<null | HTMLElement>(null);
+    const [pendingFilters, setPendingFilters] = useState<any>({});
 
     const loadData = async () => {
         setLoading(true);
@@ -239,14 +256,85 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                             <RotateCcw size={16} color="#64748b" />
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title="Filters">
-                        <IconButton
-                            size="small"
-                            sx={{ bgcolor: '#F8FAFC', border: '1px solid rgba(0,0,0,0.08)', '&:hover': { bgcolor: '#F1F5F9' } }}
-                        >
-                            <Filter size={16} color="#64748b" />
-                        </IconButton>
-                    </Tooltip>
+                    {filterConfig.length > 0 && (
+                        <>
+                            <Tooltip title="Filters">
+                                <IconButton
+                                    size="small"
+                                    onClick={(e) => {
+                                        setPendingFilters({ ...filters });
+                                        setFilterAnchor(e.currentTarget);
+                                    }}
+                                    sx={{ bgcolor: '#F8FAFC', border: '1px solid rgba(0,0,0,0.08)', '&:hover': { bgcolor: '#F1F5F9' } }}
+                                >
+                                    <Badge
+                                        badgeContent={Object.keys(filters).filter(k => filters[k] !== '' && filters[k] !== undefined).length}
+                                        color="primary"
+                                        sx={{ '& .MuiBadge-badge': { bgcolor: '#0A3D62', fontSize: '0.6rem', minWidth: 16, height: 16 } }}
+                                    >
+                                        <Filter size={16} color={Object.keys(filters).length > 0 ? '#0A3D62' : '#64748b'} />
+                                    </Badge>
+                                </IconButton>
+                            </Tooltip>
+                            <Popover
+                                open={Boolean(filterAnchor)}
+                                anchorEl={filterAnchor}
+                                onClose={() => setFilterAnchor(null)}
+                                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                                PaperProps={{
+                                    sx: {
+                                        mt: 1, p: 2.5, borderRadius: '14px', minWidth: 260,
+                                        boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                                        border: '1px solid rgba(0,0,0,0.08)'
+                                    }
+                                }}
+                            >
+                                <Typography sx={{ fontWeight: 700, fontSize: '0.85rem', color: '#334155', mb: 2 }}>Filter by</Typography>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                    {filterConfig.map((field) => (
+                                        <FormControl key={field.key} size="small" fullWidth>
+                                            <InputLabel sx={{ fontSize: '0.85rem' }}>{field.label}</InputLabel>
+                                            <Select
+                                                value={pendingFilters[field.key] ?? ''}
+                                                label={field.label}
+                                                onChange={(e) => setPendingFilters((prev: any) => ({ ...prev, [field.key]: e.target.value }))}
+                                                sx={{ fontSize: '0.875rem', borderRadius: '8px' }}
+                                            >
+                                                <MenuItem value=""><em>All</em></MenuItem>
+                                                {field.options.map((opt) => (
+                                                    <MenuItem key={String(opt.value)} value={opt.value}>{opt.label}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    ))}
+                                </Box>
+                                <Box sx={{ display: 'flex', gap: 1, mt: 2.5 }}>
+                                    <Button
+                                        fullWidth variant="outlined" size="small"
+                                        onClick={() => { setFilters({}); setPendingFilters({}); setFilterAnchor(null); }}
+                                        sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 600, borderColor: 'rgba(0,0,0,0.15)', color: '#64748b' }}
+                                    >
+                                        Reset
+                                    </Button>
+                                    <Button
+                                        fullWidth variant="contained" size="small"
+                                        onClick={() => {
+                                            const applied: any = {};
+                                            Object.entries(pendingFilters).forEach(([k, v]) => {
+                                                if (v !== '' && v !== undefined) applied[k] = v;
+                                            });
+                                            setFilters(applied);
+                                            setFilterAnchor(null);
+                                        }}
+                                        sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 700, bgcolor: '#0A3D62', '&:hover': { bgcolor: '#0d4d7a' } }}
+                                    >
+                                        Apply
+                                    </Button>
+                                </Box>
+                            </Popover>
+                        </>
+                    )}
                 </Box>
 
                 <TableContainer>
