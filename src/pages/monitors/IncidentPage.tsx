@@ -156,14 +156,6 @@ const IncidentPage: React.FC = () => {
     return (
         <Box>
             <Breadcrumb />
-            <Box sx={{ mb: 3 }}>
-                <Typography variant="h4" sx={{ fontWeight: 900, color: '#0A3D62', letterSpacing: '-0.02em' }}>
-                    Incident History
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                    Track and resolve all monitor downtime incidents.
-                </Typography>
-            </Box>
             <DynamicTable
                 key={refreshTrigger}
                 title="Incident History"

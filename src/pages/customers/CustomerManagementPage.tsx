@@ -104,14 +104,6 @@ const CustomerManagementPage: React.FC = () => {
     return (
         <Box>
             <Breadcrumb />
-            <Box sx={{ mb: 3 }}>
-                <Typography variant="h4" sx={{ fontWeight: 900, color: '#0A3D62', letterSpacing: '-0.02em' }}>
-                    Customer Management
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                    View and manage customer accounts, plans, and access.
-                </Typography>
-            </Box>
             <DynamicTable
                 key={refreshTrigger}
                 title="Customer Management"

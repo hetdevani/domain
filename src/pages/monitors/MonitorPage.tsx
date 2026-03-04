@@ -186,14 +186,6 @@ const MonitorPage: React.FC = () => {
     return (
         <Box>
             <Breadcrumb />
-            <Box sx={{ mb: 3 }}>
-                <Typography variant="h4" sx={{ fontWeight: 900, color: '#0A3D62', letterSpacing: '-0.02em' }}>
-                    Website Monitors
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                    Monitor uptime, SSL, and performance across all your sites.
-                </Typography>
-            </Box>
             <DynamicTable
                 key={refreshTrigger}
                 title="Website Monitors"

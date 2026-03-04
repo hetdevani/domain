@@ -56,9 +56,6 @@ const PlanManagementPage: React.FC = () => {
                     <Typography variant="h4" sx={{ fontWeight: 900, color: '#0A3D62', letterSpacing: '-0.02em' }}>
                         Subscription Plans
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                        Review and modify service tiers and feature limits.
-                    </Typography>
                 </Box>
             </Box>
 

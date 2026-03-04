@@ -38,7 +38,7 @@ export const theme = createTheme({
     },
     typography: {
         fontFamily: [
-            '"Poppins"',
+            '"DM Sans"',
             'sans-serif',
         ].join(','),
         h1: { fontSize: '2.25rem', fontWeight: 800, letterSpacing: '-0.02em', color: textColor },

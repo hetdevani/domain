@@ -49,15 +49,6 @@ const MasterManagementPage: React.FC = () => {
         <Box>
             <Breadcrumb />
 
-            <Box sx={{ mb: 4 }}>
-                <Typography variant="h4" sx={{ fontWeight: 900, color: '#0A3D62', letterSpacing: '-0.02em' }}>
-                    Master Data Management
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                    Manage lookup values, categories, and system constants.
-                </Typography>
-            </Box>
-
             <DynamicTable
                 key={refreshTrigger}
                 title="Master Data List"

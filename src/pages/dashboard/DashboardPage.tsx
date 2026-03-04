@@ -47,10 +47,10 @@ const StatCard: React.FC<{
         height: '100%',
         position: 'relative',
         overflow: 'hidden',
-        borderRadius: 3,
+        borderRadius: 6,
         boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
-        border: `1px solid ${alpha(color, 0.15)}`,
-        background: `linear-gradient(135deg, ${alpha(color, 0.07)} 0%, rgba(255,255,255,0) 60%)`,
+        border: `1px solid #ffffff`,
+        background: '#ffffff',
         transition: 'transform 0.2s ease, box-shadow 0.2s ease',
         '&:hover': {
             transform: 'translateY(-3px)',
@@ -68,7 +68,7 @@ const StatCard: React.FC<{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        boxShadow: `0 4px 14px ${alpha(color, 0.25)}`
+                        boxShadow: `0 4px 14px ${alpha(color, 0.05)}`
                     }}
                 >
                     {React.cloneElement(icon as React.ReactElement<any>, { size: 22 })}
