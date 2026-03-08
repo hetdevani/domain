@@ -197,7 +197,7 @@ const LoginPage: React.FC = () => {
             >
                 {/* Mobile Logo */}
                 <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 4 }}>
-                    <img src="/logo.png" alt="LeasePacket Logo" style={{ width: 180 }} />
+                    <img src="/logo-dark.png" alt="LeasePacket Logo" style={{ width: 180 }} />
                 </Box>
 
                 <Box style={{ width: '100%', maxWidth: 360, minHeight: 400 }}>

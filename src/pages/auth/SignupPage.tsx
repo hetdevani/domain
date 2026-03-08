@@ -76,6 +76,12 @@ const SignupPage: React.FC = () => {
             {/* Right Side - Signup Form (30%) */}
             <Box sx={{ flex: { xs: 1, md: 0.3 }, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', p: { xs: 4, md: 6 }, position: 'relative', boxShadow: '-10px 0 30px rgba(0,0,0,0.05)', zIndex: 2, bgcolor: '#fff' }}>
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.2 }} style={{ width: '100%', maxWidth: 360 }}>
+                    
+                     {/* Mobile Logo */}
+                    <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 4 }}>
+                        <img src="/logo-dark.png" alt="LeasePacket Logo" style={{ width: 180 }} />
+                    </Box>
+                    
                     <Box sx={{ mb: 4 }}>
                         <Typography variant="h4" sx={{ fontWeight: 800, color: '#0A3D62', mb: 1 }}>Create Account</Typography>
                         <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>Sign up to start monitoring.</Typography>

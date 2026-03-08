@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Chip } from '@mui/material';
+import { Box, Chip } from '@mui/material';
 import DynamicTable, { type Column } from '../../components/table/DynamicTable';
 import Breadcrumb from '../../components/layout/Breadcrumb';
 import MasterForm from './components/MasterForm';

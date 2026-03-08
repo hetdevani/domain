@@ -54,7 +54,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }) => {
             sx={{
                 backgroundColor: '#0A3D62', // Deep Tech Blue
                 color: '#ffffff',
-                zIndex: theme.zIndex.drawer + 1,
+                zIndex: theme.zIndex.drawer + 3,
                 height: 72,
                 justifyContent: 'center',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
