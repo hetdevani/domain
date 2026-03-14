@@ -10,7 +10,10 @@ import {
     useTheme,
     CircularProgress,
     Alert,
-    LinearProgress
+    LinearProgress,
+    Stack,
+    Divider,
+    Button
 } from '@mui/material';
 import {
     AlertTriangle,
@@ -21,7 +24,10 @@ import {
     ShieldAlert,
     Shield,
     UsersRound,
-    ArrowUpRight
+    ArrowUpRight,
+    Globe2,
+    ShieldCheck,
+    TimerReset
 } from 'lucide-react';
 import {
     AreaChart,
@@ -35,6 +41,8 @@ import {
 import Breadcrumb from '../../components/layout/Breadcrumb';
 import { useAuth } from '../../contexts/AuthContext';
 import { dashboardApi, type DashboardStats } from '../../api/dashboardApi';
+import { INCIDENT_STATUS, type IRecentIncident } from '../../types';
+import { useNavigate } from 'react-router-dom';
 
 const StatCard: React.FC<{
     title: string;
@@ -107,8 +115,39 @@ const StatCard: React.FC<{
     </Card>
 );
 
+const SectionHeading: React.FC<{
+    eyebrow: string;
+    title: string;
+    subtitle?: string;
+}> = ({ eyebrow, title, subtitle }) => (
+    <Box sx={{ mb: 2 }}>
+        <Typography
+            variant="caption"
+            sx={{
+                display: 'block',
+                color: '#64748b',
+                fontWeight: 800,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                mb: 0.75
+            }}
+        >
+            {eyebrow}
+        </Typography>
+        <Typography variant="h6" sx={{ fontWeight: 900, color: '#0A3D62', mb: subtitle ? 0.5 : 0 }}>
+            {title}
+        </Typography>
+        {subtitle && (
+            <Typography variant="body2" color="text.secondary">
+                {subtitle}
+            </Typography>
+        )}
+    </Box>
+);
+
 const DashboardPage: React.FC = () => {
     const theme = useTheme();
+    const navigate = useNavigate();
     const { user } = useAuth();
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -150,7 +189,7 @@ const DashboardPage: React.FC = () => {
 
     const incidentChartData = stats.incidents.recent.map((item: any) => ({
         date: new Date(item.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
-        incidents: item.count
+        incidents: Number(item.count)
     }));
 
     if (incidentChartData.length === 0) {
@@ -180,105 +219,191 @@ const DashboardPage: React.FC = () => {
         }
     }
 
-    const uptimePct = stats.monitors.total > 0
-        ? Math.round((stats.monitors.up / stats.monitors.total) * 100)
-        : 0;
+    const uptimePct = Math.round(stats.monitors.averageUptime || 0);
+    const recentIncidentList = stats.incidents.recentList || [];
+    const warningStats = stats.warnings || { sslExpiry: 0, domainExpiry: 0 };
+    const monitoringStats = stats.monitoring || { totalChecks: 0, upChecks: 0 };
+    const benchmarkScore = Math.max(
+        0,
+        Math.min(
+            100,
+            Math.round(
+                (stats.monitors.averageUptime || 0)
+                - (stats.incidents.open * 4)
+                - (warningStats.sslExpiry * 2)
+                - (warningStats.domainExpiry * 3)
+            )
+        )
+    );
+    const benchmarkLabel = benchmarkScore >= 90 ? 'Elite' : benchmarkScore >= 75 ? 'Strong' : benchmarkScore >= 55 ? 'Needs tuning' : 'At risk';
+    const quickTools = [
+        { label: 'DNS Lookup', path: '/tools/dns-lookup' },
+        { label: 'Domain Monitoring', path: '/tools/domain-monitoring' },
+        { label: 'PageSpeed', path: '/tools/page-speed' },
+        { label: 'IP Intelligence', path: '/tools/ip-intelligence' },
+    ];
+    const statItems = isMasterAdmin
+        ? [
+            {
+                title: 'Total Customers',
+                value: stats.users.customers || 0,
+                icon: <UsersRound size={22} />,
+                color: '#0A3D62',
+                subtitle: 'Registered accounts'
+            },
+            {
+                title: 'Total Admins',
+                value: stats.users.admins || 0,
+                icon: <Shield size={22} />,
+                color: '#8b5cf6',
+                subtitle: 'Admin users'
+            },
+            {
+                title: 'Total Monitors',
+                value: stats.monitors.total,
+                icon: <MonitorPlay size={22} />,
+                color: theme.palette.success.main,
+                subtitle: `${stats.monitors.up} online`
+            },
+            {
+                title: 'Open Incidents',
+                value: stats.incidents.open,
+                icon: <AlertTriangle size={22} />,
+                color: theme.palette.error.main,
+                subtitle: 'Requires attention'
+            },
+            {
+                title: 'SSL Warnings',
+                value: warningStats.sslExpiry,
+                icon: <ShieldCheck size={22} />,
+                color: '#f59e0b',
+                subtitle: 'Certificates nearing expiry'
+            },
+            {
+                title: 'Domain Warnings',
+                value: warningStats.domainExpiry,
+                icon: <Globe2 size={22} />,
+                color: '#ef4444',
+                subtitle: 'Expiring domains detected'
+            }
+        ]
+        : [
+            {
+                title: 'Total Monitors',
+                value: stats.monitors.total,
+                icon: <MonitorPlay size={22} />,
+                color: '#0A3D62',
+                subtitle: `${stats.monitors.up} online`
+            },
+            {
+                title: 'Open Incidents',
+                value: stats.incidents.open,
+                icon: <AlertTriangle size={22} />,
+                color: theme.palette.error.main,
+                subtitle: 'Needs resolution'
+            },
+            {
+                title: 'Resolved Incidents',
+                value: stats.incidents.resolved,
+                icon: <CheckCircle size={22} />,
+                color: theme.palette.success.main,
+                subtitle: 'All time'
+            },
+            {
+                title: 'Unread Notifications',
+                value: stats.notifications.total,
+                icon: <Bell size={22} />,
+                color: '#f59e0b',
+                subtitle: 'Pending review'
+            },
+            {
+                title: 'SSL Warnings',
+                value: warningStats.sslExpiry,
+                icon: <ShieldCheck size={22} />,
+                color: '#f59e0b',
+                subtitle: 'Your monitored SSL risks'
+            },
+            {
+                title: 'Domain Warnings',
+                value: warningStats.domainExpiry,
+                icon: <Globe2 size={22} />,
+                color: '#ef4444',
+                subtitle: 'Your expiring domains'
+            }
+        ];
 
     return (
         <Box>
             <Breadcrumb />
 
-            <Box sx={{ mb: 4 }}>
-                <Typography variant="h4" sx={{ fontWeight: 900, color: '#0A3D62', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
-                    {isMasterAdmin ? 'Admin Overview' : 'Your Dashboard'}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                    {isMasterAdmin ? 'Monitor your platform health and user activity.' : 'Track your monitors and incidents in real-time.'}
-                </Typography>
+            <Box
+                sx={{
+                    mb: 4,
+                    p: { xs: 2.5, md: 3.5 },
+                    borderRadius: 5,
+                    background: 'linear-gradient(135deg, rgba(10,61,98,0.08), rgba(46,204,113,0.08) 60%, rgba(255,255,255,0.95))',
+                    border: '1px solid rgba(10,61,98,0.08)'
+                }}
+            >
+                <Grid container spacing={2} alignItems="center">
+                    <Grid size={{ xs: 12, md: 8 }}>
+                        <Typography variant="h4" sx={{ fontWeight: 900, color: '#0A3D62', letterSpacing: '-0.02em', lineHeight: 1.15 }}>
+                            {isMasterAdmin ? 'Admin Overview' : 'Your Dashboard'}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1, maxWidth: 720 }}>
+                            {isMasterAdmin
+                                ? 'See platform-wide monitoring, warning signals, customer activity, and quick diagnostics in one aligned control center.'
+                                : 'Track your monitors, warning signals, incidents, and diagnostics in one clean operational workspace.'}
+                        </Typography>
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 4 }}>
+                        <Box
+                            sx={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                                gap: 1.5
+                            }}
+                        >
+                            <Box sx={{ p: 1.75, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.7)', border: '1px solid rgba(10,61,98,0.08)' }}>
+                                <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Uptime</Typography>
+                                <Typography variant="h5" sx={{ color: '#0A3D62', fontWeight: 900 }}>{stats.monitors.averageUptime.toFixed(1)}%</Typography>
+                            </Box>
+                            <Box sx={{ p: 1.75, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.7)', border: '1px solid rgba(10,61,98,0.08)' }}>
+                                <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Score</Typography>
+                                <Typography variant="h5" sx={{ color: '#0A3D62', fontWeight: 900 }}>{benchmarkScore}</Typography>
+                            </Box>
+                        </Box>
+                    </Grid>
+                </Grid>
             </Box>
 
-            <Grid container spacing={3}>
-                {isMasterAdmin ? (
-                    <>
-                        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                            <StatCard
-                                title="Total Customers"
-                                value={stats.users.customers || 0}
-                                icon={<UsersRound size={22} />}
-                                color="#0A3D62"
-                                subtitle="Registered accounts"
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                            <StatCard
-                                title="Total Admins"
-                                value={stats.users.admins || 0}
-                                icon={<Shield size={22} />}
-                                color="#8b5cf6"
-                                subtitle="Admin users"
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                            <StatCard
-                                title="Total Monitors"
-                                value={stats.monitors.total}
-                                icon={<MonitorPlay size={22} />}
-                                color={theme.palette.success.main}
-                                subtitle={`${stats.monitors.up} online`}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                            <StatCard
-                                title="Open Incidents"
-                                value={stats.incidents.open}
-                                icon={<AlertTriangle size={22} />}
-                                color={theme.palette.error.main}
-                                subtitle="Requires attention"
-                            />
-                        </Grid>
-                    </>
-                ) : (
-                    <>
-                        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                            <StatCard
-                                title="Total Monitors"
-                                value={stats.monitors.total}
-                                icon={<MonitorPlay size={22} />}
-                                color="#0A3D62"
-                                subtitle={`${stats.monitors.up} online`}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                            <StatCard
-                                title="Open Incidents"
-                                value={stats.incidents.open}
-                                icon={<AlertTriangle size={22} />}
-                                color={theme.palette.error.main}
-                                subtitle="Needs resolution"
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                            <StatCard
-                                title="Resolved Incidents"
-                                value={stats.incidents.resolved}
-                                icon={<CheckCircle size={22} />}
-                                color={theme.palette.success.main}
-                                subtitle="All time"
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                            <StatCard
-                                title="Unread Notifications"
-                                value={stats.notifications.total}
-                                icon={<Bell size={22} />}
-                                color="#f59e0b"
-                                subtitle="Pending review"
-                            />
-                        </Grid>
-                    </>
-                )}
+            <SectionHeading
+                eyebrow="Overview"
+                title="Operational Snapshot"
+                subtitle="A fast, aligned summary of your most important monitoring signals."
+            />
 
-                {/* Chart Card */}
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+                {statItems.map((item) => (
+                    <Grid key={item.title} size={{ xs: 12, sm: 6, lg: 4, xl: 2 }}>
+                        <StatCard
+                            title={item.title}
+                            value={item.value}
+                            icon={item.icon}
+                            color={item.color}
+                            subtitle={item.subtitle}
+                        />
+                    </Grid>
+                ))}
+            </Grid>
+
+            <SectionHeading
+                eyebrow="Analytics"
+                title="Performance And Health"
+                subtitle="Visual trends and operational health grouped in a cleaner, more balanced layout."
+            />
+
+            <Grid container spacing={3} sx={{ mb: 4 }}>
                 <Grid size={{ xs: 12, md: 8 }}>
                     <Card sx={{
                         height: 420,
@@ -354,7 +479,6 @@ const DashboardPage: React.FC = () => {
                     </Card>
                 </Grid>
 
-                {/* Infrastructure Health */}
                 <Grid size={{ xs: 12, md: 4 }}>
                     <Card sx={{
                         borderRadius: 3,
@@ -430,19 +554,236 @@ const DashboardPage: React.FC = () => {
                                 <Box sx={{
                                     p: 2.5,
                                     borderRadius: 2.5,
-                                    bgcolor: alpha(theme.palette.success.main, 0.04),
-                                    border: `1px solid ${alpha(theme.palette.success.main, 0.12)}`
+                                    bgcolor: alpha('#0A3D62', 0.04),
+                                    border: `1px solid ${alpha('#0A3D62', 0.12)}`
                                 }}>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                                        <CheckCircle size={15} color={theme.palette.success.main} />
-                                        <Typography variant="subtitle2" color="success.main" sx={{ fontWeight: 800 }}>
-                                            Resolved Issues
+                                        <TimerReset size={15} color="#0A3D62" />
+                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0A3D62' }}>
+                                            Check Quality
                                         </Typography>
                                     </Box>
                                     <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-                                        <strong style={{ color: '#111827' }}>{stats.incidents.resolved} incidents</strong> have been resolved successfully.
+                                        <strong style={{ color: '#111827' }}>{monitoringStats.totalChecks}</strong> total monitor checks recorded,
+                                        with <strong style={{ color: '#111827' }}>{monitoringStats.upChecks}</strong> successful checks.
                                     </Typography>
                                 </Box>
+                            </Box>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
+
+            <SectionHeading
+                eyebrow="Controls"
+                title="Tools And Priorities"
+                subtitle="Keep benchmark signals and quick diagnostics close together for faster action."
+            />
+
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+                <Grid size={{ xs: 12, md: 4 }}>
+                    <Card sx={{
+                        borderRadius: 3,
+                        boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
+                        border: '1px solid rgba(0,0,0,0.06)',
+                        height: '100%'
+                    }}>
+                        <CardContent sx={{ p: 3 }}>
+                            <Typography variant="h6" sx={{ fontWeight: 800, color: '#0A3D62', mb: 2 }}>
+                                Benchmark Score
+                            </Typography>
+                            <Box sx={{ p: 3, borderRadius: 3, background: 'linear-gradient(135deg, rgba(10,61,98,0.08), rgba(46,204,113,0.12))', border: '1px solid rgba(10,61,98,0.08)' }}>
+                                <Typography variant="h2" sx={{ fontWeight: 900, color: '#0A3D62', lineHeight: 1 }}>
+                                    {benchmarkScore}
+                                </Typography>
+                                <Typography variant="subtitle2" sx={{ mt: 0.75, fontWeight: 800, color: benchmarkScore >= 75 ? theme.palette.success.main : theme.palette.warning.main }}>
+                                    {benchmarkLabel}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5, lineHeight: 1.7 }}>
+                                    A frontend benchmark-style score derived from uptime, open incidents, and expiry warnings to help teams prioritize operational health.
+                                </Typography>
+                            </Box>
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                <Grid size={{ xs: 12, md: 8 }}>
+                    <Card sx={{
+                        borderRadius: 3,
+                        boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
+                        border: '1px solid rgba(0,0,0,0.06)'
+                    }}>
+                        <CardContent sx={{ p: 3 }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5, flexWrap: 'wrap', gap: 1.5 }}>
+                                <Box>
+                                    <Typography variant="h6" sx={{ fontWeight: 800, color: '#0A3D62' }}>
+                                        Quick Diagnostic Tools
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        Jump into the most-used diagnostics without leaving the dashboard flow.
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            <Grid container spacing={2}>
+                                {quickTools.map((tool) => (
+                                    <Grid key={tool.path} size={{ xs: 12, sm: 6 }}>
+                                        <Box
+                                            sx={{
+                                                p: 2.5,
+                                                borderRadius: 3,
+                                                border: '1px solid rgba(10,61,98,0.08)',
+                                                bgcolor: alpha('#0A3D62', 0.02),
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                gap: 2
+                                            }}
+                                        >
+                                            <Box>
+                                                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0A3D62' }}>
+                                                    {tool.label}
+                                                </Typography>
+                                                <Typography variant="caption" color="text.secondary">
+                                                    Open the tool workspace
+                                                </Typography>
+                                            </Box>
+                                            <Button
+                                                variant="outlined"
+                                                size="small"
+                                                onClick={() => navigate(tool.path)}
+                                                sx={{ borderRadius: 2, fontWeight: 700 }}
+                                            >
+                                                Open
+                                            </Button>
+                                        </Box>
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
+
+            <SectionHeading
+                eyebrow="Activity"
+                title="Recent Incidents And Warning Signals"
+                subtitle="A clearer final section for the incidents stream and the warning overview."
+            />
+
+            <Grid container spacing={3}>
+                <Grid size={{ xs: 12, md: 7 }}>
+                    <Card sx={{
+                        borderRadius: 3,
+                        boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
+                        border: '1px solid rgba(0,0,0,0.06)'
+                    }}>
+                        <CardContent sx={{ p: 3 }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
+                                <Box>
+                                    <Typography variant="h6" sx={{ fontWeight: 800, color: '#0A3D62' }}>
+                                        Recent Incidents
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        {isMasterAdmin ? 'Latest platform incidents' : 'Latest incidents affecting your account'}
+                                    </Typography>
+                                </Box>
+                                <Chip
+                                    label={`${recentIncidentList.length} recent`}
+                                    size="small"
+                                    sx={{ fontWeight: 700, bgcolor: alpha('#0A3D62', 0.08), color: '#0A3D62' }}
+                                />
+                            </Box>
+
+                            {recentIncidentList.length === 0 ? (
+                                <Alert severity="success" sx={{ borderRadius: 3 }}>
+                                    No recent incidents found.
+                                </Alert>
+                            ) : (
+                                <Stack divider={<Divider flexItem sx={{ borderColor: 'rgba(0,0,0,0.06)' }} />} spacing={0}>
+                                    {recentIncidentList.map((incident: IRecentIncident) => (
+                                        <Box key={incident.id} sx={{ py: 2, display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
+                                            <Box sx={{ minWidth: 0, flex: 1 }}>
+                                                <Typography variant="body2" sx={{ fontWeight: 800, color: '#111827' }}>
+                                                    {incident.monitor?.name || 'Monitor'}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                                                    {incident.cause || 'No incident reason available'}
+                                                </Typography>
+                                                <Typography variant="caption" color="text.disabled" sx={{ display: 'block', mt: 0.75 }}>
+                                                    {incident.createdAt ? new Date(incident.createdAt).toLocaleString() : ''}
+                                                </Typography>
+                                            </Box>
+                                            <Chip
+                                                label={incident.status === INCIDENT_STATUS.OPEN ? 'Open' : 'Resolved'}
+                                                size="small"
+                                                sx={{
+                                                    alignSelf: 'flex-start',
+                                                    fontWeight: 800,
+                                                    bgcolor: incident.status === INCIDENT_STATUS.OPEN ? alpha(theme.palette.error.main, 0.1) : alpha(theme.palette.success.main, 0.1),
+                                                    color: incident.status === INCIDENT_STATUS.OPEN ? theme.palette.error.main : theme.palette.success.main
+                                                }}
+                                            />
+                                        </Box>
+                                    ))}
+                                </Stack>
+                            )}
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                <Grid size={{ xs: 12, md: 5 }}>
+                    <Card sx={{
+                        borderRadius: 3,
+                        boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
+                        border: '1px solid rgba(0,0,0,0.06)'
+                    }}>
+                        <CardContent sx={{ p: 3 }}>
+                            <Typography variant="h6" sx={{ fontWeight: 800, color: '#0A3D62', mb: 2 }}>
+                                Warning Radar
+                            </Typography>
+
+                            {[
+                                {
+                                    title: 'SSL Expiry Warnings',
+                                    value: warningStats.sslExpiry,
+                                    helper: 'Certificates expiring within 30 days',
+                                    color: '#f59e0b'
+                                },
+                                {
+                                    title: 'Domain Expiry Warnings',
+                                    value: warningStats.domainExpiry,
+                                    helper: 'Domains expiring within 30 days',
+                                    color: '#ef4444'
+                                },
+                            ].map((item) => (
+                                <Box key={item.title} sx={{ p: 2.5, borderRadius: 2.5, bgcolor: alpha(item.color, 0.05), border: `1px solid ${alpha(item.color, 0.12)}`, mb: 2 }}>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <Box>
+                                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#111827' }}>
+                                                {item.title}
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary">
+                                                {item.helper}
+                                            </Typography>
+                                        </Box>
+                                        <Typography variant="h4" sx={{ fontWeight: 900, color: item.color }}>
+                                            {item.value}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            ))}
+
+                            <Box sx={{ mt: 3, p: 2.5, borderRadius: 2.5, bgcolor: '#F8FAFC', border: '1px solid rgba(0,0,0,0.06)' }}>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0A3D62', mb: 1 }}>
+                                    Server Health Summary
+                                </Typography>
+                                <Typography variant="h3" sx={{ fontWeight: 900, color: '#0A3D62' }}>
+                                    {stats.monitors.averageUptime.toFixed(2)}%
+                                </Typography>
+                                <Typography variant="caption" color="text.secondary">
+                                    Derived from monitor health signals until dedicated agent-based server metrics are connected.
+                                </Typography>
                             </Box>
                         </CardContent>
                     </Card>

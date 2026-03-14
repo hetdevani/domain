@@ -29,6 +29,7 @@ import {
     Activity,
     Shield,
     ShieldOff,
+    CalendarClock,
     Clock,
     AlertTriangle,
     CheckCircle,
@@ -61,7 +62,7 @@ import toast from 'react-hot-toast';
 const MONITOR_TYPE_LABELS: Record<number, string> = {
     [MONITOR_TYPE.HTTP]: 'HTTP(s)',
     [MONITOR_TYPE.PING]: 'Ping',
-    [MONITOR_TYPE.TCP]: 'TCP Port',
+    [MONITOR_TYPE.TCP]: 'TCP Ports',
     [MONITOR_TYPE.DNS]: 'DNS',
     [MONITOR_TYPE.KEYWORD]: 'Keyword',
 };
@@ -198,6 +199,12 @@ const MonitorDetailPage: React.FC = () => {
     const avgMs = chartData.length ? Math.round(chartData.reduce((s, d) => s + d.ms, 0) / chartData.length) : null;
     const minMs = chartData.length ? Math.min(...chartData.map(d => d.ms)) : null;
     const maxMs = chartData.length ? Math.max(...chartData.map(d => d.ms)) : null;
+    const tcpHost = monitor?.type === MONITOR_TYPE.TCP && typeof monitor?.url === 'string' && monitor.url.includes(':')
+        ? monitor.url.split(':')[0]
+        : null;
+    const tcpPorts = monitor?.type === MONITOR_TYPE.TCP && typeof monitor?.url === 'string' && monitor.url.includes(':')
+        ? monitor.url.split(':').slice(1).join(':')
+        : null;
 
     const lastLog = logs[0];
     const isUp = monitor?.lastStatus === MONITOR_STATUS.UP;
@@ -675,6 +682,8 @@ const MonitorDetailPage: React.FC = () => {
                                     )
                                 },
                                 { label: 'Type', value: MONITOR_TYPE_LABELS[monitor.type] || 'HTTP' },
+                                ...(tcpHost ? [{ label: 'TCP Host', value: tcpHost }] : []),
+                                ...(tcpPorts ? [{ label: 'TCP Ports', value: tcpPorts }] : []),
                                 { label: 'Check Interval', value: `Every ${monitor.checkInterval} min` },
                                 { label: 'Monitor Status', value: monitor.isActive ? 'Active' : 'Paused' },
                                 { label: 'Created', value: new Date(monitor.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) },
@@ -688,6 +697,21 @@ const MonitorDetailPage: React.FC = () => {
                                     </Typography>
                                 </Box>
                             ))}
+
+                            {tcpHost && tcpPorts && (
+                                <Alert
+                                    severity="info"
+                                    sx={{
+                                        mt: 2.5,
+                                        borderRadius: 2.5,
+                                        bgcolor: alpha('#0A3D62', 0.04),
+                                        color: '#0A3D62',
+                                        '& .MuiAlert-icon': { color: '#0A3D62' }
+                                    }}
+                                >
+                                    This TCP monitor checks all added ports under one monitor entry, so it stays user-friendly and counts as one monitor.
+                                </Alert>
+                            )}
                         </CardContent>
                     </Card>
 
@@ -719,6 +743,61 @@ const MonitorDetailPage: React.FC = () => {
                                         {monitor.sslMonitoring
                                             ? 'Certificate expiry alerts are enabled'
                                             : 'Enable to monitor SSL certificate expiry'}
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            {monitor.sslMonitoring && (
+                                <Box sx={{ mt: 2, p: 2, borderRadius: 2, bgcolor: alpha('#f59e0b', 0.05), border: `1px solid ${alpha('#f59e0b', 0.15)}` }}>
+                                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#0A3D62' }}>
+                                        {monitor.sslWarningDaysRemaining != null
+                                            ? `${monitor.sslWarningDaysRemaining} day(s) remaining`
+                                            : 'No SSL warning data yet'}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        {monitor.sslExpiresAt
+                                            ? `Expires on ${new Date(monitor.sslExpiresAt).toLocaleDateString()}`
+                                            : 'Expiry date will appear after the warning scan runs'}
+                                    </Typography>
+                                </Box>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    <Card sx={{ borderRadius: 3, boxShadow: '0 2px 16px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', mb: 3 }}>
+                        <CardContent sx={{ p: 3 }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0A3D62', mb: 2.5 }}>
+                                Domain Expiry
+                            </Typography>
+
+                            <Box sx={{
+                                p: 2,
+                                borderRadius: 2.5,
+                                bgcolor: monitor.domainMonitoring ? alpha('#f59e0b', 0.06) : '#F8FAFC',
+                                border: `1px solid ${monitor.domainMonitoring ? alpha('#f59e0b', 0.18) : 'rgba(0,0,0,0.06)'}`,
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                gap: 1.5
+                            }}>
+                                <CalendarClock size={18} color={monitor.domainMonitoring ? '#f59e0b' : '#94a3b8'} />
+                                <Box>
+                                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#111827' }}>
+                                        {monitor.domainMonitoring
+                                            ? (
+                                                monitor.domainWarningDaysRemaining != null
+                                                    ? `${monitor.domainWarningDaysRemaining} day(s) remaining`
+                                                    : 'Domain monitoring is active'
+                                            )
+                                            : 'Domain expiry monitoring disabled'}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        {monitor.domainMonitoring
+                                            ? (
+                                                monitor.domainExpiresAt
+                                                    ? `Expires on ${new Date(monitor.domainExpiresAt).toLocaleDateString()}`
+                                                    : 'Expiry details will appear after the warning scan runs'
+                                            )
+                                            : 'Enable it in monitor settings when you want expiry alerts for this domain'}
                                     </Typography>
                                 </Box>
                             </Box>

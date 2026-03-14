@@ -5,14 +5,37 @@ export interface DashboardStats {
         total: number;
         up: number;
         down: number;
+        averageUptime: number;
+    };
+    warnings: {
+        sslExpiry: number;
+        domainExpiry: number;
     };
     incidents: {
         open: number;
         resolved: number;
         recent: { date: string; count: number }[];
+        recentList?: Array<{
+            id: number;
+            cause: string;
+            status: number;
+            startTime: string;
+            endTime?: string;
+            createdAt?: string;
+            monitor?: {
+                id: number;
+                name: string;
+                url: string;
+                type: number;
+            };
+        }>;
     };
     notifications: {
         total: number;
+    };
+    monitoring: {
+        totalChecks: number;
+        upChecks: number;
     };
     users: {
         total: number;

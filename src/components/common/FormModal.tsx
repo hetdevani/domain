@@ -43,13 +43,15 @@ const FormModal: React.FC<FormModalProps> = ({
             onClose={onClose}
             maxWidth={maxWidth}
             fullWidth
+            scroll="body"
             PaperProps={{
                 sx: {
                     borderRadius: '20px',
                     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
                     backgroundImage: 'none',
                     position: 'relative',
-                    overflow: 'visible'
+                    overflow: 'visible',
+                    width: 'min(1280px, calc(100vw - 32px))'
                 }
             }}
         >
@@ -85,7 +87,7 @@ const FormModal: React.FC<FormModalProps> = ({
 
             <Divider sx={{ opacity: 0.1 }} />
 
-            <DialogContent sx={{ p: 3, py: 4 }}>
+            <DialogContent sx={{ p: 3, py: 4, overflowY: 'visible' }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
                     {children}
                 </Box>

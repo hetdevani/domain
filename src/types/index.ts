@@ -32,6 +32,41 @@ export interface IUser {
     updatedAt?: string;
 }
 
+export interface IRecentIncident {
+    id: number;
+    cause: string;
+    status: number;
+    startTime: string;
+    endTime?: string;
+    createdAt?: string;
+    monitor?: {
+        id: number;
+        name: string;
+        url: string;
+        type: number;
+    };
+}
+
+export interface IMonitor {
+    id: number;
+    name: string;
+    url: string;
+    type: number;
+    checkInterval: number;
+    sslMonitoring?: boolean;
+    sslNotifyDays?: number;
+    domainMonitoring?: boolean;
+    domainExpiresAt?: string;
+    domainWarningDaysRemaining?: number;
+    sslExpiresAt?: string;
+    sslWarningDaysRemaining?: number;
+    isActive?: boolean;
+    lastStatus?: number;
+    ownerId?: number;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
 export interface IPlan {
     id: number;
     name: string;
@@ -98,7 +133,10 @@ export const MONITOR_TYPE = {
     PING: 2,
     TCP: 3,
     DNS: 4,
-    KEYWORD: 5
+    KEYWORD: 5,
+    CRON: 6,
+    HEARTBEAT: 7,
+    BROWSER: 8,
 };
 
 export const MONITOR_STATUS = {

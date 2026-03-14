@@ -21,6 +21,7 @@ export interface FormField {
     grid?: { xs?: number; sm?: number; md?: number };
     placeholder?: string;
     condition?: (values: any) => boolean;
+    disabled?: boolean;
 }
 
 interface DynamicFormProps {
@@ -65,6 +66,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                                     checked={!!value}
                                                     onChange={onChange}
                                                     color="primary"
+                                                    disabled={loading || field.disabled}
                                                 />
                                             }
                                             label={field.label}
@@ -87,6 +89,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                                 value={value || ''}
                                                 label={field.label}
                                                 onChange={onChange}
+                                                disabled={loading || field.disabled}
                                                 sx={{
                                                     borderRadius: '12px',
                                                     '& .MuiSelect-select': { fontWeight: 500 }
@@ -117,7 +120,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                         error={error}
                                         helperText={helperText}
                                         variant="outlined"
-                                        disabled={loading}
+                                        disabled={loading || field.disabled}
                                         InputLabelProps={{ shrink: true }}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {

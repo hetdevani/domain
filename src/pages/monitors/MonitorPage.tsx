@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Chip, Typography, IconButton, Tooltip, Link } from '@mui/material';
-import { ExternalLink, Globe, Activity, Shield, ShieldOff, History } from 'lucide-react';
+import { Box, Chip, Typography, IconButton, Tooltip, Link, Card, CardContent, Grid, alpha } from '@mui/material';
+import { ExternalLink, Globe, Activity, Shield, ShieldOff, History, CheckCircle2, ServerCrash, CalendarClock } from 'lucide-react';
 import DynamicTable, { type Column } from '../../components/table/DynamicTable';
 import Breadcrumb from '../../components/layout/Breadcrumb';
 import MonitorForm from './components/MonitorForm';
@@ -11,6 +11,14 @@ import { monitorApi } from './api/monitorApi';
 import { MONITOR_TYPE, MONITOR_STATUS, USER_TYPES } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+
+const MONITOR_TYPE_LABELS: Record<number, string> = {
+    [MONITOR_TYPE.HTTP]: 'HTTP(s)',
+    [MONITOR_TYPE.PING]: 'Ping',
+    [MONITOR_TYPE.TCP]: 'TCP Ports',
+    [MONITOR_TYPE.DNS]: 'DNS',
+    [MONITOR_TYPE.KEYWORD]: 'Keyword',
+};
 
 const MonitorPage: React.FC = () => {
     const navigate = useNavigate();
@@ -31,6 +39,7 @@ const MonitorPage: React.FC = () => {
     } = useMonitorLogic();
 
     const [totalMonitors, setTotalMonitors] = React.useState(0);
+    const [monitorRows, setMonitorRows] = React.useState<any[]>([]);
     const { user } = useAuth();
 
     const [logModalOpen, setLogModalOpen] = React.useState(false);
@@ -87,16 +96,9 @@ const MonitorPage: React.FC = () => {
             id: 'type',
             label: 'Type',
             format: (value) => {
-                const types: any = {
-                    [MONITOR_TYPE.HTTP]: 'HTTP(s)',
-                    [MONITOR_TYPE.PING]: 'Ping',
-                    [MONITOR_TYPE.TCP]: 'TCP Port',
-                    [MONITOR_TYPE.DNS]: 'DNS',
-                    [MONITOR_TYPE.KEYWORD]: 'Keyword'
-                };
                 return (
                     <Chip
-                        label={types[value] || 'Unknown'}
+                        label={MONITOR_TYPE_LABELS[value] || 'Unknown'}
                         size="small"
                         variant="outlined"
                         sx={{ fontWeight: 700, borderRadius: '6px', fontSize: '0.75rem' }}
@@ -110,6 +112,30 @@ const MonitorPage: React.FC = () => {
             format: (value) => `${value} min`
         },
         {
+            id: 'url',
+            label: 'Target Details',
+            minWidth: 210,
+            format: (value, row) => {
+                const isTcp = row.type === MONITOR_TYPE.TCP;
+                const tcpPorts = isTcp && typeof value === 'string' && value.includes(':')
+                    ? value.split(':').slice(1).join(':')
+                    : null;
+
+                return (
+                    <Box>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: '#111827' }}>
+                            {isTcp ? value.split(':')[0] : value}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                            {isTcp && tcpPorts
+                                ? `Ports: ${tcpPorts}`
+                                : `Checks every ${row.checkInterval} min`}
+                        </Typography>
+                    </Box>
+                );
+            }
+        },
+        {
             id: 'sslMonitoring',
             label: 'SSL',
             format: (value) => (
@@ -120,6 +146,21 @@ const MonitorPage: React.FC = () => {
                 ) : (
                     <Tooltip title="SSL Monitoring Disabled">
                         <ShieldOff size={18} color="#94a3b8" />
+                    </Tooltip>
+                )
+            )
+        },
+        {
+            id: 'domainMonitoring',
+            label: 'Domain Expiry',
+            format: (value) => (
+                value ? (
+                    <Tooltip title="Domain Expiry Monitoring Active">
+                        <CalendarClock size={18} color="#f59e0b" />
+                    </Tooltip>
+                ) : (
+                    <Tooltip title="Domain Expiry Monitoring Disabled">
+                        <CalendarClock size={18} color="#94a3b8" />
                     </Tooltip>
                 )
             )
@@ -176,19 +217,67 @@ const MonitorPage: React.FC = () => {
     const fetchMonitors = async (params: any) => {
         const response = await monitorApi.getPaginated(params);
         const total = response.data.data.totalRecords;
+        const rows = response.data.data.data || [];
         setTotalMonitors(total);
+        setMonitorRows(rows);
         return {
-            data: response.data.data.data,
+            data: rows,
             total: total
         };
     };
 
+    const activeCount = React.useMemo(
+        () => monitorRows.filter((item) => item.isActive).length,
+        [monitorRows]
+    );
+    const downCount = React.useMemo(
+        () => monitorRows.filter((item) => item.lastStatus === MONITOR_STATUS.DOWN).length,
+        [monitorRows]
+    );
+    const sslEnabledCount = React.useMemo(
+        () => monitorRows.filter((item) => item.sslMonitoring).length,
+        [monitorRows]
+    );
+    const domainEnabledCount = React.useMemo(
+        () => monitorRows.filter((item) => item.domainMonitoring).length,
+        [monitorRows]
+    );
+
     return (
         <Box>
             <Breadcrumb />
+            <Grid container spacing={2.5} sx={{ mb: 3 }}>
+                {[
+                    { label: 'Total Monitors', value: totalMonitors, icon: <Activity size={18} />, color: '#0A3D62' },
+                    { label: 'Active', value: activeCount, icon: <CheckCircle2 size={18} />, color: '#10b981' },
+                    { label: 'Down', value: downCount, icon: <ServerCrash size={18} />, color: '#ef4444' },
+                    { label: 'SSL Enabled', value: sslEnabledCount, icon: <Shield size={18} />, color: '#14b8a6' },
+                    { label: 'Domain Expiry Enabled', value: domainEnabledCount, icon: <CalendarClock size={18} />, color: '#f59e0b' },
+                ].map((item) => (
+                    <Grid key={item.label} size={{ xs: 12, sm: 6, lg: item.label === 'Domain Expiry Enabled' ? 3 : 3 }}>
+                        <Card sx={{ borderRadius: 4, border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
+                            <CardContent sx={{ p: 2.5 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <Box>
+                                        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                                            {item.label}
+                                        </Typography>
+                                        <Typography variant="h4" sx={{ mt: 0.75, fontWeight: 900, color: '#0A3D62' }}>
+                                            {item.value}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ width: 42, height: 42, borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: alpha(item.color, 0.12), color: item.color }}>
+                                        {item.icon}
+                                    </Box>
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                ))}
+            </Grid>
             <DynamicTable
                 key={refreshTrigger}
-                title="Website Monitors"
+                title={user?.type === USER_TYPES.MASTER_ADMIN ? 'Platform Monitors' : 'Your Monitors'}
                 columns={columns}
                 fetchData={fetchMonitors}
                 onRowClick={(row) => navigate(`/monitors/${row.id}`)}
@@ -222,6 +311,32 @@ const MonitorPage: React.FC = () => {
                 }
                 searchPlaceholder="Search monitors by name or URL..."
                 searchKeys={['name', 'url']}
+                filterConfig={[
+                    {
+                        key: 'type',
+                        label: 'Monitor Type',
+                        type: 'select',
+                        options: Object.entries(MONITOR_TYPE_LABELS).map(([value, label]) => ({ value: Number(value), label }))
+                    },
+                    {
+                        key: 'isActive',
+                        label: 'Lifecycle',
+                        type: 'select',
+                        options: [
+                            { label: 'Active', value: true },
+                            { label: 'Paused', value: false }
+                        ]
+                    },
+                    {
+                        key: 'lastStatus',
+                        label: 'Last Status',
+                        type: 'select',
+                        options: [
+                            { label: 'Up', value: MONITOR_STATUS.UP },
+                            { label: 'Down', value: MONITOR_STATUS.DOWN }
+                        ]
+                    }
+                ]}
                 renderExtraActions={(row) => (
                     <Box sx={{ display: 'flex', gap: 1 }}>
                         <Tooltip title={row.isActive ? 'Pause Monitor' : 'Resume Monitor'}>
