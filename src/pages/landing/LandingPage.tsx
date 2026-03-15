@@ -47,7 +47,7 @@ const LandingPage: React.FC = () => {
     return (
         <Box sx={{ minHeight: '100vh', bgcolor: '#ffffff', color: '#1e293b', overflowX: 'hidden' }}>
             <SEOHead
-                title="Lease Packet Tools — Free Developer & SEO Utilities"
+                title="Lease Packet Tools — Free Website Monitoring Services"
                 description="Free online tools for developers and SEO professionals. DNS lookup, page speed analysis, IP intelligence, domain monitoring, SMTP testing and more. Monitor everything, miss nothing."
                 keywords="website monitoring, uptime monitoring, dns tools, seo tools, developer tools, page speed test, domain monitoring, ip lookup, sitemap checker"
                 canonical="/"
