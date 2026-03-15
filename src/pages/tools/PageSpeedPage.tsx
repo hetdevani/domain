@@ -4,7 +4,10 @@ import {
     CircularProgress, Accordion, AccordionSummary, AccordionDetails, Grid, Chip, Tabs, Tab
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, ChevronDown, AlertCircle, Monitor, Smartphone, Clock, Server, CheckCircle, AlertTriangle, Info } from 'lucide-react';
+import {
+    Zap, ChevronDown, AlertCircle, Monitor, Smartphone,
+    CheckCircle, AlertTriangle, Lightbulb, ShieldAlert
+} from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
 
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;
@@ -49,17 +52,10 @@ const ScoreRing: React.FC<{ score: number; label: string; size?: number }> = ({ 
     );
 };
 
-const SEVERITY_CONFIG: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
-    good: { color: '#2ECC71', bg: 'rgba(46,204,113,0.08)', icon: <CheckCircle size={15} color="#2ECC71" /> },
-    'needs-improvement': { color: '#F39C12', bg: 'rgba(243,156,18,0.08)', icon: <AlertTriangle size={15} color="#F39C12" /> },
-    poor: { color: '#E74C3C', bg: 'rgba(231,76,60,0.08)', icon: <AlertCircle size={15} color="#E74C3C" /> },
-    info: { color: '#3498DB', bg: 'rgba(52,152,219,0.08)', icon: <Info size={15} color="#3498DB" /> },
-};
-
 const MetricPill: React.FC<{ label: string; value: string; color?: string }> = ({ label, value, color = '#1e293b' }) => (
     <Box sx={{ p: 2, bgcolor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', textAlign: 'center' }}>
-        <Typography sx={{ color, fontWeight: 800, fontSize: '1.3rem', fontFamily: 'monospace', lineHeight: 1 }}>{value}</Typography>
-        <Typography sx={{ color: '#94a3b8', fontSize: '0.72rem', mt: 0.5, fontWeight: 500 }}>{label}</Typography>
+        <Typography sx={{ color, fontWeight: 800, fontSize: '1.2rem', fontFamily: 'monospace', lineHeight: 1 }}>{value}</Typography>
+        <Typography sx={{ color: '#94a3b8', fontSize: '0.68rem', mt: 0.5, fontWeight: 500 }}>{label}</Typography>
     </Box>
 );
 
@@ -74,7 +70,7 @@ const PageSpeedPage: React.FC = () => {
         if (!url) return;
         setLoading(true); setError(null); setResult(null); setStrategy('desktop');
         try {
-            const res = await fetch(`${API_BASE}/pagespeed?url=${encodeURIComponent(url)}`);
+            const res = await fetch(`${API_BASE}/pagespeed/deep/?url=${encodeURIComponent(url)}`);
             const data = await res.json();
             if (data.success === true) setResult(data);
             else setError(data.message || 'Request failed');
@@ -88,13 +84,15 @@ const PageSpeedPage: React.FC = () => {
     const renderResult = () => {
         if (!result) return null;
 
-        const view = result[strategy] ?? result;
+        // Deep API: result.mobile.normalized / result.desktop.normalized
+        const view = result[strategy]?.normalized ?? result[strategy] ?? {};
         const scores = view.scores ?? {};
-        const labMetrics = view.labMetrics ?? {};
-        const timings = view.timings ?? {};
-        const diagnostics = view.diagnostics ?? result.diagnostics ?? {};
-        const insights: any[] = view.insights ?? [];
-        const passedAudits: number = view.passedAudits ?? 0;
+        const cwv = view.coreWebVitals ?? {};
+        const screenshot: string | null = view.screenshots?.final ?? null;
+        const opportunities: any[] = view.opportunities ?? [];
+        const diagnostics: any[] = view.diagnostics ?? [];
+        const failedDiagnostics = diagnostics.filter((d: any) => d.score === 0);
+        const passedCount = diagnostics.filter((d: any) => d.score > 0 || d.score === null).length;
 
         const SCORE_ITEMS = [
             { label: 'Performance', key: 'performance' },
@@ -103,36 +101,29 @@ const PageSpeedPage: React.FC = () => {
             { label: 'SEO', key: 'seo' },
         ];
 
-        const LAB_ITEMS = [
-            { label: 'First Contentful Paint', abbr: 'FCP', key: 'FCP' },
-            { label: 'Largest Contentful Paint', abbr: 'LCP', key: 'LCP' },
-            { label: 'Cumulative Layout Shift', abbr: 'CLS', key: 'CLS' },
-            { label: 'Total Blocking Time', abbr: 'TBT', key: 'TBT' },
-            { label: 'Speed Index', abbr: 'SI', key: 'speedIndex' },
-            { label: 'Time to First Byte', abbr: 'TTFB', key: 'TTFB' },
-        ];
-
-        const TIMING_ITEMS = [
-            { label: 'DNS Lookup', key: 'dnsLookupMs', unit: 'ms' },
-            { label: 'TTFB', key: 'ttfbMs', unit: 'ms' },
-            { label: 'Download Time', key: 'downloadTimeMs', unit: 'ms' },
-            { label: 'Total Load', key: 'totalLoadMs', unit: 'ms' },
+        const CWV_ITEMS = [
+            { label: 'FCP', full: 'First Contentful Paint', key: 'FCP' },
+            { label: 'LCP', full: 'Largest Contentful Paint', key: 'LCP' },
+            { label: 'CLS', full: 'Cumulative Layout Shift', key: 'CLS' },
+            { label: 'TBT', full: 'Total Blocking Time', key: 'TBT' },
+            { label: 'SI', full: 'Speed Index', key: 'speedIndex' },
+            { label: 'TTFB', full: 'Time to First Byte', key: 'TTFB' },
+            { label: 'INP', full: 'Interaction to Next Paint', key: 'INP' },
         ];
 
         return (
             <Box>
-                {/* Strategy Tabs */}
+                {/* Header: URL + strategy tabs */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
                     <Box>
-                        <Typography sx={{ color: '#94a3b8', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, mb: 0.5 }}>Analyzed URL</Typography>
+                        <Typography sx={{ color: '#94a3b8', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, mb: 0.5 }}>Analyzed URL</Typography>
                         <Typography sx={{ color: '#475569', fontFamily: 'monospace', fontSize: '0.85rem', wordBreak: 'break-all' }}>{result.url}</Typography>
                     </Box>
                     <Tabs
                         value={strategy}
                         onChange={(_e, v) => setStrategy(v)}
                         sx={{
-                            minHeight: 36,
-                            bgcolor: '#f1f5f9', borderRadius: '10px', p: 0.5,
+                            minHeight: 36, bgcolor: '#f1f5f9', borderRadius: '10px', p: 0.5,
                             '& .MuiTab-root': { minHeight: 32, py: 0.5, px: 2, borderRadius: '8px', textTransform: 'none', fontWeight: 600, fontSize: '0.82rem', color: '#64748b' },
                             '& .Mui-selected': { color: '#1e293b !important', bgcolor: '#fff', boxShadow: '0 1px 4px rgba(0,0,0,0.1)' },
                             '& .MuiTabs-indicator': { display: 'none' },
@@ -143,41 +134,60 @@ const PageSpeedPage: React.FC = () => {
                     </Tabs>
                 </Box>
 
-                {/* Score Rings */}
-                <Box sx={{ p: 3, bgcolor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', mb: 3 }}>
-                    <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2.5 }}>Lighthouse Scores</Typography>
-                    <Grid container spacing={2}>
-                        {SCORE_ITEMS.map(({ label, key }) => (
-                            scores[key] !== undefined ? (
-                                <Grid key={key} size={{ xs: 3 }}>
-                                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                        <ScoreRing score={scores[key]} label={label} size={100} />
-                                    </Box>
-                                </Grid>
-                            ) : null
-                        ))}
-                    </Grid>
-                    <Box sx={{ display: 'flex', gap: 2.5, mt: 2.5, flexWrap: 'wrap' }}>
-                        {[{ color: '#2ECC71', label: '90–100 Good' }, { color: '#F39C12', label: '50–89 Needs Work' }, { color: '#E74C3C', label: '0–49 Poor' }].map(item => (
-                            <Box key={item.label} sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: item.color }} />
-                                <Typography sx={{ fontSize: '0.72rem', color: '#64748b' }}>{item.label}</Typography>
-                            </Box>
-                        ))}
+                {/* Score Rings + Screenshot */}
+                <Box sx={{ p: 3, bgcolor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', mb: 3, display: 'flex', gap: 3, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+                    <Box sx={{ flex: 1, minWidth: 280 }}>
+                        <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 2 }}>
+                            Lighthouse Scores
+                        </Typography>
+                        <Grid container spacing={1.5}>
+                            {SCORE_ITEMS.map(({ label, key }) => (
+                                scores[key] !== undefined ? (
+                                    <Grid key={key} size={{ xs: 3 }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                            <ScoreRing score={scores[key]} label={label} size={90} />
+                                        </Box>
+                                    </Grid>
+                                ) : null
+                            ))}
+                        </Grid>
+                        <Box sx={{ display: 'flex', gap: 2, mt: 2, flexWrap: 'wrap' }}>
+                            {[{ color: '#2ECC71', label: '90–100 Good' }, { color: '#F39C12', label: '50–89 Needs Work' }, { color: '#E74C3C', label: '0–49 Poor' }].map(item => (
+                                <Box key={item.label} sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: item.color }} />
+                                    <Typography sx={{ fontSize: '0.7rem', color: '#64748b' }}>{item.label}</Typography>
+                                </Box>
+                            ))}
+                        </Box>
                     </Box>
+
+                    {/* Page Screenshot */}
+                    {screenshot && (
+                        <Box sx={{ flexShrink: 0 }}>
+                            <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 1 }}>
+                                Page Screenshot
+                            </Typography>
+                            <Box
+                                component="img"
+                                src={screenshot}
+                                alt="Page screenshot"
+                                sx={{ width: 140, height: 'auto', borderRadius: '10px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', display: 'block' }}
+                            />
+                        </Box>
+                    )}
                 </Box>
 
-                {/* Lab Metrics */}
-                {Object.keys(labMetrics).length > 0 && (
+                {/* Core Web Vitals */}
+                {Object.keys(cwv).length > 0 && (
                     <Box sx={{ mb: 3 }}>
-                        <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 1.5 }}>
-                            Lab Metrics
+                        <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 1.5, display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                            <Zap size={13} color={ACCENT} /> Core Web Vitals & Lab Metrics
                         </Typography>
                         <Grid container spacing={1.5}>
-                            {LAB_ITEMS.map(({ label, abbr, key }) => (
-                                labMetrics[key] !== undefined ? (
-                                    <Grid key={key} size={{ xs: 6, sm: 4 }}>
-                                        <MetricPill label={`${abbr} — ${label}`} value={labMetrics[key]} />
+                            {CWV_ITEMS.map(({ label, full, key }) => (
+                                cwv[key] !== undefined && cwv[key] !== 'N/A' ? (
+                                    <Grid key={key} size={{ xs: 6, sm: 4, md: 3 }}>
+                                        <MetricPill label={`${label} — ${full}`} value={String(cwv[key])} />
                                     </Grid>
                                 ) : null
                             ))}
@@ -185,75 +195,64 @@ const PageSpeedPage: React.FC = () => {
                     </Box>
                 )}
 
-                {/* Timings */}
-                {Object.keys(timings).length > 0 && (
+                {/* Opportunities */}
+                {opportunities.length > 0 && (
                     <Box sx={{ mb: 3 }}>
-                        <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Clock size={13} /> Network Timings
+                        <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 1.5, display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                            <Lightbulb size={13} color="#F39C12" /> Opportunities
                         </Typography>
-                        <Grid container spacing={1.5}>
-                            {TIMING_ITEMS.map(({ label, key, unit }) => (
-                                timings[key] !== undefined ? (
-                                    <Grid key={key} size={{ xs: 6, sm: 3 }}>
-                                        <MetricPill label={label} value={`${timings[key]} ${unit}`} color="#0A3D62" />
-                                    </Grid>
-                                ) : null
-                            ))}
-                            {timings.bodyBytesRead !== undefined && (
-                                <Grid size={{ xs: 6, sm: 3 }}>
-                                    <MetricPill label="Body Size" value={`${(timings.bodyBytesRead / 1024).toFixed(1)} KB`} color="#0A3D62" />
-                                </Grid>
-                            )}
-                        </Grid>
-                    </Box>
-                )}
-
-                {/* Diagnostics */}
-                {Object.keys(diagnostics).length > 0 && (
-                    <Box sx={{ mb: 3 }}>
-                        <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Server size={13} /> Server Diagnostics
-                        </Typography>
-                        <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
-                            {Object.entries(diagnostics).map(([k, v]) => (
-                                <Box key={k} sx={{ px: 2, py: 1, bgcolor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
-                                    <Typography sx={{ color: '#94a3b8', fontSize: '0.65rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{k}</Typography>
-                                    <Typography sx={{ color: '#1e293b', fontWeight: 700, fontSize: '0.85rem', fontFamily: 'monospace' }}>{String(v)}</Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                            {opportunities.map((op: any, i: number) => (
+                                <Box key={i} sx={{ p: 2, bgcolor: 'rgba(243,156,18,0.06)', border: '1px solid rgba(243,156,18,0.2)', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                    <AlertTriangle size={15} color="#F39C12" style={{ flexShrink: 0 }} />
+                                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                                        <Typography sx={{ color: '#1e293b', fontWeight: 700, fontSize: '0.85rem' }}>{op.title}</Typography>
+                                        {op.displayValue && (
+                                            <Typography sx={{ color: '#64748b', fontSize: '0.78rem', mt: 0.25 }}>{op.displayValue}</Typography>
+                                        )}
+                                    </Box>
+                                    {op.savingsMs > 0 && (
+                                        <Chip
+                                            label={`Save ${op.savingsMs >= 1000 ? (op.savingsMs / 1000).toFixed(1) + 's' : op.savingsMs + 'ms'}`}
+                                            size="small"
+                                            sx={{ bgcolor: 'rgba(243,156,18,0.12)', color: '#d97706', border: '1px solid rgba(243,156,18,0.3)', fontWeight: 700, fontSize: '0.7rem', flexShrink: 0 }}
+                                        />
+                                    )}
                                 </Box>
                             ))}
                         </Box>
                     </Box>
                 )}
 
-                {/* Insights */}
-                {insights.length > 0 && (
-                    <Box sx={{ mb: 2 }}>
-                        <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 1.5 }}>
-                            Insights & Opportunities
+                {/* Diagnostics */}
+                {failedDiagnostics.length > 0 && (
+                    <Box sx={{ mb: 3 }}>
+                        <Typography sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 1.5, display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                            <ShieldAlert size={13} color="#E74C3C" /> Failed Audits
                         </Typography>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                            {insights.map((insight: any, i: number) => {
-                                const cfg = SEVERITY_CONFIG[insight.severity] ?? SEVERITY_CONFIG.info;
-                                return (
-                                    <Box key={i} sx={{ p: 2, bgcolor: cfg.bg, border: `1px solid ${cfg.color}25`, borderRadius: '10px', display: 'flex', gap: 1.5, alignItems: 'flex-start' }}>
-                                        <Box sx={{ flexShrink: 0, mt: 0.2 }}>{cfg.icon}</Box>
-                                        <Box>
-                                            <Typography sx={{ color: '#1e293b', fontWeight: 700, fontSize: '0.85rem', mb: 0.25 }}>{insight.title}</Typography>
-                                            <Typography sx={{ color: '#64748b', fontSize: '0.8rem', lineHeight: 1.5 }}>{insight.description}</Typography>
-                                        </Box>
-                                        <Chip label={insight.severity} size="small" sx={{ ml: 'auto', flexShrink: 0, bgcolor: `${cfg.color}15`, color: cfg.color, border: `1px solid ${cfg.color}30`, fontWeight: 700, fontSize: '0.65rem', height: 22 }} />
+                            {failedDiagnostics.map((d: any, i: number) => (
+                                <Box key={i} sx={{ p: 2, bgcolor: 'rgba(231,76,60,0.05)', border: '1px solid rgba(231,76,60,0.18)', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                    <AlertCircle size={15} color="#E74C3C" style={{ flexShrink: 0 }} />
+                                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                                        <Typography sx={{ color: '#1e293b', fontWeight: 700, fontSize: '0.85rem' }}>{d.title}</Typography>
+                                        {d.displayValue && (
+                                            <Typography sx={{ color: '#64748b', fontSize: '0.78rem', mt: 0.25 }}>{d.displayValue}</Typography>
+                                        )}
                                     </Box>
-                                );
-                            })}
+                                </Box>
+                            ))}
                         </Box>
                     </Box>
                 )}
 
-                {/* Passed audits */}
-                {passedAudits > 0 && (
+                {/* Passed audits summary */}
+                {passedCount > 0 && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1.5, bgcolor: 'rgba(46,204,113,0.06)', border: '1px solid rgba(46,204,113,0.2)', borderRadius: '10px' }}>
                         <CheckCircle size={16} color="#2ECC71" />
-                        <Typography sx={{ color: '#2ECC71', fontWeight: 700, fontSize: '0.85rem' }}>{passedAudits} audits passed</Typography>
+                        <Typography sx={{ color: '#2ECC71', fontWeight: 700, fontSize: '0.85rem' }}>
+                            {passedCount} audit{passedCount !== 1 ? 's' : ''} passed
+                        </Typography>
                     </Box>
                 )}
             </Box>
@@ -269,7 +268,7 @@ const PageSpeedPage: React.FC = () => {
                     </Box>
                     <Typography variant="h2" sx={{ color: '#1e293b', fontWeight: 900, mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>Page Speed Metrics</Typography>
                     <Typography sx={{ color: '#64748b', maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}>
-                        Measure your website's Core Web Vitals and Lighthouse scores for both Desktop and Mobile.
+                        Full Lighthouse audit — Core Web Vitals, scores, opportunities, and diagnostics for Desktop & Mobile.
                     </Typography>
                 </motion.div>
             </Box>
@@ -294,7 +293,7 @@ const PageSpeedPage: React.FC = () => {
                         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                             <CircularProgress size={12} sx={{ color: '#94a3b8' }} />
                             <Typography variant="caption" sx={{ color: '#94a3b8' }}>
-                                Running Lighthouse audits — this may take 15–30 seconds…
+                                Running full Lighthouse audit — this may take 20–40 seconds…
                             </Typography>
                         </Box>
                     )}
@@ -312,7 +311,10 @@ const PageSpeedPage: React.FC = () => {
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                             <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', mb: 4 }}>
-                                <Typography variant="h6" sx={{ color: '#1e293b', fontWeight: 700, mb: 3 }}>Performance Report</Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, flexWrap: 'wrap', gap: 1 }}>
+                                    <Typography variant="h6" sx={{ color: '#1e293b', fontWeight: 700 }}>Performance Report</Typography>
+                                    <Chip label={result.provider ?? 'Lighthouse'} size="small" sx={{ bgcolor: '#f1f5f9', color: '#64748b', fontSize: '0.7rem', fontWeight: 600 }} />
+                                </Box>
                                 {renderResult()}
                             </Paper>
                         </motion.div>
@@ -323,9 +325,9 @@ const PageSpeedPage: React.FC = () => {
                     <Typography variant="h5" sx={{ color: '#1e293b', fontWeight: 800, mb: 3 }}>How to Use</Typography>
                     {[
                         { step: '1', title: 'Enter URL', desc: 'Paste the full URL of the page you want to test.' },
-                        { step: '2', title: 'Click Analyze Speed', desc: 'Our server runs Lighthouse audits for both Desktop and Mobile. This can take 15–30 seconds.' },
-                        { step: '3', title: 'Switch Desktop / Mobile', desc: 'Use the tabs to compare performance scores and metrics between desktop and mobile results.' },
-                        { step: '4', title: 'Review & Optimize', desc: 'Check Insights for actionable recommendations. Focus on LCP and TBT for the biggest SEO impact.' },
+                        { step: '2', title: 'Click Analyze Speed', desc: 'We run a full Google Lighthouse audit for Desktop and Mobile. This takes 20–40 seconds.' },
+                        { step: '3', title: 'Switch Desktop / Mobile', desc: 'Use the tabs to compare Lighthouse scores and metrics between both strategies.' },
+                        { step: '4', title: 'Fix Opportunities & Diagnostics', desc: 'Opportunities show estimated savings. Failed audits highlight specific issues to address for better scores.' },
                     ].map((item) => (
                         <Box key={item.step} sx={{ display: 'flex', gap: 2.5, mb: 2.5 }}>
                             <Box sx={{ width: 32, height: 32, borderRadius: '8px', bgcolor: `${ACCENT}25`, border: `1px solid ${ACCENT}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
