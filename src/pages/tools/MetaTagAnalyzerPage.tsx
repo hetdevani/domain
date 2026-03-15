@@ -6,6 +6,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileSearch, ChevronDown, AlertCircle, ExternalLink } from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
+import SEOHead from '../../components/seo/SEOHead';
 
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;
 
@@ -166,6 +167,12 @@ const MetaTagAnalyzerPage: React.FC = () => {
 
     return (
         <ToolPageLayout>
+            <SEOHead
+            title="Meta Tag Analyzer — Analyze & Validate SEO Meta Tags"
+            description="Analyze and validate meta tags on any web page. Check title, description, Open Graph, Twitter Card and technical SEO tags."
+            keywords="meta tag analyzer, seo meta tags, og tags checker, twitter card checker, meta description analyzer, seo audit"
+            canonical="/tools/meta-tag-analyzer"
+        />
             <Box sx={{ py: { xs: 6, md: 10 }, textAlign: 'center', px: 2, background: 'linear-gradient(180deg, rgba(243,156,18,0.07) 0%, transparent 100%)' }}>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(243,156,18,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(243,156,18,0.25)' }}>

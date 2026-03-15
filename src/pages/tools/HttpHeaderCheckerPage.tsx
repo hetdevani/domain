@@ -6,6 +6,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { Server, ChevronDown, AlertCircle } from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
+import SEOHead from '../../components/seo/SEOHead';
 
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;
 
@@ -90,6 +91,12 @@ const HttpHeaderCheckerPage: React.FC = () => {
 
     return (
         <ToolPageLayout>
+            <SEOHead
+            title="HTTP Header Checker — Inspect HTTP Response Headers"
+            description="Inspect HTTP response headers for any URL. Check security headers, caching policy, redirect chains and server information."
+            keywords="http header checker, response headers, security headers, http headers tool, inspect headers, hsts checker"
+            canonical="/tools/http-header-checker"
+        />
             <Box sx={{ py: { xs: 6, md: 10 }, textAlign: 'center', px: 2, background: 'linear-gradient(180deg, rgba(231,76,60,0.07) 0%, transparent 100%)' }}>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(231,76,60,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(231,76,60,0.25)' }}>

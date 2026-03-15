@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography, Button, Container, Grid, Accordion, AccordionSummary, AccordionDetails, Chip } from '@mui/material';
+import SEOHead from '../../components/seo/SEOHead';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -45,6 +46,23 @@ const LandingPage: React.FC = () => {
 
     return (
         <Box sx={{ minHeight: '100vh', bgcolor: '#ffffff', color: '#1e293b', overflowX: 'hidden' }}>
+            <SEOHead
+                title="Lease Packet Tools — Free Developer & SEO Utilities"
+                description="Free online tools for developers and SEO professionals. DNS lookup, page speed analysis, IP intelligence, domain monitoring, SMTP testing and more. Monitor everything, miss nothing."
+                keywords="website monitoring, uptime monitoring, dns tools, seo tools, developer tools, page speed test, domain monitoring, ip lookup, sitemap checker"
+                canonical="/"
+                ogType="website"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'WebApplication',
+                    'name': 'Lease Packet Tools',
+                    'url': 'https://tools.leasepacket.com',
+                    'description': 'Free online tools for developers and SEO professionals.',
+                    'applicationCategory': 'DeveloperApplication',
+                    'operatingSystem': 'Any',
+                    'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' }
+                }}
+            />
             <LandingNavbar />
 
             {/* Hero Section */}

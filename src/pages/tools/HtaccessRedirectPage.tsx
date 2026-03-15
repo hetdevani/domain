@@ -10,6 +10,7 @@ import {
     Globe, Lock, ArrowRight
 } from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
+import SEOHead from '../../components/seo/SEOHead';
 
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;
 
@@ -145,6 +146,12 @@ const HtaccessRedirectPage: React.FC = () => {
 
     return (
         <ToolPageLayout>
+            <SEOHead
+            title="HTACCESS Redirect Generator — Build .htaccess Redirect Rules"
+            description="Generate .htaccess redirect rules for 301, 302 and other types. Build Apache mod_rewrite redirect rules instantly without coding."
+            keywords="htaccess redirect generator, 301 redirect, 302 redirect, mod_rewrite, apache redirect rules, htaccess generator"
+            canonical="/tools/htaccess-redirect"
+        />
             {/* Hero */}
             <Box sx={{ py: { xs: 6, md: 10 }, textAlign: 'center', px: 2, background: 'linear-gradient(180deg, rgba(231,76,60,0.07) 0%, transparent 100%)' }}>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>

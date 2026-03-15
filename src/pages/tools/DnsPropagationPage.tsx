@@ -7,6 +7,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, ChevronDown, CheckCircle, XCircle, AlertCircle, Clock } from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
+import SEOHead from '../../components/seo/SEOHead';
 
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;
 
@@ -213,6 +214,12 @@ const DnsPropagationPage: React.FC = () => {
 
     return (
         <ToolPageLayout>
+            <SEOHead
+            title="DNS Propagation Checker — Check Global DNS Propagation"
+            description="Check how DNS changes are propagating across the world. Verify DNS records from multiple global nameserver locations in real time."
+            keywords="dns propagation checker, dns propagation test, global dns check, nameserver propagation, dns spread"
+            canonical="/tools/dns-propagation"
+        />
             {/* Hero */}
             <Box sx={{ py: { xs: 6, md: 10 }, textAlign: 'center', px: 2, background: 'linear-gradient(180deg, rgba(46,204,113,0.06) 0%, transparent 100%)' }}>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>

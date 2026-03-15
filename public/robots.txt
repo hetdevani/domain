@@ -1,0 +1,29 @@
+User-agent: *
+Allow: /
+
+# Tool pages
+Allow: /tools/
+Allow: /tools/dns-propagation
+Allow: /tools/dns-lookup
+Allow: /tools/ip-intelligence
+Allow: /tools/what-is-my-ip
+Allow: /tools/meta-tag-analyzer
+Allow: /tools/http-header-checker
+Allow: /tools/robots-txt-checker
+Allow: /tools/sitemap-checker
+Allow: /tools/page-speed
+Allow: /tools/word-counter
+Allow: /tools/lorem-ipsum
+Allow: /tools/htaccess-redirect
+Allow: /tools/smtp-test
+Allow: /tools/domain-monitoring
+
+# Disallow private/auth routes
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /signup
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://tools.leasepacket.com/sitemap.xml

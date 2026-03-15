@@ -10,6 +10,7 @@ import {
     Clock, RefreshCw, Monitor, Chrome, Layers, Network
 } from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
+import SEOHead from '../../components/seo/SEOHead';
 
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;
 
@@ -292,6 +293,12 @@ const WhatIsMyIpPage: React.FC = () => {
 
     return (
         <ToolPageLayout>
+            <SEOHead
+            title="What Is My IP — Detect Your Public IP Address"
+            description="Find out your current public IP address, location, ISP and connection details instantly."
+            keywords="what is my ip, my ip address, find my ip, public ip address, ip location, ip checker"
+            canonical="/tools/what-is-my-ip"
+        />
             {/* Hero */}
             <Box sx={{ py: { xs: 6, md: 10 }, textAlign: 'center', px: 2, background: 'linear-gradient(180deg, rgba(26,188,156,0.07) 0%, transparent 100%)' }}>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>

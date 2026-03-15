@@ -6,6 +6,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileText, ChevronDown, AlertCircle, CheckCircle, XCircle, Link } from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
+import SEOHead from '../../components/seo/SEOHead';
 
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;
 
@@ -125,6 +126,12 @@ const SitemapCheckerPage: React.FC = () => {
 
     return (
         <ToolPageLayout>
+            <SEOHead
+            title="Sitemap Checker — Validate XML Sitemaps Online"
+            description="Validate XML sitemaps and check sitemap accessibility. Verify your sitemap is correctly formatted and indexable by search engines."
+            keywords="sitemap checker, xml sitemap validator, sitemap status, google sitemap checker, sitemap tester"
+            canonical="/tools/sitemap-checker"
+        />
             <Box sx={{ py: { xs: 6, md: 10 }, textAlign: 'center', px: 2, background: 'linear-gradient(180deg, rgba(142,68,173,0.07) 0%, transparent 100%)' }}>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(142,68,173,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(142,68,173,0.25)' }}>

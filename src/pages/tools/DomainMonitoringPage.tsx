@@ -6,6 +6,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, ChevronDown, AlertCircle, CheckCircle, AlertTriangle, Clock, Server, Shield, Calendar, RefreshCw } from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
+import SEOHead from '../../components/seo/SEOHead';
 
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;
 const ACCENT = '#8B5CF6';
@@ -205,6 +206,12 @@ const DomainMonitoringPage: React.FC = () => {
 
     return (
         <ToolPageLayout>
+            <SEOHead
+            title="Domain Monitoring — Check Domain Expiry & WHOIS Data"
+            description="Check domain expiration dates, registrar details, nameservers, DNSSEC status and RDAP registration data for any domain."
+            keywords="domain expiry checker, domain monitoring, whois lookup, domain registration, domain expiration date, rdap lookup"
+            canonical="/tools/domain-monitoring"
+        />
             <Box sx={{ py: { xs: 6, md: 10 }, textAlign: 'center', px: 2, background: `linear-gradient(180deg, ${ACCENT}12 0%, transparent 100%)` }}>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: `${ACCENT}18`, borderRadius: '16px', mb: 3, border: `1px solid ${ACCENT}40` }}>

@@ -10,6 +10,7 @@ import {
     Lock, Shield, Settings, Send, Server
 } from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
+import SEOHead from '../../components/seo/SEOHead';
 
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;
 const ACCENT = '#1ABC9C';
@@ -173,6 +174,12 @@ const SmtpTestPage: React.FC = () => {
 
     return (
         <ToolPageLayout>
+            <SEOHead
+            title="SMTP Test — Test Your SMTP Server & Email Authentication"
+            description="Test SMTP server connectivity, authentication and email delivery. Verify ports 25, 465, 587 with SSL/TLS and STARTTLS support."
+            keywords="smtp test, smtp server test, email server test, smtp authentication, smtp port checker, smtp connection test"
+            canonical="/tools/smtp-test"
+        />
             {/* Hero */}
             <Box sx={{ py: { xs: 6, md: 10 }, textAlign: 'center', px: 2, background: `linear-gradient(180deg, ${ACCENT}12 0%, transparent 100%)` }}>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>

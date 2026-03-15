@@ -8,6 +8,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlignLeft, ChevronDown, AlertCircle, Copy, Check } from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
+import SEOHead from '../../components/seo/SEOHead';
 
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;
 
@@ -78,6 +79,12 @@ const LoremIpsumPage: React.FC = () => {
 
     return (
         <ToolPageLayout>
+            <SEOHead
+            title="Lorem Ipsum Generator — Generate Placeholder Text"
+            description="Generate Lorem Ipsum placeholder text for designs and mockups. Choose the number of paragraphs, words or sentences."
+            keywords="lorem ipsum generator, placeholder text, dummy text generator, lorem ipsum text, design placeholder"
+            canonical="/tools/lorem-ipsum"
+        />
             <Box sx={{ py: { xs: 6, md: 10 }, textAlign: 'center', px: 2, background: 'linear-gradient(180deg, rgba(52,152,219,0.07) 0%, transparent 100%)' }}>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: 'rgba(52,152,219,0.1)', borderRadius: '16px', mb: 3, border: '1px solid rgba(52,152,219,0.25)' }}>

@@ -9,6 +9,7 @@ import {
     CheckCircle, AlertTriangle, Lightbulb, ShieldAlert
 } from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
+import SEOHead from '../../components/seo/SEOHead';
 
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;
 const ACCENT = '#F39C12';
@@ -261,6 +262,12 @@ const PageSpeedPage: React.FC = () => {
 
     return (
         <ToolPageLayout>
+            <SEOHead
+            title="Page Speed Metrics — Full Lighthouse Audit & Core Web Vitals"
+            description="Run a full Google Lighthouse audit. Check Core Web Vitals (FCP, LCP, CLS, TBT), performance scores, opportunities and diagnostics for Desktop and Mobile."
+            keywords="page speed test, lighthouse audit, core web vitals, lcp fcp cls tbt, google pagespeed insights, website speed test"
+            canonical="/tools/page-speed"
+        />
             <Box sx={{ py: { xs: 6, md: 10 }, textAlign: 'center', px: 2, background: `linear-gradient(180deg, ${ACCENT}12 0%, transparent 100%)` }}>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
                     <Box sx={{ display: 'inline-flex', p: 2, bgcolor: `${ACCENT}18`, borderRadius: '16px', mb: 3, border: `1px solid ${ACCENT}40` }}>

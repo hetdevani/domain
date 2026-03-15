@@ -6,6 +6,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, ChevronDown, AlertCircle, Globe, Wifi, Building, Clock, CheckCircle, XCircle } from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
+import SEOHead from '../../components/seo/SEOHead';
 
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/web/publicTool`;
 
@@ -221,6 +222,12 @@ const IpIntelligencePage: React.FC = () => {
 
     return (
         <ToolPageLayout>
+            <SEOHead
+            title="IP Intelligence — Geo-locate Any IP Address"
+            description="Look up detailed information for any IP address including geolocation, ISP, ASN, timezone and threat data."
+            keywords="ip lookup, ip geolocation, ip intelligence, ip address location, asn lookup, isp lookup, ip info"
+            canonical="/tools/ip-intelligence"
+        />
             {/* Hero */}
             <Box sx={{ py: { xs: 6, md: 10 }, textAlign: 'center', px: 2, background: 'linear-gradient(180deg, rgba(52,152,219,0.07) 0%, transparent 100%)' }}>
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
