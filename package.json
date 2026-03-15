@@ -15,6 +15,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@mui/icons-material": "^7.3.8",
     "@mui/material": "^7.3.8",
+    "@reactour/tour": "^3.8.0",
     "@types/lodash": "^4.17.23",
     "axios": "^1.13.5",
     "clsx": "^2.1.1",

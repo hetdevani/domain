@@ -13,6 +13,9 @@ const UserManagementPage = lazy(() => import('../pages/users/UserManagementPage'
 const CustomerManagementPage = lazy(() => import('../pages/customers/CustomerManagementPage'));
 const MonitorPage = lazy(() => import('../pages/monitors/MonitorPage'));
 const MonitorDetailPage = lazy(() => import('../pages/monitors/MonitorDetailPage'));
+const StatusPageListPage = lazy(() => import('../pages/status-pages/StatusPageListPage'));
+const ReportListPage = lazy(() => import('../pages/reports/ReportListPage'));
+const PublicStatusPage = lazy(() => import('../pages/status-pages/PublicStatusPage'));
 const IncidentPage = lazy(() => import('../pages/monitors/IncidentPage'));
 const PlanManagementPage = lazy(() => import('../pages/plans/PlanManagementPage'));
 const MasterManagementPage = lazy(() => import('../pages/master/MasterManagementPage'));
@@ -61,6 +64,7 @@ const AppRoutes: React.FC = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/status/:slug" element={<PublicStatusPage />} />
 
             {/* Tool Pages */}
             <Route path="/tools/dns-propagation" element={<DnsPropagationPage />} />
@@ -111,6 +115,22 @@ const AppRoutes: React.FC = () => {
                     element={
                         <ProtectedRoute module={MODULES.MONITOR}>
                             <MonitorDetailPage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/reports"
+                    element={
+                        <ProtectedRoute module={MODULES.REPORT}>
+                            <ReportListPage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/status-pages"
+                    element={
+                        <ProtectedRoute module={MODULES.STATUS_PAGE}>
+                            <StatusPageListPage />
                         </ProtectedRoute>
                     }
                 />

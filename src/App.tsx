@@ -5,6 +5,7 @@ import { theme } from './theme';
 import { AuthProvider } from './contexts/AuthContext';
 import AppRoutes from './routes';
 import { Toaster } from 'react-hot-toast';
+import { TourProvider } from '@reactour/tour';
 
 const App: React.FC = () => {
   return (
@@ -38,7 +39,27 @@ const App: React.FC = () => {
           }}
         />
         <AuthProvider>
-          <AppRoutes />
+          <TourProvider
+            steps={[]}
+            showBadge={false}
+            showCloseButton
+            disableDotsNavigation={false}
+            padding={12}
+            styles={{
+              popover: (base) => ({
+                ...base,
+                borderRadius: 14,
+                boxShadow: '0 20px 45px rgba(15,23,42,0.2)',
+                maxWidth: 360,
+              }),
+              maskArea: (base) => ({
+                ...base,
+                rx: 10,
+              }),
+            }}
+          >
+            <AppRoutes />
+          </TourProvider>
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>

@@ -55,14 +55,39 @@ export interface IMonitor {
     checkInterval: number;
     sslMonitoring?: boolean;
     sslNotifyDays?: number;
+    sslExpiresAt?: string;
+    sslWarningDaysRemaining?: number;
+    sslIssuer?: string;
+    sslProtocol?: string;
+    sslCipher?: string;
+    sslSubject?: string;
+    sslIsWildcard?: boolean;
     domainMonitoring?: boolean;
     domainExpiresAt?: string;
     domainWarningDaysRemaining?: number;
-    sslExpiresAt?: string;
-    sslWarningDaysRemaining?: number;
+    domainNameServers?: string;
+    domainRegistrar?: string;
+    domainStatus?: string;
+    domainDnsRecords?: string;
+    blacklistMonitoring?: boolean;
+    lastBlacklistStatus?: string;
     isActive?: boolean;
     lastStatus?: number;
     ownerId?: number;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface IStatusPage {
+    id: number;
+    name: string;
+    slug: string;
+    description?: string;
+    logo?: string;
+    theme?: string; // Hex color e.g. '#0A3D62'
+    ownerId: number;
+    isActive: boolean;
+    monitors?: IMonitor[];
     createdAt?: string;
     updatedAt?: string;
 }
@@ -120,6 +145,9 @@ export const MODULES = {
     MONITOR: 14,
     INCIDENT: 15,
     PLAN: 19,
+    PUBLICTOOL: 20,
+    STATUS_PAGE: 21,
+    REPORT: 22,
 };
 
 export const USER_TYPES = {
@@ -141,7 +169,9 @@ export const MONITOR_TYPE = {
 
 export const MONITOR_STATUS = {
     UP: 1,
-    DOWN: 2
+    DOWN: 2,
+    DEGRADED: 3,
+    UNKNOWN: 4
 };
 
 export const INCIDENT_STATUS = {

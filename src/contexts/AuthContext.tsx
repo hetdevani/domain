@@ -19,16 +19,34 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const getValidStoredToken = (): string | null => {
+    const token = localStorage.getItem('token');
+    if (!token || token === 'undefined' || token === 'null') {
+        return null;
+    }
+    return token;
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<IUser | null>(null);
-    const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+    const [token, setToken] = useState<string | null>(getValidStoredToken());
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser && token) {
-            setUser(JSON.parse(storedUser));
+            try {
+                setUser(JSON.parse(storedUser));
+            } catch {
+                localStorage.removeItem('user');
+                setUser(null);
+            }
+        } else {
+            if (storedUser && !token) {
+                localStorage.removeItem('user');
+            }
+            setUser(null);
         }
         setIsLoading(false);
     }, [token]);
@@ -59,6 +77,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const verify2FA = async (username: string, otp: string) => {
         try {
+            if (!username || !otp || otp.trim().length < 6) {
+                throw new Error('Please enter a valid 6-digit OTP.');
+            }
             const response = await api.post('/web/auth/authenticate-otp-verification', { username, otp });
             const { token, refreshToken, user } = response.data.data;
 
@@ -76,6 +97,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const verifyEmailOTP = async (username: string, otp: string) => {
         try {
+            if (!username || !otp || otp.trim().length < 6) {
+                throw new Error('Please enter a valid 6-digit OTP.');
+            }
             const response = await api.post('/web/auth/login-with-otp', { username, otp });
             const { token, refreshToken, user } = response.data.data;
 
@@ -101,7 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const forgotPassword = async (email: string): Promise<void> => {
         try {
-            await api.post('/web/auth/forgot-password', { email });
+            await api.post('/web/auth/forgot-password', { username: email });
         } catch (error) {
             throw error;
         }

@@ -1,16 +1,17 @@
 import api from '../../../api';
+import { MONITOR_TYPE } from '../../../types';
 
 const extractHostname = (input: string, type?: number) => {
     const value = String(input || '').trim().replace(/^tcp:\/\//i, '');
     if (!value) return '';
 
-    if (type === 3) {
+    if (type === MONITOR_TYPE.TCP) {
         const separatorIndex = value.lastIndexOf(':');
         return separatorIndex === -1 ? value : value.slice(0, separatorIndex).trim();
     }
 
-    if (type === 5 && value.includes('|')) {
-        return extractHostname(value.split('|')[0], 1);
+    if (type === MONITOR_TYPE.KEYWORD && value.includes('|')) {
+        return extractHostname(value.split('|')[0], MONITOR_TYPE.HTTP);
     }
 
     try {
@@ -25,7 +26,7 @@ const extractHostname = (input: string, type?: number) => {
 
 const normalizeTarget = (input: string, type: number) => {
     const value = String(input || '').trim();
-    if ([1, 5, 8].includes(type) && value && !value.includes('://')) {
+    if ([MONITOR_TYPE.HTTP, MONITOR_TYPE.KEYWORD, MONITOR_TYPE.BROWSER].includes(type) && value && !value.includes('://')) {
         return `https://${value}`;
     }
     return value;
@@ -50,8 +51,12 @@ export const monitorApi = {
     delete: (id: number) => api.put(`/web/monitor/${id}/soft-delete`),
     activate: (id: number) => api.put(`/web/monitor/${id}/activate`),
     deactivate: (id: number) => api.put(`/web/monitor/${id}/deactivate`),
+    sendTestAlert: (id: number) => api.post(`/web/monitor/${id}/test-alert`),
+    getAlertHistory: (id: number) => api.get(`/web/monitor/${id}/alert-history`),
+    getPerformance: (id: number, params?: { days?: number }) => api.get(`/web/monitor/${id}/performance`, { params }),
     downloadReport: (data: any) => api.post('/web/monitor/download-report', data),
     runtimePing: (data: { url: string }) => api.post('/web/monitor/runtime-ping', data),
+    refreshWarnings: (id: number) => api.post(`/web/monitor/${id}/refresh-warnings`),
     previewTarget: async (data: { url: string; type: number; domainMonitoring?: boolean }) => {
         try {
             return await api.post('/web/monitor/preview-target', data);
@@ -67,7 +72,7 @@ export const monitorApi = {
                 throw { ...error, message: 'Unable to resolve target hostname' };
             }
 
-            if ([1, 5, 8].includes(data.type)) {
+            if ([MONITOR_TYPE.HTTP, MONITOR_TYPE.KEYWORD, MONITOR_TYPE.BROWSER].includes(data.type)) {
                 await api.post('/web/monitor/runtime-ping', { url: normalizedTarget });
             }
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import {
     Box,
+    Stack,
     Grid,
     Card,
     CardContent,
@@ -65,6 +66,9 @@ const MONITOR_TYPE_LABELS: Record<number, string> = {
     [MONITOR_TYPE.TCP]: 'TCP Ports',
     [MONITOR_TYPE.DNS]: 'DNS',
     [MONITOR_TYPE.KEYWORD]: 'Keyword',
+    [MONITOR_TYPE.CRON]: 'Cron Job',
+    [MONITOR_TYPE.HEARTBEAT]: 'Heartbeat',
+    [MONITOR_TYPE.BROWSER]: 'Headless Browser',
 };
 
 const formatTimeAgo = (dateStr: string) => {
@@ -105,6 +109,10 @@ const MonitorDetailPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [editOpen, setEditOpen] = useState(false);
     const [toggling, setToggling] = useState(false);
+    const [sendingTestAlert, setSendingTestAlert] = useState(false);
+    const [performance, setPerformance] = useState<any>(null);
+    const [performanceDays, setPerformanceDays] = useState(7);
+    const [alertHistory, setAlertHistory] = useState<any[]>([]);
     const [refreshKey, setRefreshKey] = useState(0);
 
     useEffect(() => {
@@ -129,9 +137,18 @@ const MonitorDetailPage: React.FC = () => {
                         populateFields: ['monitor'],
                     }),
                 ]);
+
+                let alertHistoryData: any[] = [];
+                try {
+                    const alertRes = await monitorApi.getAlertHistory(Number(id));
+                    alertHistoryData = alertRes.data.data || [];
+                } catch {
+                    alertHistoryData = [];
+                }
                 setMonitor(monRes.data.data);
                 setLogs(logRes.data.data.data || []);
                 setIncidents(incRes.data.data.data || []);
+                setAlertHistory(alertHistoryData);
             } catch (e: any) {
                 setError('Failed to load monitor details.');
             } finally {
@@ -171,6 +188,35 @@ const MonitorDetailPage: React.FC = () => {
         }
     };
 
+    const handleSendTestAlert = async () => {
+        if (!monitor) return;
+        setSendingTestAlert(true);
+        try {
+            const response = await monitorApi.sendTestAlert(monitor.id);
+            const result = response.data?.data || {};
+            toast.success(`Test alert done (Email: ${result.emailSent ? 'sent' : 'failed'}, SMS: ${result.smsSent ? 'sent' : 'failed'})`);
+            setRefreshKey((k) => k + 1);
+        } catch (e: any) {
+            toast.error(e?.response?.data?.message || 'Failed to send test alert');
+        } finally {
+            setSendingTestAlert(false);
+        }
+    };
+
+    const fetchPerformance = async () => {
+        if (!id) return;
+        try {
+            const response = await monitorApi.getPerformance(Number(id), { days: performanceDays });
+            setPerformance(response.data.data);
+        } catch (error) {
+            console.error('Failed to fetch performance stats', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchPerformance();
+    }, [id, performanceDays, refreshKey]);
+
     // Derived data
     const now = new Date();
     const last24h = useMemo(() => new Date(now.getTime() - 24 * 3600 * 1000), []);
@@ -208,6 +254,10 @@ const MonitorDetailPage: React.FC = () => {
 
     const lastLog = logs[0];
     const isUp = monitor?.lastStatus === MONITOR_STATUS.UP;
+    const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:1502/api').replace(/\/api\/?$/, '');
+    const pingEndpoint = monitor && [MONITOR_TYPE.CRON, MONITOR_TYPE.HEARTBEAT].includes(monitor.type)
+        ? `${apiBaseUrl}/api/web/monitor/ping/${monitor.id}`
+        : null;
 
     const uptimeColor = (pct: number) => {
         if (pct >= 99) return '#10b981';
@@ -347,11 +397,125 @@ const MonitorDetailPage: React.FC = () => {
                         >
                             Edit
                         </Button>
+                        <Button
+                            variant="contained"
+                            startIcon={<Zap size={16} />}
+                            onClick={handleSendTestAlert}
+                            disabled={sendingTestAlert}
+                            size="small"
+                            sx={{
+                                borderRadius: 2,
+                                fontWeight: 700,
+                                bgcolor: '#16a34a',
+                                boxShadow: 'none',
+                                '&:hover': { bgcolor: '#15803d', boxShadow: '0 4px 12px rgba(21,128,61,0.25)' }
+                            }}
+                        >
+                            Test Alert
+                        </Button>
                     </Box>
                 </Box>
             </Box>
 
             <Grid container spacing={3}>
+                {/* ── Performance & Benchmarking ── */}
+                {performance && (
+                    <Grid size={{ xs: 12 }}>
+                        <Grid container spacing={3} sx={{ mb: 4 }}>
+                            <Grid size={{ xs: 12, md: 4 }}>
+                                <Card sx={{ borderRadius: 4, height: '100%', border: '1px solid rgba(0,0,0,0.06)' }}>
+                                    <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                                        <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: 700, mb: 1 }}>
+                                            Benchmarking Score
+                                        </Typography>
+                                        <Box sx={{ position: 'relative', display: 'inline-flex', mb: 2 }}>
+                                            <CircularProgress
+                                                variant="determinate"
+                                                value={performance?.summary?.score || 0}
+                                                size={120}
+                                                thickness={6}
+                                                sx={{ color: (performance?.summary?.score || 0) > 80 ? '#10b981' : '#f59e0b' }}
+                                            />
+                                            <Box sx={{
+                                                top: 0, left: 0, bottom: 0, right: 0, position: 'absolute',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                            }}>
+                                                <Typography variant="h4" sx={{ fontWeight: 900, color: '#0A3D62' }}>
+                                                    {performance?.summary?.score || '--'}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Speed & reliability score based on the last {performanceDays} days.
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+
+                            <Grid size={{ xs: 12, md: 8 }}>
+                                <Card sx={{ borderRadius: 4, height: '100%', border: '1px solid rgba(0,0,0,0.06)' }}>
+                                    <CardContent sx={{ p: 3 }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                                            <Typography variant="h6" sx={{ fontWeight: 800, color: '#0A3D62' }}>
+                                                Performance Trends
+                                            </Typography>
+                                            <Stack direction="row" spacing={1}>
+                                                {[24, 7, 30].map(d => (
+                                                    <Button
+                                                        key={d}
+                                                        size="small"
+                                                        variant={performanceDays === (d === 24 ? 1 : d) ? 'contained' : 'outlined'}
+                                                        onClick={() => setPerformanceDays(d === 24 ? 1 : d)}
+                                                        sx={{ borderRadius: 2, minWidth: 60, textTransform: 'none', fontWeight: 700 }}
+                                                    >
+                                                        {d === 24 ? '24h' : `${d}d`}
+                                                    </Button>
+                                                ))}
+                                            </Stack>
+                                        </Box>
+
+                                        <Box sx={{ height: 180 }}>
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <LineChart data={performance?.history || []}>
+                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                                                    <XAxis dataKey="timestamp" hide />
+                                                    <YAxis hide domain={['auto', 'auto']} />
+                                                    <RechartsTooltip
+                                                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                                        formatter={(val: any) => [`${val}ms`, 'Response Time']}
+                                                    />
+                                                    <Line
+                                                        type="monotone"
+                                                        dataKey="responseTime"
+                                                        stroke="#0A3D62"
+                                                        strokeWidth={3}
+                                                        dot={false}
+                                                    />
+                                                </LineChart>
+                                            </ResponsiveContainer>
+                                        </Box>
+
+                                        <Stack direction="row" spacing={4} sx={{ mt: 2, justifyContent: 'center' }}>
+                                            <Box sx={{ textAlign: 'center' }}>
+                                                <Typography variant="h6" sx={{ fontWeight: 800, color: '#0A3D62' }}>
+                                                    {performance?.summary?.uptime || '--'}%
+                                                </Typography>
+                                                <Typography variant="caption" color="text.secondary">Uptime</Typography>
+                                            </Box>
+                                            <Box sx={{ textAlign: 'center' }}>
+                                                <Typography variant="h6" sx={{ fontWeight: 800, color: '#0A3D62' }}>
+                                                    {performance?.summary?.avgResponseTime || '--'}ms
+                                                </Typography>
+                                                <Typography variant="caption" color="text.secondary">Avg Speed</Typography>
+                                            </Box>
+                                        </Stack>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                )}
+
                 {/* ── LEFT MAIN COLUMN ── */}
                 <Grid size={{ xs: 12, lg: 8 }}>
 
@@ -686,6 +850,18 @@ const MonitorDetailPage: React.FC = () => {
                                 ...(tcpPorts ? [{ label: 'TCP Ports', value: tcpPorts }] : []),
                                 { label: 'Check Interval', value: `Every ${monitor.checkInterval} min` },
                                 { label: 'Monitor Status', value: monitor.isActive ? 'Active' : 'Paused' },
+                                {
+                                    label: 'SSL Expiry Date',
+                                    value: monitor.sslExpiresAt
+                                        ? new Date(monitor.sslExpiresAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+                                        : 'Not available yet'
+                                },
+                                {
+                                    label: 'Domain Expiry Date',
+                                    value: monitor.domainExpiresAt
+                                        ? new Date(monitor.domainExpiresAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+                                        : 'Not available yet'
+                                },
                                 { label: 'Created', value: new Date(monitor.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) },
                             ].map(({ label, value }) => (
                                 <Box key={label} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', py: 1.25, borderBottom: '1px solid rgba(0,0,0,0.05)', '&:last-child': { borderBottom: 0 } }}>
@@ -712,15 +888,54 @@ const MonitorDetailPage: React.FC = () => {
                                     This TCP monitor checks all added ports under one monitor entry, so it stays user-friendly and counts as one monitor.
                                 </Alert>
                             )}
+
+                            {pingEndpoint && (
+                                <Alert
+                                    severity="info"
+                                    sx={{
+                                        mt: 2.5,
+                                        borderRadius: 2.5,
+                                        bgcolor: alpha('#0A3D62', 0.04),
+                                        color: '#0A3D62',
+                                        '& .MuiAlert-icon': { color: '#0A3D62' }
+                                    }}
+                                >
+                                    <Typography variant="body2" sx={{ fontWeight: 700, mb: 0.5 }}>
+                                        {monitor.type === MONITOR_TYPE.CRON ? 'Cron ping URL' : 'Heartbeat ping URL'}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ display: 'block', wordBreak: 'break-all' }}>
+                                        {pingEndpoint}
+                                    </Typography>
+                                </Alert>
+                            )}
                         </CardContent>
                     </Card>
 
                     {/* SSL Status */}
                     <Card sx={{ borderRadius: 3, boxShadow: '0 2px 16px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', mb: 3 }}>
                         <CardContent sx={{ p: 3 }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0A3D62', mb: 2.5 }}>
-                                SSL Monitoring
-                            </Typography>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0A3D62' }}>
+                                    SSL Monitoring
+                                </Typography>
+                                <Button 
+                                    size="small" 
+                                    startIcon={<RefreshCw size={12} />} 
+                                    onClick={async () => {
+                                        toast.loading('Checking SSL status...', { id: 'ssl-check' });
+                                        try {
+                                            await monitorApi.refreshWarnings(monitor.id);
+                                            toast.success('SSL status updated', { id: 'ssl-check' });
+                                            setRefreshKey(k => k + 1);
+                                        } catch {
+                                            toast.error('Failed to update SSL status', { id: 'ssl-check' });
+                                        }
+                                    }}
+                                    sx={{ fontSize: '0.65rem', py: 0.25, height: 20, borderRadius: 1 }}
+                                >
+                                    Check Now
+                                </Button>
+                            </Box>
 
                             <Box sx={{
                                 display: 'flex',
@@ -748,17 +963,34 @@ const MonitorDetailPage: React.FC = () => {
                             </Box>
 
                             {monitor.sslMonitoring && (
-                                <Box sx={{ mt: 2, p: 2, borderRadius: 2, bgcolor: alpha('#f59e0b', 0.05), border: `1px solid ${alpha('#f59e0b', 0.15)}` }}>
-                                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#0A3D62' }}>
-                                        {monitor.sslWarningDaysRemaining != null
-                                            ? `${monitor.sslWarningDaysRemaining} day(s) remaining`
-                                            : 'No SSL warning data yet'}
-                                    </Typography>
-                                    <Typography variant="caption" color="text.secondary">
-                                        {monitor.sslExpiresAt
-                                            ? `Expires on ${new Date(monitor.sslExpiresAt).toLocaleDateString()}`
-                                            : 'Expiry date will appear after the warning scan runs'}
-                                    </Typography>
+                                <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                    <Box sx={{ p: 2, borderRadius: 2, bgcolor: alpha('#f59e0b', 0.05), border: `1px solid ${alpha('#f59e0b', 0.15)}` }}>
+                                        <Typography variant="body2" sx={{ fontWeight: 700, color: '#0A3D62' }}>
+                                            {monitor.sslWarningDaysRemaining != null
+                                                ? `${monitor.sslWarningDaysRemaining} day(s) remaining`
+                                                : 'No SSL warning data yet'}
+                                        </Typography>
+                                        <Typography variant="caption" color="text.secondary">
+                                            {monitor.sslExpiresAt
+                                                ? `Expires on ${new Date(monitor.sslExpiresAt).toLocaleDateString()}`
+                                                : 'Expiry date will appear after the warning scan runs'}
+                                        </Typography>
+                                    </Box>
+
+                                    {/* Detailed SSL Info */}
+                                    <Box sx={{ p: 2, borderRadius: 2, bgcolor: alpha('#0A3D62', 0.03), border: '1px solid rgba(0,0,0,0.05)' }}>
+                                        {[
+                                            { label: 'Issuer', value: monitor.sslIssuer },
+                                            { label: 'Protocol', value: monitor.sslProtocol },
+                                            { label: 'Cipher', value: monitor.sslCipher },
+                                            { label: 'Wildcard', value: monitor.sslIsWildcard ? 'Yes' : 'No' }
+                                        ].map(row => (
+                                            <Box key={row.label} sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
+                                                <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>{row.label}</Typography>
+                                                <Typography variant="caption" sx={{ fontWeight: 600, color: '#0A3D62', textAlign: 'right', maxWidth: '60%' }}>{row.value || 'N/A'}</Typography>
+                                            </Box>
+                                        ))}
+                                    </Box>
                                 </Box>
                             )}
                         </CardContent>
@@ -766,9 +998,28 @@ const MonitorDetailPage: React.FC = () => {
 
                     <Card sx={{ borderRadius: 3, boxShadow: '0 2px 16px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', mb: 3 }}>
                         <CardContent sx={{ p: 3 }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0A3D62', mb: 2.5 }}>
-                                Domain Expiry
-                            </Typography>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0A3D62' }}>
+                                    Domain Expiry
+                                </Typography>
+                                <Button 
+                                    size="small" 
+                                    startIcon={<RefreshCw size={12} />} 
+                                    onClick={async () => {
+                                        toast.loading('Checking domain status...', { id: 'domain-check' });
+                                        try {
+                                            await monitorApi.refreshWarnings(monitor.id);
+                                            toast.success('Domain status updated', { id: 'domain-check' });
+                                            setRefreshKey(k => k + 1);
+                                        } catch {
+                                            toast.error('Failed to update domain status', { id: 'domain-check' });
+                                        }
+                                    }}
+                                    sx={{ fontSize: '0.65rem', py: 0.25, height: 20, borderRadius: 1 }}
+                                >
+                                    Check Now
+                                </Button>
+                            </Box>
 
                             <Box sx={{
                                 p: 2,
@@ -777,7 +1028,8 @@ const MonitorDetailPage: React.FC = () => {
                                 border: `1px solid ${monitor.domainMonitoring ? alpha('#f59e0b', 0.18) : 'rgba(0,0,0,0.06)'}`,
                                 display: 'flex',
                                 alignItems: 'flex-start',
-                                gap: 1.5
+                                gap: 1.5,
+                                mb: 2
                             }}>
                                 <CalendarClock size={18} color={monitor.domainMonitoring ? '#f59e0b' : '#94a3b8'} />
                                 <Box>
@@ -801,6 +1053,117 @@ const MonitorDetailPage: React.FC = () => {
                                     </Typography>
                                 </Box>
                             </Box>
+
+                            {monitor.domainMonitoring && (
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                    <Box sx={{ p: 2, borderRadius: 2, bgcolor: alpha('#0A3D62', 0.03), border: '1px solid rgba(0,0,0,0.05)' }}>
+                                        {[
+                                            { label: 'Registrar', value: monitor.domainRegistrar },
+                                            { label: 'Status', value: monitor.domainStatus },
+                                            { 
+                                                label: 'Nameservers', 
+                                                value: (() => {
+                                                    try {
+                                                        const ns = JSON.parse(monitor.domainNameServers || '[]');
+                                                        return Array.isArray(ns) && ns.length > 0 ? ns.join(', ') : null;
+                                                    } catch { return null; }
+                                                })()
+                                            },
+                                        ].map(row => (
+                                            <Box key={row.label} sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
+                                                <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>{row.label}</Typography>
+                                                <Typography variant="caption" sx={{ fontWeight: 600, color: '#0A3D62', textAlign: 'right', maxWidth: '60%' }}>{row.value || 'Not found'}</Typography>
+                                            </Box>
+                                        ))}
+                                    </Box>
+
+                                    {monitor.domainDnsRecords && (
+                                        <Box sx={{ p: 2, borderRadius: 2, bgcolor: alpha('#0A3D62', 0.03), border: '1px solid rgba(0,0,0,0.05)' }}>
+                                            <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', display: 'block', mb: 1 }}>DNS Records (A/MX)</Typography>
+                                            <Box sx={{ maxHeight: 100, overflowY: 'auto' }}>
+                                                {(() => {
+                                                    const records = JSON.parse(monitor.domainDnsRecords);
+                                                    return (
+                                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                                            {records.a?.map((ip: string, i: number) => (
+                                                                <Typography key={`a-${i}`} variant="caption" sx={{ fontFamily: 'monospace', display: 'block' }}>A: {ip}</Typography>
+                                                            ))}
+                                                            {records.mx?.map((mx: any, i: number) => (
+                                                                <Typography key={`mx-${i}`} variant="caption" sx={{ fontFamily: 'monospace', display: 'block' }}>MX: {mx.exchange} ({mx.priority})</Typography>
+                                                            ))}
+                                                        </Box>
+                                                    );
+                                                })()}
+                                            </Box>
+                                        </Box>
+                                    )}
+                                </Box>
+                            )}
+                        </CardContent>
+                    </Card>
+
+
+                    <Card sx={{ borderRadius: 3, boxShadow: '0 2px 16px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', mb: 3 }}>
+                        <CardContent sx={{ p: 3 }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0A3D62', mb: 2.5 }}>
+                                Blacklist Monitoring
+                            </Typography>
+
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 2,
+                                p: 2,
+                                borderRadius: 2.5,
+                                bgcolor: monitor.blacklistMonitoring ? alpha('#6366f1', 0.06) : '#F8FAFC',
+                                border: `1px solid ${monitor.blacklistMonitoring ? alpha('#6366f1', 0.2) : 'rgba(0,0,0,0.06)'}`,
+                                mb: 2
+                            }}>
+                                <Zap size={20} color={monitor.blacklistMonitoring ? '#6366f1' : '#94a3b8'} />
+                                <Box>
+                                    <Typography variant="body2" sx={{ fontWeight: 700, color: monitor.blacklistMonitoring ? '#6366f1' : '#111827' }}>
+                                        {monitor.blacklistMonitoring ? 'Blacklist Monitoring Active' : 'Blacklist Monitoring Disabled'}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        {monitor.blacklistMonitoring ? 'Checking against major RBLs' : 'Enable to check if domain/IP is blacklisted'}
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            {monitor.blacklistMonitoring && (
+                                <Box sx={{ p: 2, borderRadius: 2, bgcolor: alpha('#0A3D62', 0.03), border: '1px solid rgba(0,0,0,0.05)' }}>
+                                    <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', display: 'block', mb: 1 }}>Status</Typography>
+                                    {(() => {
+                                        try {
+                                            const status = JSON.parse(monitor.lastBlacklistStatus || '{}');
+                                            const listings = Object.entries(status).filter(([_, listed]) => listed);
+
+                                            if (listings.length === 0) {
+                                                return (
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                        <CheckCircle size={14} color="#10b981" />
+                                                        <Typography variant="caption" sx={{ color: '#10b981', fontWeight: 600 }}>Clean - Not listed on any major RBLs</Typography>
+                                                    </Box>
+                                                );
+                                            }
+
+                                            return (
+                                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                                    <Typography variant="caption" sx={{ color: '#ef4444', fontWeight: 700 }}>Listed on {listings.length} RBL(s):</Typography>
+                                                    {listings.map(([rbl]) => (
+                                                        <Box key={rbl} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                            <Activity size={12} color="#ef4444" />
+                                                            <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>{rbl}</Typography>
+                                                        </Box>
+                                                    ))}
+                                                </Box>
+                                            );
+                                        } catch (e) {
+                                            return <Typography variant="caption" color="text.secondary">No blacklist scan results yet</Typography>;
+                                        }
+                                    })()}
+                                </Box>
+                            )}
                         </CardContent>
                     </Card>
 
@@ -837,6 +1200,78 @@ const MonitorDetailPage: React.FC = () => {
                                     </Typography>
                                 </Box>
                             ))}
+                        </CardContent>
+                    </Card>
+
+                    <Card sx={{ borderRadius: 3, boxShadow: '0 2px 16px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', mt: 3 }}>
+                        <CardContent sx={{ p: 3 }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0A3D62', mb: 2.5 }}>
+                                Alert Delivery History (Email/SMS)
+                            </Typography>
+                            {alertHistory.length === 0 ? (
+                                <Typography variant="body2" color="text.secondary">
+                                    No alert history yet. Use "Test Alert" to verify channel delivery.
+                                </Typography>
+                            ) : (
+                                <TableContainer>
+                                    <Table size="small">
+                                        <TableHead>
+                                            <TableRow>
+                                                {['When', 'Channel', 'Status', 'Recipient'].map((h) => (
+                                                    <TableCell
+                                                        key={h}
+                                                        sx={{
+                                                            bgcolor: '#F8FAFC',
+                                                            fontWeight: 700,
+                                                            fontSize: '0.7rem',
+                                                            textTransform: 'uppercase',
+                                                            letterSpacing: '0.06em',
+                                                            color: '#64748b',
+                                                            py: 1.25,
+                                                        }}
+                                                    >
+                                                        {h}
+                                                    </TableCell>
+                                                ))}
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {alertHistory.slice(0, 8).map((item) => (
+                                                <TableRow key={item.id}>
+                                                    <TableCell sx={{ fontSize: '0.78rem', py: 1.25 }}>
+                                                        {item.createdAt ? new Date(item.createdAt).toLocaleString() : '-'}
+                                                    </TableCell>
+                                                    <TableCell sx={{ fontWeight: 700, py: 1.25 }}>
+                                                        {item.channel || '-'}
+                                                    </TableCell>
+                                                    <TableCell sx={{ py: 1.25 }}>
+                                                        <Chip
+                                                            size="small"
+                                                            label={item.status || '-'}
+                                                            sx={{
+                                                                fontWeight: 700,
+                                                                bgcolor: item.status === 'SENT'
+                                                                    ? alpha('#10b981', 0.1)
+                                                                    : item.status === 'FAILED'
+                                                                        ? alpha('#ef4444', 0.1)
+                                                                        : alpha('#f59e0b', 0.1),
+                                                                color: item.status === 'SENT'
+                                                                    ? '#10b981'
+                                                                    : item.status === 'FAILED'
+                                                                        ? '#ef4444'
+                                                                        : '#f59e0b'
+                                                            }}
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell sx={{ fontSize: '0.78rem', py: 1.25 }}>
+                                                        {item.recipient || '-'}
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            )}
                         </CardContent>
                     </Card>
                 </Grid>

@@ -155,20 +155,29 @@ const DashboardPage: React.FC = () => {
 
     useEffect(() => {
         const fetchStats = async () => {
+            if (!user) {
+                setLoading(false);
+                setError('Please login to view dashboard.');
+                return;
+            }
             try {
                 const response = await dashboardApi.getStats();
                 setStats(response.data.data);
                 setError(null);
             } catch (err: any) {
                 console.error('Failed to fetch stats:', err);
-                setError('Failed to load dashboard statistics.');
+                if (err?.response?.status === 401) {
+                    setError('Session expired. Please login again.');
+                } else {
+                    setError('Failed to load dashboard statistics.');
+                }
             } finally {
                 setLoading(false);
             }
         };
 
         fetchStats();
-    }, []);
+    }, [user]);
 
     if (loading) {
         return (
@@ -219,7 +228,8 @@ const DashboardPage: React.FC = () => {
         }
     }
 
-    const uptimePct = Math.round(stats.monitors.averageUptime || 0);
+    const averageUptime = Number(stats.monitors?.averageUptime || 0);
+    const uptimePct = Math.round(averageUptime);
     const recentIncidentList = stats.incidents.recentList || [];
     const warningStats = stats.warnings || { sslExpiry: 0, domainExpiry: 0 };
     const monitoringStats = stats.monitoring || { totalChecks: 0, upChecks: 0 };
@@ -228,7 +238,7 @@ const DashboardPage: React.FC = () => {
         Math.min(
             100,
             Math.round(
-                (stats.monitors.averageUptime || 0)
+                averageUptime
                 - (stats.incidents.open * 4)
                 - (warningStats.sslExpiry * 2)
                 - (warningStats.domainExpiry * 3)
@@ -366,7 +376,7 @@ const DashboardPage: React.FC = () => {
                         >
                             <Box sx={{ p: 1.75, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.7)', border: '1px solid rgba(10,61,98,0.08)' }}>
                                 <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Uptime</Typography>
-                                <Typography variant="h5" sx={{ color: '#0A3D62', fontWeight: 900 }}>{stats.monitors.averageUptime.toFixed(1)}%</Typography>
+                                <Typography variant="h5" sx={{ color: '#0A3D62', fontWeight: 900 }}>{averageUptime.toFixed(1)}%</Typography>
                             </Box>
                             <Box sx={{ p: 1.75, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.7)', border: '1px solid rgba(10,61,98,0.08)' }}>
                                 <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>Score</Typography>
@@ -404,7 +414,7 @@ const DashboardPage: React.FC = () => {
             />
 
             <Grid container spacing={3} sx={{ mb: 4 }}>
-                <Grid size={{ xs: 12, md: 8 }}>
+                <Grid size={{ xs: 12, md: 8 }} sx={{ minWidth: 0 }}>
                     <Card sx={{
                         height: 420,
                         borderRadius: 3,
@@ -428,8 +438,8 @@ const DashboardPage: React.FC = () => {
                                     sx={{ fontWeight: 700, fontSize: '0.7rem' }}
                                 />
                             </Box>
-                            <Box sx={{ flexGrow: 1, minHeight: 0 }}>
-                                <ResponsiveContainer width="100%" height="100%">
+                            <Box sx={{ flexGrow: 1, minHeight: 280, minWidth: 0 }}>
+                                <ResponsiveContainer width="100%" height={280}>
                                     <AreaChart
                                         data={isMasterAdmin ? userChartData : incidentChartData}
                                         margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
@@ -779,7 +789,7 @@ const DashboardPage: React.FC = () => {
                                     Server Health Summary
                                 </Typography>
                                 <Typography variant="h3" sx={{ fontWeight: 900, color: '#0A3D62' }}>
-                                    {stats.monitors.averageUptime.toFixed(2)}%
+                                    {averageUptime.toFixed(2)}%
                                 </Typography>
                                 <Typography variant="caption" color="text.secondary">
                                     Derived from monitor health signals until dedicated agent-based server metrics are connected.

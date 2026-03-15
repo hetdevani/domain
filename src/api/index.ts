@@ -11,12 +11,22 @@ const api: AxiosInstance = axios.create({
     },
 });
 
+const getValidStoredToken = (): string | null => {
+    const token = localStorage.getItem('token');
+    if (!token || token === 'undefined' || token === 'null') {
+        return null;
+    }
+    return token;
+};
+
 // Request interceptor
 api.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        const token = localStorage.getItem('token');
+        const token = getValidStoredToken();
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
+        } else if (config.headers.Authorization) {
+            delete config.headers.Authorization;
         }
         return config;
     },
@@ -30,10 +40,17 @@ api.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
         const originalRequest = error.config as any;
+        const status = error.response?.status;
+        const errorCode = (error.response?.data as any)?.code;
 
         // If the error is 401 and not a retry, try to refresh token
         const isAuthEndpoint = originalRequest.url?.includes('/auth/');
-        if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
+        const shouldTryRefresh =
+            (status === 401 || (status === 422 && errorCode === 'MISSING_TOKEN')) &&
+            !originalRequest._retry &&
+            !isAuthEndpoint;
+
+        if (shouldTryRefresh) {
             originalRequest._retry = true;
 
             try {

@@ -20,6 +20,7 @@ import {
     AlertCircle,
     CreditCard,
     Database,
+    Globe,
     type LucideProps,
     Shield
 } from 'lucide-react';
@@ -57,18 +58,27 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
         { title: 'Customer', path: '/customers', icon: <Users />, module: MODULES.USER },
         { title: 'Monitors', path: '/monitors', icon: <Activity />, module: MODULES.MONITOR },
         { title: 'Incidents', path: '/incidents', icon: <AlertCircle />, module: MODULES.INCIDENT },
+        { title: 'Status Pages', path: '/status-pages', icon: <Globe />, module: MODULES.STATUS_PAGE },
+        // { title: 'Reports', path: '/reports', icon: <FileText />, module: MODULES.REPORT },
+        // { title: 'Public Tools', path: '/tools', icon: <Wrench />, module: MODULES.PUBLICTOOL },
         { title: 'Plans', path: '/plans', icon: <CreditCard />, module: MODULES.PLAN },
         { title: 'Masters', path: '/masters', icon: <Database />, module: MODULES.MASTER },
         { title: 'Settings', path: '/settings', icon: <Settings />, module: MODULES.SETTING },
     ];
 
     const filteredItems = menuItems.filter(item => {
-        // Hide permissions (User/Customer), Plans, and Masters for Customers (type === 3)
+        // Hide specific modules for Customers (type === 3)
         if (user && user.type === 3) {
             if (['User', 'Customer', 'Plans', 'Masters'].includes(item.title)) {
                 return false;
             }
         }
+        
+        // Always show Status Pages for all authenticated users
+        if (user && (user.type === 1 || user.type === 2 || user.type === 3)) {
+            if (item.title === 'Status Pages') return true;
+        }
+
         return !item.module || hasPermission(item.module, 'list');
     });
 

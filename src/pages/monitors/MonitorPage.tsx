@@ -18,6 +18,9 @@ const MONITOR_TYPE_LABELS: Record<number, string> = {
     [MONITOR_TYPE.TCP]: 'TCP Ports',
     [MONITOR_TYPE.DNS]: 'DNS',
     [MONITOR_TYPE.KEYWORD]: 'Keyword',
+    [MONITOR_TYPE.CRON]: 'Cron Job',
+    [MONITOR_TYPE.HEARTBEAT]: 'Heartbeat',
+    [MONITOR_TYPE.BROWSER]: 'Headless Browser',
 };
 
 const MonitorPage: React.FC = () => {
@@ -138,32 +141,72 @@ const MonitorPage: React.FC = () => {
         {
             id: 'sslMonitoring',
             label: 'SSL',
-            format: (value) => (
-                value ? (
-                    <Tooltip title="SSL Monitoring Active">
-                        <Shield size={18} color="#2ECC71" />
-                    </Tooltip>
-                ) : (
-                    <Tooltip title="SSL Monitoring Disabled">
-                        <ShieldOff size={18} color="#94a3b8" />
-                    </Tooltip>
-                )
-            )
+            minWidth: 180,
+            format: (value, row) => {
+                if (!value) {
+                    return (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Tooltip title="SSL Monitoring Disabled">
+                                <ShieldOff size={18} color="#94a3b8" />
+                            </Tooltip>
+                            <Typography variant="caption" color="text.secondary">Disabled</Typography>
+                        </Box>
+                    );
+                }
+
+                return (
+                    <Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Tooltip title="SSL Monitoring Active">
+                                <Shield size={18} color="#2ECC71" />
+                            </Tooltip>
+                            <Typography variant="caption" sx={{ fontWeight: 700, color: '#111827' }}>
+                                {row.sslWarningDaysRemaining != null ? `${row.sslWarningDaysRemaining} day(s)` : 'Active'}
+                            </Typography>
+                        </Box>
+                        <Typography variant="caption" color="text.secondary">
+                            {row.sslExpiresAt
+                                ? `Expires: ${new Date(row.sslExpiresAt).toLocaleDateString()}`
+                                : 'Expiry date pending'}
+                        </Typography>
+                    </Box>
+                );
+            }
         },
         {
             id: 'domainMonitoring',
             label: 'Domain Expiry',
-            format: (value) => (
-                value ? (
-                    <Tooltip title="Domain Expiry Monitoring Active">
-                        <CalendarClock size={18} color="#f59e0b" />
-                    </Tooltip>
-                ) : (
-                    <Tooltip title="Domain Expiry Monitoring Disabled">
-                        <CalendarClock size={18} color="#94a3b8" />
-                    </Tooltip>
-                )
-            )
+            minWidth: 210,
+            format: (value, row) => {
+                if (!value) {
+                    return (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Tooltip title="Domain Expiry Monitoring Disabled">
+                                <CalendarClock size={18} color="#94a3b8" />
+                            </Tooltip>
+                            <Typography variant="caption" color="text.secondary">Disabled</Typography>
+                        </Box>
+                    );
+                }
+
+                return (
+                    <Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Tooltip title="Domain Expiry Monitoring Active">
+                                <CalendarClock size={18} color="#f59e0b" />
+                            </Tooltip>
+                            <Typography variant="caption" sx={{ fontWeight: 700, color: '#111827' }}>
+                                {row.domainWarningDaysRemaining != null ? `${row.domainWarningDaysRemaining} day(s)` : 'Active'}
+                            </Typography>
+                        </Box>
+                        <Typography variant="caption" color="text.secondary">
+                            {row.domainExpiresAt
+                                ? `Expires: ${new Date(row.domainExpiresAt).toLocaleDateString()}`
+                                : 'Expiry date pending'}
+                        </Typography>
+                    </Box>
+                );
+            }
         },
         {
             id: 'isActive',
@@ -254,7 +297,7 @@ const MonitorPage: React.FC = () => {
                     { label: 'SSL Enabled', value: sslEnabledCount, icon: <Shield size={18} />, color: '#14b8a6' },
                     { label: 'Domain Expiry Enabled', value: domainEnabledCount, icon: <CalendarClock size={18} />, color: '#f59e0b' },
                 ].map((item) => (
-                    <Grid key={item.label} size={{ xs: 12, sm: 6, lg: item.label === 'Domain Expiry Enabled' ? 3 : 3 }}>
+                    <Grid key={item.label} size={{ xs: 12, sm: 6, lg: 3 }}>
                         <Card sx={{ borderRadius: 4, border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
                             <CardContent sx={{ p: 2.5 }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -338,7 +381,7 @@ const MonitorPage: React.FC = () => {
                     }
                 ]}
                 renderExtraActions={(row) => (
-                    <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Box sx={{ display: 'flex', gap: 0.5 }}>
                         <Tooltip title={row.isActive ? 'Pause Monitor' : 'Resume Monitor'}>
                             <IconButton
                                 size="small"
@@ -348,19 +391,16 @@ const MonitorPage: React.FC = () => {
                                     bgcolor: row.isActive ? 'rgba(251, 191, 36, 0.05)' : 'rgba(16, 185, 129, 0.05)'
                                 }}
                             >
-                                <Activity size={16} />
+                                <Activity size={15} />
                             </IconButton>
                         </Tooltip>
                         <Tooltip title="View History">
                             <IconButton
                                 size="small"
                                 onClick={(e) => { e.stopPropagation(); handleViewLogs(row); }}
-                                sx={{
-                                    color: '#6366f1',
-                                    bgcolor: 'rgba(99, 102, 241, 0.05)'
-                                }}
+                                sx={{ color: '#6366f1', bgcolor: 'rgba(99, 102, 241, 0.05)' }}
                             >
-                                <History size={16} />
+                                <History size={15} />
                             </IconButton>
                         </Tooltip>
                     </Box>
