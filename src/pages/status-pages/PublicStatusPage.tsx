@@ -165,8 +165,8 @@ const MonitorRow: React.FC<{ monitor: IMonitor; themeColor: string }> = ({ monit
                     })}
                 </Box>
                 <Stack direction="row" justifyContent="space-between" sx={{ mt: 0.5 }}>
-                    <Typography variant="caption" sx={{ color: '#cbd5e1', fontSize: '0.65rem' }}>90 days ago</Typography>
-                    <Typography variant="caption" sx={{ color: '#cbd5e1', fontSize: '0.65rem' }}>Today</Typography>
+                    <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.65rem', fontWeight: 600 }}>90 days ago</Typography>
+                    <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.65rem', fontWeight: 600 }}>Today</Typography>
                 </Stack>
             </Box>
         </Box>
@@ -247,19 +247,21 @@ const PublicStatusPage: React.FC = () => {
                                 <Globe size={28} />
                             )}
                             <Box>
-                                <Typography variant="h5" sx={{ fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1 }}>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1 }}>
                                     {pageData.name}
                                 </Typography>
                                 {pageData.description && (
-                                    <Typography variant="caption" sx={{ opacity: 0.75 }}>{pageData.description}</Typography>
+                                    <Typography variant="caption" sx={{ opacity: 0.75, color: '#ffffff' }}>
+                                        {pageData.description}
+                                    </Typography>
                                 )}
                             </Box>
                         </Stack>
                         <Box sx={{ textAlign: 'right' }}>
-                            <Typography variant="caption" sx={{ opacity: 0.65, display: 'block' }}>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.9)', display: 'block', fontWeight: 600 }}>
                                 Last updated: {new Date().toLocaleTimeString()}
                             </Typography>
-                            <Typography variant="caption" sx={{ opacity: 0.5 }}>
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.65)' }}>
                                 Auto-refreshes every 60 seconds
                             </Typography>
                         </Box>
@@ -324,7 +326,7 @@ const PublicStatusPage: React.FC = () => {
                 {/* ── Footer ─────────────────────────────────────── */}
                 <Divider sx={{ mt: 6, mb: 3 }} />
                 <Box sx={{ textAlign: 'center', pb: 4 }}>
-                    <Typography variant="caption" sx={{ color: '#cbd5e1', fontWeight: 600 }}>
+                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
                         Powered by{' '}
                         <Box component="span" sx={{ color: themeColor, fontWeight: 800 }}>LeasePacket Tool</Box>
                     </Typography>

@@ -10,19 +10,33 @@ import {
     Box,
     Tooltip,
     Divider,
-    ListItemIcon
+    ListItemIcon,
+    Badge,
 } from '@mui/material';
 import {
     LogOut,
     User,
     Settings,
     Bell,
-    ChevronLeft,
-    ChevronRight
+    PanelLeftClose,
+    PanelLeftOpen,
 } from 'lucide-react';
-import { useTheme, alpha } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLocation, useNavigate } from 'react-router-dom';
 
+const PAGE_META: Record<string, { title: string; subtitle: string }> = {
+    '/dashboard': { title: 'Dashboard', subtitle: 'Operations overview' },
+    '/monitors': { title: 'Monitors', subtitle: 'Track uptime & performance' },
+    '/incidents': { title: 'Incidents', subtitle: 'Active & resolved events' },
+    '/status-pages': { title: 'Status Pages', subtitle: 'Public status portals' },
+    '/users': { title: 'User Management', subtitle: 'Admin users' },
+    '/customers': { title: 'Customers', subtitle: 'Customer accounts' },
+    '/plans': { title: 'Plans', subtitle: 'Subscription plans' },
+    '/masters': { title: 'Masters', subtitle: 'Master configuration' },
+    '/settings': { title: 'Settings', subtitle: 'Account & security' },
+    '/reports': { title: 'Reports', subtitle: 'Analytics & reports' },
+};
 
 interface HeaderProps {
     onMenuClick: () => void;
@@ -33,109 +47,169 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }) => {
     const { user, logout } = useAuth();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const theme = useTheme();
+    const location = useLocation();
+    const navigate = useNavigate();
 
-    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
+    const pageMeta =
+        Object.entries(PAGE_META).find(([path]) => location.pathname.startsWith(path))?.[1] ||
+        { title: 'LeasePacket', subtitle: '' };
 
-    const handleMenuClose = () => {
-        setAnchorEl(null);
-    };
+    const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
+    const handleMenuClose = () => setAnchorEl(null);
+    const handleLogout = () => { handleMenuClose(); logout(); };
 
-    const handleLogout = () => {
-        handleMenuClose();
-        logout();
-    };
+    const initials = user?.name
+        ?.split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2) || 'U';
 
     return (
         <AppBar
             position="sticky"
             elevation={0}
             sx={{
-                backgroundColor: '#0A3D62', // Deep Tech Blue
-                color: '#ffffff',
+                backgroundColor: '#ffffff',
+                color: '#0f172a',
                 zIndex: theme.zIndex.drawer + 3,
-                height: 72,
+                height: 64,
                 justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                borderBottom: '1px solid rgba(0,0,0,0.07)',
+                boxShadow: 'none',
             }}
         >
-            <Toolbar sx={{ px: { xs: 2, sm: 4 } }}>
+            <Toolbar sx={{ px: { xs: 2, sm: 3 }, gap: 2, minHeight: '64px !important' }}>
+
+                {/* Sidebar toggle */}
                 <IconButton
-                    edge="start"
-                    color="inherit"
-                    aria-label="menu"
                     onClick={onMenuClick}
+                    size="small"
                     sx={{
-                        mr: 2,
-                        width: 40,
-                        height: 40,
-                        backgroundColor: alpha('#ffffff', 0.1),
-                        borderRadius: '10px',
-                        transition: 'all 0.2s ease',
-                        '&:hover': {
-                            backgroundColor: alpha('#ffffff', 0.2),
-                            transform: 'scale(1.05)'
-                        }
+                        color: '#64748b',
+                        width: 36,
+                        height: 36,
+                        borderRadius: '8px',
+                        border: '1px solid rgba(0,0,0,0.09)',
+                        flexShrink: 0,
+                        transition: 'all 0.15s ease',
+                        '&:hover': { bgcolor: '#f8fafc', color: '#0f172a', borderColor: 'rgba(0,0,0,0.18)' },
                     }}
                 >
-                    {sidebarOpen ? <ChevronLeft size={22} /> : <ChevronRight size={22} />}
+                    {sidebarOpen ? <PanelLeftClose size={17} /> : <PanelLeftOpen size={17} />}
                 </IconButton>
 
-                <Box sx={{
-                    flexGrow: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1.5,
-                    opacity: sidebarOpen ? 0 : 1,
-                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                    visibility: sidebarOpen ? 'hidden' : 'visible',
-                    transform: sidebarOpen ? 'translateX(-20px)' : 'translateX(0)'
-                }}>
-                </Box>
-
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-
-                    <Box
+                {/* Page title */}
+                <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                    <Typography
                         sx={{
-                            ml: 1,
-                            display: 'flex',
-                            alignItems: 'center',
-                            cursor: 'pointer',
-                            p: '4px 4px 4px 12px',
-                            borderRadius: '12px',
-                            transition: 'all 0.2s ease',
-                            '&:hover': {
-                                backgroundColor: alpha('#ffffff', 0.1),
-                            }
+                            fontWeight: 800,
+                            fontSize: '1.0625rem',
+                            color: '#0f172a',
+                            lineHeight: 1.2,
+                            letterSpacing: '-0.015em',
+                            fontFamily: '"Outfit", "DM Sans", sans-serif',
                         }}
-                        onClick={handleMenuOpen}
                     >
-                        <Box sx={{ mr: 1.5, textAlign: 'right', display: { xs: 'none', lg: 'block' } }}>
-                            <Typography variant="subtitle2" sx={{ lineHeight: 1.2, fontWeight: 700, color: '#ffffff' }}>
-                                {user?.name}
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
-                                {user?.type === 1 ? 'Master Admin' : 'Administrator'}
-                            </Typography>
-                        </Box>
-                        <Avatar
-                            src={user?.image}
-                            alt={user?.name}
+                        {pageMeta.title}
+                    </Typography>
+                    {pageMeta.subtitle && (
+                        <Typography
                             sx={{
-                                width: 40,
-                                height: 40,
-                                border: '2px solid',
-                                borderColor: 'rgba(255,255,255,0.2)',
-                                backgroundColor: alpha('#ffffff', 0.2),
-                                fontWeight: 700,
-                                fontSize: '0.875rem',
-                                color: '#ffffff',
-                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                                fontSize: '0.725rem',
+                                color: '#94a3b8',
+                                fontWeight: 500,
+                                lineHeight: 1,
+                                mt: 0.25,
                             }}
                         >
-                            {user?.name?.charAt(0)}
+                            {pageMeta.subtitle}
+                        </Typography>
+                    )}
+                </Box>
+
+                {/* Right actions */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
+
+                    {/* Notifications */}
+                    <Tooltip title="Notifications">
+                        <IconButton
+                            size="small"
+                            sx={{
+                                color: '#64748b',
+                                width: 36,
+                                height: 36,
+                                borderRadius: '8px',
+                                border: '1px solid rgba(0,0,0,0.09)',
+                                transition: 'all 0.15s ease',
+                                '&:hover': { bgcolor: '#f8fafc', color: '#0f172a', borderColor: 'rgba(0,0,0,0.18)' },
+                            }}
+                        >
+                            <Badge
+                                badgeContent={0}
+                                color="error"
+                                sx={{
+                                    '& .MuiBadge-badge': {
+                                        fontSize: '0.6rem',
+                                        minWidth: 15,
+                                        height: 15,
+                                        padding: 0,
+                                    },
+                                }}
+                            >
+                                <Bell size={17} />
+                            </Badge>
+                        </IconButton>
+                    </Tooltip>
+
+                    {/* Divider */}
+                    <Box sx={{ width: '1px', height: 24, bgcolor: 'rgba(0,0,0,0.08)', mx: 0.5 }} />
+
+                    {/* Profile button */}
+                    <Box
+                        onClick={handleMenuOpen}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                            cursor: 'pointer',
+                            py: 0.75,
+                            px: 1.25,
+                            borderRadius: '10px',
+                            border: '1px solid rgba(0,0,0,0.09)',
+                            transition: 'all 0.15s ease',
+                            '&:hover': {
+                                bgcolor: '#f8fafc',
+                                borderColor: 'rgba(0,0,0,0.16)',
+                            },
+                        }}
+                    >
+                        <Avatar
+                            src={user?.image}
+                            sx={{
+                                width: 27,
+                                height: 27,
+                                fontSize: '0.7rem',
+                                fontWeight: 800,
+                                bgcolor: '#0A3D62',
+                                color: '#ffffff',
+                            }}
+                        >
+                            {initials}
                         </Avatar>
+                        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                            <Typography
+                                sx={{
+                                    fontWeight: 700,
+                                    fontSize: '0.8125rem',
+                                    color: '#0f172a',
+                                    lineHeight: 1,
+                                    fontFamily: '"Outfit", "DM Sans", sans-serif',
+                                }}
+                            >
+                                {user?.name?.split(' ')[0]}
+                            </Typography>
+                        </Box>
                     </Box>
 
                     <Menu
@@ -146,45 +220,93 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }) => {
                         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                         PaperProps={{
                             sx: {
-                                mt: 1.5,
-                                width: 220,
-                                borderRadius: 3,
-                                boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
-                                border: '1px solid rgba(0,0,0,0.05)'
-                            }
+                                mt: 1,
+                                width: 228,
+                                borderRadius: '14px',
+                                boxShadow: '0 8px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
+                                border: '1px solid rgba(0,0,0,0.07)',
+                                py: 0.75,
+                                overflow: 'hidden',
+                            },
                         }}
                     >
-                        <MenuItem onClick={handleMenuClose}>
-                            <ListItemIcon><User size={18} /></ListItemIcon>
-                            My Profile
-                        </MenuItem>
-                        <MenuItem onClick={handleMenuClose}>
-                            <ListItemIcon><Settings size={18} /></ListItemIcon>
-                            Settings
-                        </MenuItem>
-                        <Divider />
-                        <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
-                            <ListItemIcon><LogOut size={18} color="#ef4444" /></ListItemIcon>
-                            Logout
-                        </MenuItem>
-                    </Menu>
-                    <Divider />
-                    <Tooltip title="Notifications">
-                        <IconButton
+                        {/* User info header */}
+                        <Box sx={{ px: 2, py: 1.25, mb: 0.5 }}>
+                            <Typography
+                                sx={{
+                                    fontWeight: 700,
+                                    fontSize: '0.875rem',
+                                    color: '#0f172a',
+                                    fontFamily: '"Outfit", "DM Sans", sans-serif',
+                                }}
+                            >
+                                {user?.name}
+                            </Typography>
+                            <Typography sx={{ fontSize: '0.75rem', color: '#94a3b8', mt: 0.125 }}>
+                                {user?.type === 1
+                                    ? 'Master Admin'
+                                    : user?.type === 2
+                                    ? 'Administrator'
+                                    : 'Customer'}
+                            </Typography>
+                        </Box>
+
+                        <Divider sx={{ mb: 0.5 }} />
+
+                        <MenuItem
+                            onClick={handleMenuClose}
                             sx={{
-                                color: '#ffffff',
-                                backgroundColor: alpha('#ffffff', 0.05),
-                                transition: 'all 0.2s ease',
-                                '&:hover': {
-                                    backgroundColor: alpha('#ffffff', 0.15),
-                                    transform: 'translateY(-2px)'
-                                }
+                                borderRadius: '8px',
+                                mx: 0.75,
+                                fontSize: '0.875rem',
+                                fontWeight: 500,
+                                py: 1,
+                                color: '#374151',
                             }}
                         >
-                            <Bell size={20} />
-                        </IconButton>
-                    </Tooltip>
+                            <ListItemIcon sx={{ color: '#64748b' }}>
+                                <User size={16} />
+                            </ListItemIcon>
+                            My Profile
+                        </MenuItem>
 
+                        <MenuItem
+                            onClick={() => { handleMenuClose(); navigate('/settings'); }}
+                            sx={{
+                                borderRadius: '8px',
+                                mx: 0.75,
+                                fontSize: '0.875rem',
+                                fontWeight: 500,
+                                py: 1,
+                                color: '#374151',
+                            }}
+                        >
+                            <ListItemIcon sx={{ color: '#64748b' }}>
+                                <Settings size={16} />
+                            </ListItemIcon>
+                            Settings
+                        </MenuItem>
+
+                        <Divider sx={{ my: 0.5 }} />
+
+                        <MenuItem
+                            onClick={handleLogout}
+                            sx={{
+                                borderRadius: '8px',
+                                mx: 0.75,
+                                fontSize: '0.875rem',
+                                fontWeight: 600,
+                                py: 1,
+                                color: '#ef4444',
+                                '& .MuiListItemIcon-root': { color: '#ef4444' },
+                            }}
+                        >
+                            <ListItemIcon>
+                                <LogOut size={16} />
+                            </ListItemIcon>
+                            Sign Out
+                        </MenuItem>
+                    </Menu>
                 </Box>
             </Toolbar>
         </AppBar>

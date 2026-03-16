@@ -825,6 +825,78 @@ const MonitorDetailPage: React.FC = () => {
                             </TableContainer>
                         )}
                     </Card>
+
+                    <Card sx={{ borderRadius: 3, boxShadow: '0 2px 16px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', mt: 3 }}>
+                        <CardContent sx={{ p: 3 }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0A3D62', mb: 2.5 }}>
+                                Alert Delivery History (Email/SMS)
+                            </Typography>
+                            {alertHistory.length === 0 ? (
+                                <Typography variant="body2" color="text.secondary">
+                                    No alert history yet. Use "Test Alert" to verify channel delivery.
+                                </Typography>
+                            ) : (
+                                <TableContainer>
+                                    <Table size="small">
+                                        <TableHead>
+                                            <TableRow>
+                                                {['When', 'Channel', 'Status', 'Recipient'].map((h) => (
+                                                    <TableCell
+                                                        key={h}
+                                                        sx={{
+                                                            bgcolor: '#F8FAFC',
+                                                            fontWeight: 700,
+                                                            fontSize: '0.7rem',
+                                                            textTransform: 'uppercase',
+                                                            letterSpacing: '0.06em',
+                                                            color: '#64748b',
+                                                            py: 1.25,
+                                                        }}
+                                                    >
+                                                        {h}
+                                                    </TableCell>
+                                                ))}
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {alertHistory.slice(0, 8).map((item) => (
+                                                <TableRow key={item.id}>
+                                                    <TableCell sx={{ fontSize: '0.78rem', py: 1.25 }}>
+                                                        {item.createdAt ? new Date(item.createdAt).toLocaleString() : '-'}
+                                                    </TableCell>
+                                                    <TableCell sx={{ fontWeight: 700, py: 1.25 }}>
+                                                        {item.channel || '-'}
+                                                    </TableCell>
+                                                    <TableCell sx={{ py: 1.25 }}>
+                                                        <Chip
+                                                            size="small"
+                                                            label={item.status || '-'}
+                                                            sx={{
+                                                                fontWeight: 700,
+                                                                bgcolor: item.status === 'SENT'
+                                                                    ? alpha('#10b981', 0.1)
+                                                                    : item.status === 'FAILED'
+                                                                        ? alpha('#ef4444', 0.1)
+                                                                        : alpha('#f59e0b', 0.1),
+                                                                color: item.status === 'SENT'
+                                                                    ? '#10b981'
+                                                                    : item.status === 'FAILED'
+                                                                        ? '#ef4444'
+                                                                        : '#f59e0b'
+                                                            }}
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell sx={{ fontSize: '0.78rem', py: 1.25 }}>
+                                                        {item.recipient || '-'}
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            )}
+                        </CardContent>
+                    </Card>
                 </Grid>
 
                 {/* ── RIGHT SIDEBAR ── */}
@@ -840,7 +912,7 @@ const MonitorDetailPage: React.FC = () => {
                                 {
                                     label: 'URL',
                                     value: (
-                                        <Link href={monitor.url} target="_blank" sx={{ color: '#0A3D62', fontWeight: 600, wordBreak: 'break-all', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                        <Link href={monitor.url} target="_blank" sx={{ color: '#0A3D62', fontWeight: 600, wordBreak: 'break-all', display: 'flex', alignItems: 'center', justifyContent: 'end', gap: 0.5 }}>
                                             {monitor.url} <ExternalLink size={12} />
                                         </Link>
                                     )
@@ -1203,77 +1275,7 @@ const MonitorDetailPage: React.FC = () => {
                         </CardContent>
                     </Card>
 
-                    <Card sx={{ borderRadius: 3, boxShadow: '0 2px 16px rgba(0,0,0,0.07)', border: '1px solid rgba(0,0,0,0.06)', mt: 3 }}>
-                        <CardContent sx={{ p: 3 }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0A3D62', mb: 2.5 }}>
-                                Alert Delivery History (Email/SMS)
-                            </Typography>
-                            {alertHistory.length === 0 ? (
-                                <Typography variant="body2" color="text.secondary">
-                                    No alert history yet. Use "Test Alert" to verify channel delivery.
-                                </Typography>
-                            ) : (
-                                <TableContainer>
-                                    <Table size="small">
-                                        <TableHead>
-                                            <TableRow>
-                                                {['When', 'Channel', 'Status', 'Recipient'].map((h) => (
-                                                    <TableCell
-                                                        key={h}
-                                                        sx={{
-                                                            bgcolor: '#F8FAFC',
-                                                            fontWeight: 700,
-                                                            fontSize: '0.7rem',
-                                                            textTransform: 'uppercase',
-                                                            letterSpacing: '0.06em',
-                                                            color: '#64748b',
-                                                            py: 1.25,
-                                                        }}
-                                                    >
-                                                        {h}
-                                                    </TableCell>
-                                                ))}
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {alertHistory.slice(0, 8).map((item) => (
-                                                <TableRow key={item.id}>
-                                                    <TableCell sx={{ fontSize: '0.78rem', py: 1.25 }}>
-                                                        {item.createdAt ? new Date(item.createdAt).toLocaleString() : '-'}
-                                                    </TableCell>
-                                                    <TableCell sx={{ fontWeight: 700, py: 1.25 }}>
-                                                        {item.channel || '-'}
-                                                    </TableCell>
-                                                    <TableCell sx={{ py: 1.25 }}>
-                                                        <Chip
-                                                            size="small"
-                                                            label={item.status || '-'}
-                                                            sx={{
-                                                                fontWeight: 700,
-                                                                bgcolor: item.status === 'SENT'
-                                                                    ? alpha('#10b981', 0.1)
-                                                                    : item.status === 'FAILED'
-                                                                        ? alpha('#ef4444', 0.1)
-                                                                        : alpha('#f59e0b', 0.1),
-                                                                color: item.status === 'SENT'
-                                                                    ? '#10b981'
-                                                                    : item.status === 'FAILED'
-                                                                        ? '#ef4444'
-                                                                        : '#f59e0b'
-                                                            }}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell sx={{ fontSize: '0.78rem', py: 1.25 }}>
-                                                        {item.recipient || '-'}
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            )}
-                        </CardContent>
-                    </Card>
+                    
                 </Grid>
             </Grid>
 

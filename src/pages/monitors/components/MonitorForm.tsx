@@ -14,9 +14,26 @@ import {
     Switch,
     TextField,
     Tooltip,
-    Typography
+    Typography,
+    CircularProgress,
 } from '@mui/material';
-import { CircleHelp, Mail, Plus, Server, Trash2 } from 'lucide-react';
+import {
+    CircleHelp,
+    Globe,
+    Wifi,
+    Server,
+    Search,
+    FileSearch,
+    Mail,
+    Plus,
+    Trash2,
+    ShieldCheck,
+    CalendarClock,
+    BellRing,
+    MessageSquare,
+    CheckCircle2,
+    AlertCircle,
+} from 'lucide-react';
 import FormModal from '../../../components/common/FormModal';
 import { MONITOR_TYPE, USER_TYPES } from '../../../types';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -78,28 +95,22 @@ const defaultState: FormState = {
     smsNotifications: false,
     notificationCountryCode: '+91',
     notificationMobile: '',
-    ownerId: ''
+    ownerId: '',
 };
 
 const MONITOR_TYPE_OPTIONS = [
-    { value: MONITOR_TYPE.HTTP, label: 'HTTP(s)' },
-    { value: MONITOR_TYPE.PING, label: 'Ping' },
-    { value: MONITOR_TYPE.TCP, label: 'TCP Multi-Port' },
-    { value: MONITOR_TYPE.DNS, label: 'DNS' },
-    { value: MONITOR_TYPE.KEYWORD, label: 'Keyword' },
-    // { value: MONITOR_TYPE.CRON, label: 'Cron Job' },
-    // { value: MONITOR_TYPE.HEARTBEAT, label: 'Heartbeat' },
-    // { value: MONITOR_TYPE.BROWSER, label: 'Headless Browser' },
+    { value: MONITOR_TYPE.HTTP, label: 'HTTP(s)', icon: <Globe size={22} />, desc: 'Web & API', color: '#3498DB' },
+    { value: MONITOR_TYPE.PING, label: 'Ping', icon: <Wifi size={22} />, desc: 'Host reachability', color: '#2ECC71' },
+    { value: MONITOR_TYPE.TCP, label: 'TCP Ports', icon: <Server size={22} />, desc: 'Multi-port', color: '#8b5cf6' },
+    { value: MONITOR_TYPE.DNS, label: 'DNS', icon: <Search size={22} />, desc: 'DNS resolution', color: '#f59e0b' },
+    { value: MONITOR_TYPE.KEYWORD, label: 'Keyword', icon: <FileSearch size={22} />, desc: 'Content watch', color: '#ef4444' },
 ];
 
 const getDomainTargetHostname = (target: string) => {
     const value = target.trim().replace(/^tcp:\/\//i, '');
     if (!value) return '';
-
     try {
-        if (value.includes('://')) {
-            return new URL(value).hostname;
-        }
+        if (value.includes('://')) return new URL(value).hostname;
         return new URL(`https://${value}`).hostname;
     } catch {
         return value.split('/')[0].trim();
@@ -111,48 +122,96 @@ const isValidDomainMonitoringTarget = (target: string) => {
     if (!hostname) return false;
     if (/^\d{1,3}(\.\d{1,3}){3}$/.test(hostname)) return false;
     if (hostname.includes(' ')) return false;
-
     return /^(?=.{1,253}$)(?!-)(?:[a-zA-Z0-9-]{1,63}\.)+[a-zA-Z]{2,63}$/.test(hostname);
 };
 
 const getDefaultEmailRecipients = (user: any): string[] => {
     if (!user) return [];
-    if (user.type === USER_TYPES.MASTER_ADMIN) {
-        return [];
-    }
+    if (user.type === USER_TYPES.MASTER_ADMIN) return [];
     return user.email ? [String(user.email).trim().toLowerCase()] : [];
 };
 
-const SectionTitle: React.FC<{ step: string; title: string; info: string }> = ({ step, title, info }) => (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-        <Chip
-            size="small"
-            label={step}
-            sx={{
-                height: 22,
-                fontWeight: 800,
-                bgcolor: alpha('#0A3D62', 0.08),
-                color: '#0A3D62',
-                borderRadius: 1.5
-            }}
-        />
-        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0A3D62' }}>
-            {title}
-        </Typography>
-        <Tooltip title={info} placement="top">
-            <IconButton size="small" sx={{ p: 0.5, color: '#64748b' }}>
-                <CircleHelp size={14} />
-            </IconButton>
-        </Tooltip>
+// ─── Section Panel ────────────────────────────────────────────────────────────
+
+const SectionPanel: React.FC<{
+    step: string;
+    title: string;
+    info: string;
+    accentColor?: string;
+    children: React.ReactNode;
+    className?: string;
+}> = ({ step, title, info, accentColor = '#0A3D62', children, className }) => (
+    <Box
+        className={className}
+        sx={{
+            position: 'relative',
+            p: 3,
+            borderRadius: '14px',
+            border: '1px solid rgba(0,0,0,0.07)',
+            bgcolor: '#ffffff',
+            overflow: 'hidden',
+            '&::before': {
+                content: '""',
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                bottom: 0,
+                width: 4,
+                borderRadius: '14px 0 0 14px',
+                background: accentColor,
+            },
+        }}
+    >
+        {/* Step header */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, mb: 2.5, pl: 0.5 }}>
+            <Box
+                sx={{
+                    width: 26,
+                    height: 26,
+                    borderRadius: '7px',
+                    bgcolor: accentColor,
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.688rem',
+                    fontWeight: 800,
+                    flexShrink: 0,
+                    fontFamily: '"DM Sans", monospace',
+                    letterSpacing: '0.02em',
+                }}
+            >
+                {step}
+            </Box>
+            <Typography
+                sx={{
+                    fontWeight: 800,
+                    color: '#0f172a',
+                    fontSize: '0.9375rem',
+                    letterSpacing: '-0.01em',
+                    fontFamily: '"Outfit", "DM Sans", sans-serif',
+                }}
+            >
+                {title}
+            </Typography>
+            <Tooltip title={info} placement="top">
+                <IconButton size="small" sx={{ p: 0.4, color: '#7e8a99', '&:hover': { color: '#94a3b8' } }}>
+                    <CircleHelp size={14} />
+                </IconButton>
+            </Tooltip>
+        </Box>
+        {children}
     </Box>
 );
+
+// ─── MonitorForm ──────────────────────────────────────────────────────────────
 
 const MonitorForm: React.FC<MonitorFormProps> = ({
     open,
     onClose,
     onSubmit,
     initialData,
-    loading = false
+    loading = false,
 }) => {
     const { user } = useAuth();
     const { setSteps, setCurrentStep, setIsOpen } = useTour();
@@ -170,20 +229,21 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
     React.useEffect(() => {
         if (open && user?.type === USER_TYPES.MASTER_ADMIN) {
             import('../../users/api/userApi').then(({ userApi }) => {
-                userApi.getPaginated({ filter: { type: USER_TYPES.CUSTOMER }, limit: 100 })
-                    .then((res) => setCustomers(res.data.data.data || []))
-                    .catch((e) => console.error('Could not fetch customers', e));
+                userApi
+                    .getPaginated({ filter: { type: USER_TYPES.CUSTOMER }, limit: 100 })
+                    .then(res => setCustomers(res.data.data.data || []))
+                    .catch(e => console.error('Could not fetch customers', e));
             });
         }
     }, [open, user]);
 
     React.useEffect(() => {
         if (!open) return;
-
         if (!initialData) {
             setForm({
                 ...defaultState,
-                emailNotifications: user?.type === USER_TYPES.MASTER_ADMIN || !!user?.plan?.emailNotifications,
+                emailNotifications:
+                    user?.type === USER_TYPES.MASTER_ADMIN || !!user?.plan?.emailNotifications,
             });
             setNotificationEmails(getDefaultEmailRecipients(user));
             setTcpPorts([]);
@@ -210,7 +270,7 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
             smsNotifications: !!initialData.smsNotifications,
             notificationCountryCode: initialData.notificationCountryCode || '+91',
             notificationMobile: initialData.notificationMobile || '',
-            ownerId: initialData.ownerId || ''
+            ownerId: initialData.ownerId || '',
         };
 
         if (nextForm.type === MONITOR_TYPE.KEYWORD && nextForm.url.includes('|')) {
@@ -222,7 +282,13 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
         if (nextForm.type === MONITOR_TYPE.TCP && nextForm.url.includes(':')) {
             const [tcpHost, ...rest] = nextForm.url.split(':');
             nextForm.tcpHost = tcpHost;
-            setTcpPorts(rest.join(':').split(',').map((item: string) => item.trim()).filter(Boolean));
+            setTcpPorts(
+                rest
+                    .join(':')
+                    .split(',')
+                    .map((item: string) => item.trim())
+                    .filter(Boolean)
+            );
         } else {
             setTcpPorts([]);
         }
@@ -244,17 +310,19 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
     React.useEffect(() => {
         if (!open || !user || user.type !== USER_TYPES.MASTER_ADMIN) return;
         if (!form.ownerId) return;
-
-        const selectedCustomer = customers.find((item: any) => Number(item.id) === Number(form.ownerId));
+        const selectedCustomer = customers.find(
+            (item: any) => Number(item.id) === Number(form.ownerId)
+        );
         const selectedEmail = String(selectedCustomer?.email || '').trim().toLowerCase();
-
         if (!selectedEmail) return;
-        setNotificationEmails((prev) => (prev.includes(selectedEmail) ? prev : [selectedEmail]));
+        setNotificationEmails(prev =>
+            prev.includes(selectedEmail) ? prev : [selectedEmail]
+        );
     }, [open, form.ownerId, customers, user]);
 
     const updateField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
-        setForm((prev) => ({ ...prev, [key]: value }));
-        setErrors((prev) => ({ ...prev, [key]: '' }));
+        setForm(prev => ({ ...prev, [key]: value }));
+        setErrors(prev => ({ ...prev, [key]: '' }));
         if (key === 'url' || key === 'tcpHost' || key === 'type' || key === 'domainMonitoring') {
             setTargetPreview(null);
             setLastPreviewKey('');
@@ -264,16 +332,15 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
     const addEmail = () => {
         const value = emailDraft.trim().toLowerCase();
         if (!value) return;
-        const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-        if (!isValid) {
-            setErrors((prev) => ({ ...prev, notificationEmails: 'Enter a valid email address' }));
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            setErrors(prev => ({ ...prev, notificationEmails: 'Enter a valid email address' }));
             return;
         }
         if (!notificationEmails.includes(value)) {
-            setNotificationEmails((prev) => [...prev, value]);
+            setNotificationEmails(prev => [...prev, value]);
         }
         setEmailDraft('');
-        setErrors((prev) => ({ ...prev, notificationEmails: '' }));
+        setErrors(prev => ({ ...prev, notificationEmails: '' }));
     };
 
     const addTcpPort = () => {
@@ -281,70 +348,58 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
         if (!value) return;
         const numericValue = Number(value);
         if (!Number.isInteger(numericValue) || numericValue < 1 || numericValue > 65535) {
-            setErrors((prev) => ({ ...prev, tcpPorts: 'Port must be between 1 and 65535' }));
+            setErrors(prev => ({ ...prev, tcpPorts: 'Port must be between 1 and 65535' }));
             return;
         }
         if (!tcpPorts.includes(String(numericValue))) {
-            setTcpPorts((prev) => [...prev, String(numericValue)]);
+            setTcpPorts(prev => [...prev, String(numericValue)]);
         }
         setTcpPortDraft('');
-        setErrors((prev) => ({ ...prev, tcpPorts: '' }));
+        setErrors(prev => ({ ...prev, tcpPorts: '' }));
         setTargetPreview(null);
         setLastPreviewKey('');
     };
 
     const getPreviewPayload = () => {
         let target = form.url.trim();
-
         if (form.type === MONITOR_TYPE.TCP) {
             target = form.tcpHost.trim();
-            if (tcpPorts.length) {
-                target = `${target}:${tcpPorts.join(',')}`;
-            }
+            if (tcpPorts.length) target = `${target}:${tcpPorts.join(',')}`;
         }
-
-        return {
-            url: target,
-            type: form.type,
-            domainMonitoring: form.domainMonitoring
-        };
+        return { url: target, type: form.type, domainMonitoring: form.domainMonitoring };
     };
 
-    const getPreviewKey = (payload: { url: string; type: number; domainMonitoring?: boolean }) =>
-        `${payload.type}::${String(payload.url || '').trim()}::${payload.domainMonitoring ? 1 : 0}`;
+    const getPreviewKey = (payload: {
+        url: string;
+        type: number;
+        domainMonitoring?: boolean;
+    }) => `${payload.type}::${String(payload.url || '').trim()}::${payload.domainMonitoring ? 1 : 0}`;
 
     const validateTargetPreview = async (force = false) => {
         const payload = getPreviewPayload();
         if (!payload.url) return false;
         const nextPreviewKey = getPreviewKey(payload);
-
-        if (!force && targetPreview && lastPreviewKey === nextPreviewKey) {
-            return true;
-        }
+        if (!force && targetPreview && lastPreviewKey === nextPreviewKey) return true;
 
         setPreviewLoading(true);
         try {
             const response = await monitorApi.previewTarget(payload);
             setTargetPreview(response.data.data);
             setLastPreviewKey(nextPreviewKey);
-            setErrors((prev) => ({
-                ...prev,
-                url: '',
-                tcpHost: '',
-                domainMonitoring: ''
-            }));
+            setErrors(prev => ({ ...prev, url: '', tcpHost: '', domainMonitoring: '' }));
             return true;
         } catch (error: any) {
             setTargetPreview(null);
             setLastPreviewKey('');
-            const message = error?.response?.data?.message || error?.message || 'Target validation failed';
+            const message =
+                error?.response?.data?.message || error?.message || 'Target validation failed';
             if (form.type === MONITOR_TYPE.TCP) {
-                setErrors((prev) => ({ ...prev, tcpHost: message }));
+                setErrors(prev => ({ ...prev, tcpHost: message }));
             } else {
-                setErrors((prev) => ({ ...prev, url: message }));
+                setErrors(prev => ({ ...prev, url: message }));
             }
             if (form.domainMonitoring) {
-                setErrors((prev) => ({ ...prev, domainMonitoring: message }));
+                setErrors(prev => ({ ...prev, domainMonitoring: message }));
             }
             return false;
         } finally {
@@ -354,20 +409,14 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
 
     React.useEffect(() => {
         if (!open || !form.domainMonitoring) return;
+        const hasRunnableTarget =
+            form.type === MONITOR_TYPE.TCP
+                ? !!form.tcpHost.trim() && tcpPorts.length > 0
+                : !!form.url.trim();
+        if (hasRunnableTarget) void validateTargetPreview(false);
+    }, [open, form.domainMonitoring, form.type, form.url, form.tcpHost, tcpPorts.join(',')]); // eslint-disable-line react-hooks/exhaustive-deps
 
-        const hasRunnableTarget = form.type === MONITOR_TYPE.TCP
-            ? !!form.tcpHost.trim() && tcpPorts.length > 0
-            : !!form.url.trim();
-
-        if (hasRunnableTarget) {
-            void validateTargetPreview(false);
-        }
-    }, [open, form.domainMonitoring, form.type, form.url, form.tcpHost, tcpPorts.join(',')]);
-
-    const handleKeyAdd = (
-        event: React.KeyboardEvent<HTMLElement>,
-        handler: () => void
-    ) => {
+    const handleKeyAdd = (event: React.KeyboardEvent<HTMLElement>, handler: () => void) => {
         if (event.key === 'Enter' || event.key === ',') {
             event.preventDefault();
             handler();
@@ -376,11 +425,11 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
 
     const validate = () => {
         const nextErrors: Record<string, string> = {};
-
         if (!form.name.trim()) nextErrors.name = 'Monitor name is required';
         if (!form.type) nextErrors.type = 'Monitor type is required';
 
-        const minInterval = user?.type === USER_TYPES.MASTER_ADMIN ? 1 : (user?.plan?.minCheckInterval || 5);
+        const minInterval =
+            user?.type === USER_TYPES.MASTER_ADMIN ? 1 : user?.plan?.minCheckInterval || 5;
         const interval = Number(form.checkInterval);
         if (!Number.isInteger(interval) || interval < minInterval) {
             nextErrors.checkInterval = `Minimum ${minInterval} minute(s) required`;
@@ -398,12 +447,11 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
         }
 
         if (form.domainMonitoring) {
-            const targetForDomainValidation = form.type === MONITOR_TYPE.TCP
-                ? form.tcpHost.trim()
-                : form.url.trim();
-
+            const targetForDomainValidation =
+                form.type === MONITOR_TYPE.TCP ? form.tcpHost.trim() : form.url.trim();
             if (!isValidDomainMonitoringTarget(targetForDomainValidation)) {
-                nextErrors.domainMonitoring = 'Domain expiry monitoring needs a valid domain like example.com or https://example.com';
+                nextErrors.domainMonitoring =
+                    'Domain expiry monitoring needs a valid domain like example.com';
             }
         }
 
@@ -421,7 +469,6 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
 
     const handleSubmit = async () => {
         if (!validate()) return;
-
         const isPreviewValid = await validateTargetPreview(false);
         if (!isPreviewValid) return;
 
@@ -455,86 +502,82 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
         onSubmit(payload);
     };
 
-    const showEmailSection = user?.type === USER_TYPES.MASTER_ADMIN || !!user?.plan?.emailNotifications;
-    const showSmsSection = user?.type === USER_TYPES.MASTER_ADMIN || !!user?.plan?.smsNotifications;
+    const showEmailSection =
+        user?.type === USER_TYPES.MASTER_ADMIN || !!user?.plan?.emailNotifications;
+    const showSmsSection =
+        user?.type === USER_TYPES.MASTER_ADMIN || !!user?.plan?.smsNotifications;
     const isCustomerLogin = user?.type === USER_TYPES.CUSTOMER;
-    const supportsSslMonitoring = [MONITOR_TYPE.HTTP, MONITOR_TYPE.KEYWORD, MONITOR_TYPE.BROWSER].includes(form.type);
-    const supportsDomainMonitoring = [MONITOR_TYPE.HTTP, MONITOR_TYPE.PING, MONITOR_TYPE.TCP, MONITOR_TYPE.DNS, MONITOR_TYPE.KEYWORD, MONITOR_TYPE.BROWSER].includes(form.type);
+    const supportsSslMonitoring = [
+        MONITOR_TYPE.HTTP,
+        MONITOR_TYPE.KEYWORD,
+        MONITOR_TYPE.BROWSER,
+    ].includes(form.type);
+    const supportsDomainMonitoring = [
+        MONITOR_TYPE.HTTP,
+        MONITOR_TYPE.PING,
+        MONITOR_TYPE.TCP,
+        MONITOR_TYPE.DNS,
+        MONITOR_TYPE.KEYWORD,
+        MONITOR_TYPE.BROWSER,
+    ].includes(form.type);
     const showExtraOptionsStep = supportsDomainMonitoring || supportsSslMonitoring;
-    const notificationStepLabel = showExtraOptionsStep ? 'Step 4' : 'Step 3';
+    const notificationStepNum = showExtraOptionsStep ? '4' : '3';
     const usesStandardTargetField = ![MONITOR_TYPE.TCP].includes(form.type);
-    const targetLabel = form.type === MONITOR_TYPE.PING
-        ? 'Host or IP'
-        : form.type === MONITOR_TYPE.DNS
+
+    const targetLabel =
+        form.type === MONITOR_TYPE.PING
+            ? 'Host or IP'
+            : form.type === MONITOR_TYPE.DNS
             ? 'Domain Name'
             : form.type === MONITOR_TYPE.CRON
-                ? 'Cron Job Name or Source'
-                : form.type === MONITOR_TYPE.HEARTBEAT
-                    ? 'Heartbeat Name or Source'
-                    : form.type === MONITOR_TYPE.BROWSER
-                        ? 'Browser Test URL'
-                        : 'Target URL / Domain';
-    const targetPlaceholder = form.type === MONITOR_TYPE.HTTP
-        ? 'https://example.com'
-        : form.type === MONITOR_TYPE.PING
+            ? 'Cron Job Name or Source'
+            : form.type === MONITOR_TYPE.HEARTBEAT
+            ? 'Heartbeat Name or Source'
+            : form.type === MONITOR_TYPE.BROWSER
+            ? 'Browser Test URL'
+            : 'Target URL / Domain';
+
+    const targetPlaceholder =
+        form.type === MONITOR_TYPE.HTTP
+            ? 'https://example.com'
+            : form.type === MONITOR_TYPE.PING
             ? 'example.com or 8.8.8.8'
             : form.type === MONITOR_TYPE.DNS
-                ? 'example.com'
-                : form.type === MONITOR_TYPE.CRON
-                    ? 'nightly-data-sync'
-                    : form.type === MONITOR_TYPE.HEARTBEAT
-                        ? 'primary-worker-heartbeat'
-                        : form.type === MONITOR_TYPE.BROWSER
-                            ? 'https://example.com/login'
-                            : 'example.com';
-    const targetHelper = form.type === MONITOR_TYPE.CRON
-        ? 'Use a recognizable job/source name. The monitor will be marked down if its expected ping is missed.'
-        : form.type === MONITOR_TYPE.HEARTBEAT
-            ? 'Use a recognizable service/source name. The monitor stays healthy when your service sends a ping in time.'
+            ? 'example.com'
+            : form.type === MONITOR_TYPE.CRON
+            ? 'nightly-data-sync'
+            : form.type === MONITOR_TYPE.HEARTBEAT
+            ? 'primary-worker-heartbeat'
             : form.type === MONITOR_TYPE.BROWSER
-                ? 'Runs a browser-style reachability check against this page URL.'
-                : errors.url;
+            ? 'https://example.com/login'
+            : 'example.com';
+
+    const targetHelper =
+        form.type === MONITOR_TYPE.CRON
+            ? 'Missing pings will mark the monitor as down.'
+            : form.type === MONITOR_TYPE.HEARTBEAT
+            ? 'Stay healthy by sending a ping on time.'
+            : form.type === MONITOR_TYPE.BROWSER
+            ? 'Runs a browser-style reachability check.'
+            : errors.url;
 
     const tourSteps = React.useMemo<StepType[]>(() => {
         const steps: StepType[] = [
-            {
-                selector: '.tour-monitor-step-basic',
-                content: 'Step 1: Set monitor name, type, and check interval.',
-            },
-            {
-                selector: '.tour-monitor-step-target',
-                content: 'Step 2: Fill target input based on selected monitor type.',
-            },
+            { selector: '.tour-monitor-step-basic', content: 'Step 1: Set monitor name, type, and check interval.' },
+            { selector: '.tour-monitor-step-target', content: 'Step 2: Fill target based on the monitor type.' },
         ];
-
         if (showExtraOptionsStep) {
-            steps.push({
-                selector: '.tour-monitor-step-options',
-                content: 'Step 3: Optional SSL/domain monitoring options.',
-            });
+            steps.push({ selector: '.tour-monitor-step-options', content: 'Step 3: Optional SSL/domain monitoring.' });
         }
-
-        steps.push({
-            selector: '.tour-monitor-step-alerts',
-            content: `${notificationStepLabel}: Configure email and SMS alerts.`,
-        });
-
+        steps.push({ selector: '.tour-monitor-step-alerts', content: `${notificationStepNum}: Configure email and SMS alerts.` });
         if (form.type === MONITOR_TYPE.TCP) {
-            steps.push({
-                selector: '.tour-monitor-tcp-ports',
-                content: 'Add multiple TCP ports here. This still counts as one monitor.',
-            });
+            steps.push({ selector: '.tour-monitor-tcp-ports', content: 'Add multiple TCP ports here.' });
         }
-
         if (form.domainMonitoring) {
-            steps.push({
-                selector: '.tour-monitor-domain-live',
-                content: 'After validation, live domain details show here.',
-            });
+            steps.push({ selector: '.tour-monitor-domain-live', content: 'Live domain details show here after validation.' });
         }
-
         return steps;
-    }, [form.type, form.domainMonitoring, notificationStepLabel, showExtraOptionsStep]);
+    }, [form.type, form.domainMonitoring, notificationStepNum, showExtraOptionsStep]);
 
     const startGuidedTour = () => {
         if (!isCustomerLogin) return;
@@ -544,552 +587,823 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
     };
 
     React.useEffect(() => {
-        if (!supportsSslMonitoring && form.sslMonitoring) {
-            updateField('sslMonitoring', false);
-        }
-        if (!supportsDomainMonitoring && form.domainMonitoring) {
-            updateField('domainMonitoring', false);
-        }
+        if (!supportsSslMonitoring && form.sslMonitoring) updateField('sslMonitoring', false);
+        if (!supportsDomainMonitoring && form.domainMonitoring) updateField('domainMonitoring', false);
     }, [form.type, supportsSslMonitoring, supportsDomainMonitoring]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const selectedTypeOption = MONITOR_TYPE_OPTIONS.find(o => o.value === form.type);
 
     return (
         <FormModal
             open={open}
             onClose={onClose}
-            title={initialData ? 'Update Monitor Settings' : 'Add New Monitor'}
+            title={initialData ? 'Update Monitor' : 'Add New Monitor'}
             isEdit={!!initialData}
             loading={loading}
             onSubmit={handleSubmit}
             maxWidth="xl"
         >
-            <Grid container spacing={3}>
-                <Grid size={{ xs: 12 }} className="tour-monitor-step-basic">
-                    <SectionTitle
-                        step="Step 1"
-                        title="Basic Setup"
-                        info="Choose monitor owner (if admin), name, type, and check interval first."
-                    />
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+
+                {/* ── Customer Assignment (admin only) ── */}
+                {user?.type === USER_TYPES.MASTER_ADMIN && (
+                    <FormControl fullWidth size="small">
+                        <InputLabel>Assign to Customer</InputLabel>
+                        <Select
+                            value={form.ownerId}
+                            label="Assign to Customer"
+                            onChange={e => updateField('ownerId', e.target.value as number | '')}
+                        >
+                            <MenuItem value="">Select Customer</MenuItem>
+                            {customers.map(customer => (
+                                <MenuItem key={customer.id} value={customer.id}>
+                                    {customer.name} ({customer.email})
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                )}
+
+                {/* ── Step 1: Basic Setup ── */}
+                <SectionPanel
+                    step="1"
+                    title="Basic Setup"
+                    info="Choose monitor name, type, and check interval."
+                    accentColor="#0A3D62"
+                    className="tour-monitor-step-basic"
+                >
                     {isCustomerLogin && (
-                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 0.5 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2, mt: -1 }}>
                             <Chip
                                 label="Guide Me"
                                 size="small"
                                 clickable
                                 onClick={startGuidedTour}
-                                sx={{ fontWeight: 700, bgcolor: alpha('#0A3D62', 0.08), color: '#0A3D62' }}
+                                sx={{
+                                    fontWeight: 700,
+                                    bgcolor: alpha('#0A3D62', 0.08),
+                                    color: '#0A3D62',
+                                    border: '1px solid',
+                                    borderColor: alpha('#0A3D62', 0.2),
+                                }}
                             />
                         </Box>
                     )}
-                </Grid>
 
-                {user?.type === USER_TYPES.MASTER_ADMIN && (
-                    <Grid size={{ xs: 12 }}>
-                        <FormControl fullWidth size="small">
-                            <InputLabel>Assign to Customer</InputLabel>
-                            <Select
-                                value={form.ownerId}
-                                label="Assign to Customer"
-                                onChange={(e) => updateField('ownerId', e.target.value as number | '')}
-                            >
-                                <MenuItem value="">Select Customer</MenuItem>
-                                {customers.map((customer) => (
-                                    <MenuItem key={customer.id} value={customer.id}>
-                                        {customer.name} ({customer.email})
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                )}
+                    <Grid container spacing={2.5}>
+                        {/* Monitor Name */}
+                        <Grid size={{ xs: 12, md: 6 }}>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                label="Monitor Name"
+                                placeholder="e.g. Production Website"
+                                value={form.name}
+                                onChange={e => updateField('name', e.target.value)}
+                                error={!!errors.name}
+                                helperText={errors.name}
+                            />
+                        </Grid>
 
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <TextField
-                        fullWidth
-                        size="small"
-                        label="Monitor Name"
-                        placeholder="e.g. Production Website"
-                        value={form.name}
-                        onChange={(e) => updateField('name', e.target.value)}
-                        error={!!errors.name}
-                        helperText={errors.name}
-                    />
-                </Grid>
-
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <FormControl fullWidth size="small" error={!!errors.type}>
-                        <InputLabel>Check Type</InputLabel>
-                        <Select
-                            value={form.type}
-                            label="Check Type"
-                            onChange={(e) => updateField('type', Number(e.target.value))}
-                        >
-                            {MONITOR_TYPE_OPTIONS.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
-                            ))}
-                        </Select>
-                        {errors.type && <FormHelperText>{errors.type}</FormHelperText>}
-                    </FormControl>
-                </Grid>
-
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <TextField
-                        fullWidth
-                        size="small"
-                        type="number"
-                        label="Check Interval (Minutes)"
-                        value={form.checkInterval}
-                        onChange={(e) => updateField('checkInterval', e.target.value)}
-                        error={!!errors.checkInterval}
-                        helperText={errors.checkInterval || `Minimum ${user?.type === USER_TYPES.MASTER_ADMIN ? 1 : (user?.plan?.minCheckInterval || 5)} minute(s) for your access level`}
-                    />
-                </Grid>
-
-                <Grid size={{ xs: 12 }} className="tour-monitor-step-target">
-                    <SectionTitle
-                        step="Step 2"
-                        title="Target Configuration"
-                        info="Input fields change by monitor type so users enter only what is needed."
-                    />
-                </Grid>
-
-                {usesStandardTargetField && (
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            label={targetLabel}
-                            placeholder={targetPlaceholder}
-                            value={form.url}
-                            onChange={(e) => updateField('url', e.target.value)}
-                            onBlur={() => {
-                                if (form.url.trim()) {
-                                    void validateTargetPreview(false);
+                        {/* Check Interval */}
+                        <Grid size={{ xs: 12, md: 6 }}>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                type="number"
+                                label="Check Interval (Minutes)"
+                                value={form.checkInterval}
+                                onChange={e => updateField('checkInterval', e.target.value)}
+                                error={!!errors.checkInterval}
+                                helperText={
+                                    errors.checkInterval ||
+                                    `Min ${user?.type === USER_TYPES.MASTER_ADMIN ? 1 : user?.plan?.minCheckInterval || 5} min for your plan`
                                 }
-                            }}
-                            error={!!errors.url}
-                            helperText={errors.url || (targetPreview?.hostname && form.type !== MONITOR_TYPE.TCP ? `Validated host: ${targetPreview.hostname}` : targetHelper)}
-                        />
-                    </Grid>
-                )}
-
-                {form.type === MONITOR_TYPE.KEYWORD && (
-                    <Grid size={{ xs: 12 }}>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            label="Keyword to Watch"
-                            placeholder="Press enter after typing the keyword you expect on the page"
-                            value={form.keyword}
-                            onChange={(e) => updateField('keyword', e.target.value)}
-                            error={!!errors.keyword}
-                            helperText={errors.keyword || 'The monitor will fail when this keyword is missing from the response'}
-                        />
-                    </Grid>
-                )}
-
-                {(form.type === MONITOR_TYPE.CRON || form.type === MONITOR_TYPE.HEARTBEAT) && (
-                    <Grid size={{ xs: 12 }}>
-                        <Box
-                            sx={{
-                                p: 2,
-                                borderRadius: 3,
-                                border: '1px dashed rgba(10,61,98,0.2)',
-                                bgcolor: alpha('#0A3D62', 0.03)
-                            }}
-                        >
-                            <Typography variant="body2" sx={{ fontWeight: 700, color: '#0A3D62', mb: 0.5 }}>
-                                {form.type === MONITOR_TYPE.CRON ? 'Cron monitor behavior' : 'Heartbeat monitor behavior'}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                                {form.type === MONITOR_TYPE.CRON
-                                    ? 'After creation, your cron job should call the generated ping URL on schedule. Missing pings will create incidents.'
-                                    : 'After creation, your app or worker should call the generated ping URL regularly. Missing pings will mark the monitor as down.'}
-                            </Typography>
-                        </Box>
-                    </Grid>
-                )}
-
-                {form.type === MONITOR_TYPE.BROWSER && (
-                    <Grid size={{ xs: 12 }}>
-                        <Box
-                            sx={{
-                                p: 2,
-                                borderRadius: 3,
-                                border: '1px dashed rgba(10,61,98,0.2)',
-                                bgcolor: alpha('#0A3D62', 0.03)
-                            }}
-                        >
-                            <Typography variant="body2" sx={{ fontWeight: 700, color: '#0A3D62', mb: 0.5 }}>
-                                Headless browser monitor
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                                Use this when you want browser-style page validation instead of a basic HTTP check.
-                            </Typography>
-                        </Box>
-                    </Grid>
-                )}
-
-                {form.type === MONITOR_TYPE.TCP && (
-                    <>
-                        <Grid size={{ xs: 12, md: 6 }}>
-                            <TextField
-                                fullWidth
-                                size="small"
-                                label="TCP Host"
-                                placeholder="example.com or 192.168.1.10"
-                                value={form.tcpHost}
-                                onChange={(e) => updateField('tcpHost', e.target.value)}
-                                onBlur={() => {
-                                    if (form.tcpHost.trim() && tcpPorts.length) {
-                                        void validateTargetPreview(false);
-                                    }
-                                }}
-                                error={!!errors.tcpHost}
-                                helperText={errors.tcpHost || 'One host, many ports. It still counts as one monitor.'}
                             />
                         </Grid>
 
-                        <Grid size={{ xs: 12, md: 6 }}>
-                            <TextField
-                                fullWidth
-                                size="small"
-                                label="Add TCP Port"
-                                placeholder="Type port and press Enter"
-                                value={tcpPortDraft}
-                                onChange={(e) => setTcpPortDraft(e.target.value)}
-                                onKeyDown={(e) => handleKeyAdd(e, addTcpPort)}
-                                error={!!errors.tcpPorts}
-                                helperText={errors.tcpPorts || 'Example: 80, 443, 8080. Press Enter after each port.'}
-                                InputProps={{
-                                    endAdornment: (
-                                        <Box
-                                            component="button"
-                                            type="button"
-                                            onClick={addTcpPort}
-                                            sx={{
-                                                border: 0,
-                                                bgcolor: 'transparent',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                color: '#0A3D62',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            <Plus size={18} />
-                                        </Box>
-                                    )
+                        {/* Monitor Type Cards */}
+                        <Grid size={{ xs: 12 }}>
+                            <Typography
+                                sx={{
+                                    fontSize: '0.75rem',
+                                    fontWeight: 700,
+                                    color: '#64748b',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.07em',
+                                    mb: 1.25,
                                 }}
-                            />
-                        </Grid>
-
-                        <Grid size={{ xs: 12 }} className="tour-monitor-tcp-ports">
+                            >
+                                Monitor Type
+                            </Typography>
                             <Box
                                 sx={{
-                                    p: 2,
-                                    borderRadius: 3,
-                                    border: '1px dashed rgba(10,61,98,0.25)',
-                                    bgcolor: alpha('#0A3D62', 0.02)
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(5, 1fr)',
+                                    gap: 1.25,
+                                    '@media (max-width: 600px)': {
+                                        gridTemplateColumns: 'repeat(3, 1fr)',
+                                    },
                                 }}
                             >
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                                    <Server size={16} color="#0A3D62" />
-                                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#0A3D62' }}>
-                                        Active TCP Ports
-                                    </Typography>
-                                </Box>
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                    {tcpPorts.length === 0 ? (
-                                        <Typography variant="caption" color="text.secondary">
-                                            No ports added yet. Add ports one by one with Enter.
-                                        </Typography>
-                                    ) : (
-                                        tcpPorts.map((port) => (
-                                            <Chip
-                                                key={port}
-                                                label={`Port ${port}`}
-                                                onDelete={() => {
-                                                    setTcpPorts((prev) => prev.filter((item) => item !== port));
-                                                    setTargetPreview(null);
-                                                    setLastPreviewKey('');
-                                                }}
-                                                deleteIcon={<Trash2 size={14} />}
-                                                sx={{ fontWeight: 700, bgcolor: alpha('#0A3D62', 0.08), color: '#0A3D62' }}
-                                            />
-                                        ))
-                                    )}
-                                </Box>
-                            </Box>
-                        </Grid>
-                    </>
-                )}
-
-                {showExtraOptionsStep && (
-                    <Grid size={{ xs: 12 }} className="tour-monitor-step-options">
-                        <SectionTitle
-                            step="Step 3"
-                            title="Extra Monitoring Options"
-                            info="Enable only relevant options for this monitor type. Unsupported options are hidden automatically."
-                        />
-                    </Grid>
-                )}
-
-                {showExtraOptionsStep && supportsDomainMonitoring && (
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={form.domainMonitoring}
-                                    onChange={(e) => updateField('domainMonitoring', e.target.checked)}
-                                />
-                            }
-                            label="Enable Domain Expiry Monitoring"
-                        />
-                        <FormHelperText error={!!errors.domainMonitoring} sx={{ ml: 0 }}>
-                            {errors.domainMonitoring || 'Only valid domain targets are allowed for domain expiry scans.'}
-                        </FormHelperText>
-                    </Grid>
-                )}
-
-                {showExtraOptionsStep && (
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={form.blacklistMonitoring}
-                                    onChange={(e) => updateField('blacklistMonitoring', e.target.checked)}
-                                />
-                            }
-                            label="Enable Blacklist Monitoring"
-                        />
-                        <FormHelperText sx={{ ml: 0 }}>
-                            Check if domain/IP is listed on major RBLs (Spamhaus, Barracuda, etc).
-                        </FormHelperText>
-                    </Grid>
-                )}
-
-                {previewLoading && (
-                    <Grid size={{ xs: 12 }}>
-                        <Typography variant="caption" color="text.secondary">
-                            Validating target and loading live domain details...
-                        </Typography>
-                    </Grid>
-                )}
-
-                {form.domainMonitoring && targetPreview?.domain && (
-                    <Grid size={{ xs: 12 }} className="tour-monitor-domain-live">
-                        <Box
-                            sx={{
-                                p: 2.5,
-                                borderRadius: 3,
-                                border: '1px solid rgba(245,158,11,0.2)',
-                                bgcolor: alpha('#f59e0b', 0.05)
-                            }}
-                        >
-                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#0A3D62', mb: 1.5 }}>
-                                Live Domain Details
-                            </Typography>
-                            <Grid container spacing={2}>
-                                <Grid size={{ xs: 12, md: 4 }}>
-                                    <Typography variant="caption" color="text.secondary">Domain</Typography>
-                                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#111827' }}>
-                                        {targetPreview.domain.domain}
-                                    </Typography>
-                                </Grid>
-                                <Grid size={{ xs: 12, md: 4 }}>
-                                    <Typography variant="caption" color="text.secondary">Source</Typography>
-                                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#111827', wordBreak: 'break-word' }}>
-                                        {targetPreview.domain.source || 'Not available'}
-                                    </Typography>
-                                </Grid>
-                                <Grid size={{ xs: 12, md: 4 }}>
-                                    <Typography variant="caption" color="text.secondary">Registrar</Typography>
-                                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#111827' }}>
-                                        {targetPreview.domain.registrar || 'Not available'}
-                                    </Typography>
-                                </Grid>
-                                <Grid size={{ xs: 12, md: 4 }}>
-                                    <Typography variant="caption" color="text.secondary">Expiry Date</Typography>
-                                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#111827' }}>
-                                        {targetPreview.domain.expirationDate
-                                            ? new Date(targetPreview.domain.expirationDate).toLocaleDateString()
-                                            : 'Not available'}
-                                    </Typography>
-                                </Grid>
-                                <Grid size={{ xs: 12, md: 4 }}>
-                                    <Typography variant="caption" color="text.secondary">Days Remaining</Typography>
-                                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#111827' }}>
-                                        {targetPreview.domain.expiresInDays != null
-                                            ? `${targetPreview.domain.expiresInDays} day(s)`
-                                            : 'Not available'}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    </Grid>
-                )}
-
-                {showExtraOptionsStep && supportsSslMonitoring && (
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={form.sslMonitoring}
-                                    onChange={(e) => updateField('sslMonitoring', e.target.checked)}
-                                />
-                            }
-                            label="Enable SSL Certificate Monitoring"
-                        />
-                    </Grid>
-                )}
-
-                {form.sslMonitoring && (
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            type="number"
-                            label="Notify Before Expiry (Days)"
-                            value={form.sslNotifyDays}
-                            onChange={(e) => updateField('sslNotifyDays', e.target.value)}
-                        />
-                    </Grid>
-                )}
-
-                <Grid size={{ xs: 12 }} className="tour-monitor-step-alerts">
-                    <Box
-                        sx={{
-                            p: 2.5,
-                            borderRadius: 4,
-                            bgcolor: '#F8FAFC',
-                            border: '1px solid rgba(0,0,0,0.06)'
-                        }}
-                    >
-                        <SectionTitle
-                            step={notificationStepLabel}
-                            title="Notification Channels"
-                            info="Configure recipients and phone number for monitor alerts."
-                        />
-                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
-                            Currently active channels for monitor alerts: Email and SMS.
-                        </Typography>
-
-                        <Grid container spacing={2.5}>
-                            {showEmailSection && (
-                                <Grid size={{ xs: 12, md: 6 }}>
-                                    <FormControlLabel
-                                        control={
-                                            <Switch
-                                                checked={form.emailNotifications}
-                                                onChange={(e) => updateField('emailNotifications', e.target.checked)}
-                                            />
-                                        }
-                                        label="Email Alerts"
-                                    />
-                                </Grid>
-                            )}
-
-                            {showSmsSection && (
-                                <Grid size={{ xs: 12, md: 6 }}>
-                                    <FormControlLabel
-                                        control={
-                                            <Switch
-                                                checked={form.smsNotifications}
-                                                onChange={(e) => updateField('smsNotifications', e.target.checked)}
-                                            />
-                                        }
-                                        label="SMS Alerts"
-                                    />
-                                </Grid>
-                            )}
-
-                            {form.emailNotifications && (
-                                <>
-                                    <Grid size={{ xs: 12 }}>
-                                        <TextField
-                                            fullWidth
-                                            size="small"
-                                            label="Add Notification Email"
-                                            placeholder="Type email and press Enter"
-                                            value={emailDraft}
-                                            onChange={(e) => setEmailDraft(e.target.value)}
-                                            onKeyDown={(e) => handleKeyAdd(e, addEmail)}
-                                            error={!!errors.notificationEmails}
-                                            helperText={errors.notificationEmails || 'Add recipients one by one. No comma-separated text needed.'}
-                                            InputProps={{
-                                                startAdornment: <Mail size={16} style={{ marginRight: 8, color: '#64748b' }} />,
-                                                endAdornment: (
-                                                    <Box
-                                                        component="button"
-                                                        type="button"
-                                                        onClick={addEmail}
-                                                        sx={{
-                                                            border: 0,
-                                                            bgcolor: 'transparent',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            color: '#0A3D62',
-                                                            cursor: 'pointer'
-                                                        }}
-                                                    >
-                                                        <Plus size={18} />
-                                                    </Box>
-                                                )
+                                {MONITOR_TYPE_OPTIONS.map(option => {
+                                    const isSelected = form.type === option.value;
+                                    return (
+                                        <Box
+                                            key={option.value}
+                                            onClick={() => updateField('type', option.value)}
+                                            sx={{
+                                                p: 1.75,
+                                                borderRadius: '12px',
+                                                border: `1.5px solid ${isSelected ? option.color : 'rgba(0,0,0,0.09)'}`,
+                                                bgcolor: isSelected
+                                                    ? alpha(option.color, 0.07)
+                                                    : '#FAFBFC',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.15s ease',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                gap: 0.75,
+                                                position: 'relative',
+                                                '&:hover': {
+                                                    borderColor: option.color,
+                                                    bgcolor: alpha(option.color, 0.05),
+                                                    transform: 'translateY(-1px)',
+                                                    boxShadow: `0 4px 12px ${alpha(option.color, 0.12)}`,
+                                                },
                                             }}
-                                        />
-                                    </Grid>
+                                        >
+                                            {isSelected && (
+                                                <Box
+                                                    sx={{
+                                                        position: 'absolute',
+                                                        top: 6,
+                                                        right: 6,
+                                                        color: option.color,
+                                                    }}
+                                                >
+                                                    <CheckCircle2 size={13} />
+                                                </Box>
+                                            )}
+                                            <Box
+                                                sx={{
+                                                    color: isSelected ? option.color : '#94a3b8',
+                                                    transition: 'color 0.15s ease',
+                                                }}
+                                            >
+                                                {option.icon}
+                                            </Box>
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: 700,
+                                                    fontSize: '0.78rem',
+                                                    color: isSelected ? option.color : '#374151',
+                                                    textAlign: 'center',
+                                                    lineHeight: 1.2,
+                                                    transition: 'color 0.15s ease',
+                                                }}
+                                            >
+                                                {option.label}
+                                            </Typography>
+                                            <Typography
+                                                sx={{
+                                                    fontSize: '0.65rem',
+                                                    color: '#94a3b8',
+                                                    textAlign: 'center',
+                                                    lineHeight: 1.2,
+                                                }}
+                                            >
+                                                {option.desc}
+                                            </Typography>
+                                        </Box>
+                                    );
+                                })}
+                            </Box>
+                            {errors.type && (
+                                <FormHelperText error sx={{ mt: 0.5 }}>
+                                    {errors.type}
+                                </FormHelperText>
+                            )}
+                        </Grid>
+                    </Grid>
+                </SectionPanel>
 
-                                    <Grid size={{ xs: 12 }}>
-                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                            {notificationEmails.length === 0 ? (
+                {/* ── Step 2: Target Configuration ── */}
+                <SectionPanel
+                    step="2"
+                    title="Target Configuration"
+                    info="Input fields adapt based on the monitor type selected above."
+                    accentColor={selectedTypeOption?.color || '#3498DB'}
+                    className="tour-monitor-step-target"
+                >
+                    <Grid container spacing={2.5}>
+                        {/* Standard URL field */}
+                        {usesStandardTargetField && (
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    label={targetLabel}
+                                    placeholder={targetPlaceholder}
+                                    value={form.url}
+                                    onChange={e => updateField('url', e.target.value)}
+                                    onBlur={() => {
+                                        if (form.url.trim()) void validateTargetPreview(false);
+                                    }}
+                                    error={!!errors.url}
+                                    helperText={
+                                        errors.url ||
+                                        (targetPreview?.hostname && form.type !== MONITOR_TYPE.TCP
+                                            ? `✓ Validated: ${targetPreview.hostname}`
+                                            : targetHelper)
+                                    }
+                                    InputProps={{
+                                        endAdornment: previewLoading ? (
+                                            <CircularProgress size={14} sx={{ color: '#94a3b8' }} />
+                                        ) : targetPreview?.hostname && !errors.url ? (
+                                            <CheckCircle2 size={16} color="#10b981" />
+                                        ) : null,
+                                    }}
+                                />
+                            </Grid>
+                        )}
+
+                        {/* Keyword field */}
+                        {form.type === MONITOR_TYPE.KEYWORD && (
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    label="Keyword to Watch"
+                                    placeholder="Enter expected keyword on the page"
+                                    value={form.keyword}
+                                    onChange={e => updateField('keyword', e.target.value)}
+                                    error={!!errors.keyword}
+                                    helperText={
+                                        errors.keyword ||
+                                        'Monitor fails when this keyword is absent from the response'
+                                    }
+                                />
+                            </Grid>
+                        )}
+
+                        {/* Cron / Heartbeat info box */}
+                        {(form.type === MONITOR_TYPE.CRON || form.type === MONITOR_TYPE.HEARTBEAT) && (
+                            <Grid size={{ xs: 12 }}>
+                                <Box
+                                    sx={{
+                                        p: 2.25,
+                                        borderRadius: '10px',
+                                        border: '1px dashed rgba(10,61,98,0.2)',
+                                        bgcolor: alpha('#0A3D62', 0.03),
+                                        display: 'flex',
+                                        gap: 1.5,
+                                        alignItems: 'flex-start',
+                                    }}
+                                >
+                                    <AlertCircle size={16} color="#0A3D62" style={{ marginTop: 2, flexShrink: 0 }} />
+                                    <Box>
+                                        <Typography variant="body2" sx={{ fontWeight: 700, color: '#0A3D62', mb: 0.4 }}>
+                                            {form.type === MONITOR_TYPE.CRON
+                                                ? 'Cron monitor behavior'
+                                                : 'Heartbeat monitor behavior'}
+                                        </Typography>
+                                        <Typography variant="caption" color="text.secondary">
+                                            {form.type === MONITOR_TYPE.CRON
+                                                ? 'Your cron job must call the generated ping URL on schedule. Missing pings create incidents.'
+                                                : 'Your app or worker must call the generated ping URL regularly. Missing pings mark the monitor as down.'}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </Grid>
+                        )}
+
+                        {/* TCP fields */}
+                        {form.type === MONITOR_TYPE.TCP && (
+                            <>
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label="TCP Host"
+                                        placeholder="example.com or 192.168.1.10"
+                                        value={form.tcpHost}
+                                        onChange={e => updateField('tcpHost', e.target.value)}
+                                        onBlur={() => {
+                                            if (form.tcpHost.trim() && tcpPorts.length)
+                                                void validateTargetPreview(false);
+                                        }}
+                                        error={!!errors.tcpHost}
+                                        helperText={
+                                            errors.tcpHost || 'One host, many ports — counts as one monitor.'
+                                        }
+                                    />
+                                </Grid>
+
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label="Add TCP Port"
+                                        placeholder="Type port and press Enter (e.g. 443)"
+                                        value={tcpPortDraft}
+                                        onChange={e => setTcpPortDraft(e.target.value)}
+                                        onKeyDown={e => handleKeyAdd(e, addTcpPort)}
+                                        error={!!errors.tcpPorts}
+                                        helperText={
+                                            errors.tcpPorts || 'Ports: 80, 443, 8080 — press Enter after each.'
+                                        }
+                                        InputProps={{
+                                            endAdornment: (
+                                                <IconButton size="small" onClick={addTcpPort} sx={{ color: '#0A3D62' }}>
+                                                    <Plus size={16} />
+                                                </IconButton>
+                                            ),
+                                        }}
+                                    />
+                                </Grid>
+
+                                {/* TCP Ports list */}
+                                <Grid size={{ xs: 12 }} className="tour-monitor-tcp-ports">
+                                    <Box
+                                        sx={{
+                                            p: 2,
+                                            borderRadius: '10px',
+                                            border: '1px dashed rgba(139,92,246,0.25)',
+                                            bgcolor: alpha('#8b5cf6', 0.03),
+                                        }}
+                                    >
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.25 }}>
+                                            <Server size={14} color="#8b5cf6" />
+                                            <Typography
+                                                variant="caption"
+                                                sx={{
+                                                    fontWeight: 700,
+                                                    color: '#8b5cf6',
+                                                    textTransform: 'uppercase',
+                                                    letterSpacing: '0.07em',
+                                                    fontSize: '0.65rem',
+                                                }}
+                                            >
+                                                Active TCP Ports
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+                                            {tcpPorts.length === 0 ? (
                                                 <Typography variant="caption" color="text.secondary">
-                                                    No notification emails added yet.
+                                                    No ports added yet. Add ports one by one above.
                                                 </Typography>
                                             ) : (
-                                                notificationEmails.map((email) => (
+                                                tcpPorts.map(port => (
                                                     <Chip
-                                                        key={email}
-                                                        label={email}
-                                                        onDelete={() => setNotificationEmails((prev) => prev.filter((item) => item !== email))}
-                                                        deleteIcon={<Trash2 size={14} />}
-                                                        sx={{ fontWeight: 700 }}
+                                                        key={port}
+                                                        label={`Port ${port}`}
+                                                        size="small"
+                                                        onDelete={() => {
+                                                            setTcpPorts(prev => prev.filter(p => p !== port));
+                                                            setTargetPreview(null);
+                                                            setLastPreviewKey('');
+                                                        }}
+                                                        deleteIcon={<Trash2 size={12} />}
+                                                        sx={{
+                                                            fontWeight: 700,
+                                                            bgcolor: alpha('#8b5cf6', 0.1),
+                                                            color: '#8b5cf6',
+                                                            border: '1px solid',
+                                                            borderColor: alpha('#8b5cf6', 0.25),
+                                                        }}
                                                     />
                                                 ))
                                             )}
                                         </Box>
-                                    </Grid>
-                                </>
+                                    </Box>
+                                </Grid>
+                            </>
+                        )}
+                    </Grid>
+                </SectionPanel>
+
+                {/* ── Step 3: Extra Monitoring Options ── */}
+                {showExtraOptionsStep && (
+                    <SectionPanel
+                        step="3"
+                        title="Extra Monitoring Options"
+                        info="Enable only options relevant to this monitor type. Unsupported options are hidden automatically."
+                        accentColor="#f59e0b"
+                        className="tour-monitor-step-options"
+                    >
+                        <Grid container spacing={2}>
+                            {/* Domain Monitoring toggle */}
+                            {supportsDomainMonitoring && (
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                    <Box
+                                        sx={{
+                                            p: 2,
+                                            borderRadius: '10px',
+                                            border: `1px solid ${form.domainMonitoring ? alpha('#f59e0b', 0.35) : 'rgba(0,0,0,0.07)'}`,
+                                            bgcolor: form.domainMonitoring ? alpha('#f59e0b', 0.04) : '#FAFBFC',
+                                            transition: 'all 0.15s ease',
+                                        }}
+                                    >
+                                        <FormControlLabel
+                                            control={
+                                                <Switch
+                                                    checked={form.domainMonitoring}
+                                                    onChange={e =>
+                                                        updateField('domainMonitoring', e.target.checked)
+                                                    }
+                                                    size="small"
+                                                />
+                                            }
+                                            label={
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                                                    <CalendarClock size={15} color="#f59e0b" />
+                                                    <Typography sx={{ fontWeight: 700, fontSize: '0.875rem', color: '#0f172a' }}>
+                                                        Domain Expiry Monitoring
+                                                    </Typography>
+                                                </Box>
+                                            }
+                                        />
+                                        <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mt: 0.5, pl: 4 }}>
+                                            Track domain registration expiry dates
+                                        </Typography>
+                                        {errors.domainMonitoring && (
+                                            <FormHelperText error sx={{ pl: 4, mt: 0.25 }}>
+                                                {errors.domainMonitoring}
+                                            </FormHelperText>
+                                        )}
+                                    </Box>
+                                </Grid>
                             )}
 
-                            {form.smsNotifications && (
-                                <>
-                                    <Grid size={{ xs: 12, md: 4 }}>
-                                        <TextField
-                                            fullWidth
-                                            size="small"
-                                            label="Country Code"
-                                            placeholder="+91"
-                                            value={form.notificationCountryCode}
-                                            onChange={(e) => updateField('notificationCountryCode', e.target.value)}
+                            {/* Blacklist Monitoring toggle */}
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <Box
+                                    sx={{
+                                        p: 2,
+                                        borderRadius: '10px',
+                                        border: `1px solid ${form.blacklistMonitoring ? alpha('#ef4444', 0.3) : 'rgba(0,0,0,0.07)'}`,
+                                        bgcolor: form.blacklistMonitoring ? alpha('#ef4444', 0.03) : '#FAFBFC',
+                                        transition: 'all 0.15s ease',
+                                    }}
+                                >
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                checked={form.blacklistMonitoring}
+                                                onChange={e =>
+                                                    updateField('blacklistMonitoring', e.target.checked)
+                                                }
+                                                size="small"
+                                            />
+                                        }
+                                        label={
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                                                <AlertCircle size={15} color="#ef4444" />
+                                                <Typography sx={{ fontWeight: 700, fontSize: '0.875rem', color: '#0f172a' }}>
+                                                    Blacklist Monitoring
+                                                </Typography>
+                                            </Box>
+                                        }
+                                    />
+                                    <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mt: 0.5, pl: 4 }}>
+                                        Check against Spamhaus, Barracuda & major RBLs
+                                    </Typography>
+                                </Box>
+                            </Grid>
+
+                            {/* SSL Monitoring toggle */}
+                            {supportsSslMonitoring && (
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                    <Box
+                                        sx={{
+                                            p: 2,
+                                            borderRadius: '10px',
+                                            border: `1px solid ${form.sslMonitoring ? alpha('#2ECC71', 0.35) : 'rgba(0,0,0,0.07)'}`,
+                                            bgcolor: form.sslMonitoring ? alpha('#2ECC71', 0.04) : '#FAFBFC',
+                                            transition: 'all 0.15s ease',
+                                        }}
+                                    >
+                                        <FormControlLabel
+                                            control={
+                                                <Switch
+                                                    checked={form.sslMonitoring}
+                                                    onChange={e =>
+                                                        updateField('sslMonitoring', e.target.checked)
+                                                    }
+                                                    size="small"
+                                                />
+                                            }
+                                            label={
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                                                    <ShieldCheck size={15} color="#2ECC71" />
+                                                    <Typography sx={{ fontWeight: 700, fontSize: '0.875rem', color: '#0f172a' }}>
+                                                        SSL Certificate Monitoring
+                                                    </Typography>
+                                                </Box>
+                                            }
                                         />
-                                    </Grid>
-                                    <Grid size={{ xs: 12, md: 8 }}>
-                                        <TextField
-                                            fullWidth
-                                            size="small"
-                                            label="Mobile Number"
-                                            placeholder="9876543210"
-                                            value={form.notificationMobile}
-                                            onChange={(e) => updateField('notificationMobile', e.target.value)}
-                                            error={!!errors.notificationMobile}
-                                            helperText={errors.notificationMobile}
-                                        />
-                                    </Grid>
-                                </>
+                                        <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mt: 0.5, pl: 4 }}>
+                                            Alert before certificate expires
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                            )}
+
+                            {/* SSL Notify Days */}
+                            {form.sslMonitoring && (
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        type="number"
+                                        label="Notify Before Expiry (Days)"
+                                        value={form.sslNotifyDays}
+                                        onChange={e => updateField('sslNotifyDays', e.target.value)}
+                                        helperText="Get notified this many days before the SSL cert expires"
+                                    />
+                                </Grid>
+                            )}
+
+                            {/* Domain preview loading */}
+                            {previewLoading && (
+                                <Grid size={{ xs: 12 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <CircularProgress size={14} sx={{ color: '#f59e0b' }} />
+                                        <Typography variant="caption" color="text.secondary">
+                                            Validating target and fetching live domain details…
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                            )}
+
+                            {/* Domain preview card */}
+                            {form.domainMonitoring && targetPreview?.domain && (
+                                <Grid size={{ xs: 12 }} className="tour-monitor-domain-live">
+                                    <Box
+                                        sx={{
+                                            p: 2.5,
+                                            borderRadius: '12px',
+                                            border: '1px solid',
+                                            borderColor: alpha('#f59e0b', 0.25),
+                                            bgcolor: alpha('#f59e0b', 0.04),
+                                        }}
+                                    >
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                                            <CalendarClock size={15} color="#f59e0b" />
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: 800,
+                                                    color: '#0f172a',
+                                                    fontSize: '0.875rem',
+                                                    fontFamily: '"Outfit", "DM Sans", sans-serif',
+                                                }}
+                                            >
+                                                Live Domain Details
+                                            </Typography>
+                                        </Box>
+                                        <Grid container spacing={1.5}>
+                                            {[
+                                                { label: 'Domain', value: targetPreview.domain.domain },
+                                                { label: 'Source', value: targetPreview.domain.source || 'Not available' },
+                                                { label: 'Registrar', value: targetPreview.domain.registrar || 'Not available' },
+                                                {
+                                                    label: 'Expiry Date',
+                                                    value: targetPreview.domain.expirationDate
+                                                        ? new Date(targetPreview.domain.expirationDate).toLocaleDateString()
+                                                        : 'Not available',
+                                                },
+                                                {
+                                                    label: 'Days Remaining',
+                                                    value:
+                                                        targetPreview.domain.expiresInDays != null
+                                                            ? `${targetPreview.domain.expiresInDays} day(s)`
+                                                            : 'Not available',
+                                                },
+                                            ].map(item => (
+                                                <Grid key={item.label} size={{ xs: 6, md: 4 }}>
+                                                    <Typography
+                                                        variant="caption"
+                                                        sx={{
+                                                            color: '#94a3b8',
+                                                            display: 'block',
+                                                            mb: 0.25,
+                                                            fontWeight: 600,
+                                                            textTransform: 'uppercase',
+                                                            letterSpacing: '0.06em',
+                                                            fontSize: '0.65rem',
+                                                        }}
+                                                    >
+                                                        {item.label}
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="body2"
+                                                        sx={{ fontWeight: 700, color: '#0f172a', wordBreak: 'break-word' }}
+                                                    >
+                                                        {item.value}
+                                                    </Typography>
+                                                </Grid>
+                                            ))}
+                                        </Grid>
+                                    </Box>
+                                </Grid>
                             )}
                         </Grid>
-                    </Box>
-                </Grid> 
-            </Grid>
+                    </SectionPanel>
+                )}
+
+                {/* ── Step 4: Notification Channels ── */}
+                <SectionPanel
+                    step={notificationStepNum}
+                    title="Notification Channels"
+                    info="Configure recipients for monitor down/up alerts."
+                    accentColor="#2ECC71"
+                    className="tour-monitor-step-alerts"
+                >
+                    <Grid container spacing={2}>
+                        {/* Email toggle */}
+                        {showEmailSection && (
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <Box
+                                    sx={{
+                                        p: 2,
+                                        borderRadius: '10px',
+                                        border: `1px solid ${form.emailNotifications ? alpha('#2ECC71', 0.3) : 'rgba(0,0,0,0.07)'}`,
+                                        bgcolor: form.emailNotifications ? alpha('#2ECC71', 0.04) : '#FAFBFC',
+                                        transition: 'all 0.15s ease',
+                                    }}
+                                >
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                checked={form.emailNotifications}
+                                                onChange={e =>
+                                                    updateField('emailNotifications', e.target.checked)
+                                                }
+                                                size="small"
+                                            />
+                                        }
+                                        label={
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                                                <BellRing size={15} color="#2ECC71" />
+                                                <Typography sx={{ fontWeight: 700, fontSize: '0.875rem', color: '#0f172a' }}>
+                                                    Email Alerts
+                                                </Typography>
+                                            </Box>
+                                        }
+                                    />
+                                    <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mt: 0.5, pl: 4 }}>
+                                        Send alerts to email recipients
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                        )}
+
+                        {/* SMS toggle */}
+                        {showSmsSection && (
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <Box
+                                    sx={{
+                                        p: 2,
+                                        borderRadius: '10px',
+                                        border: `1px solid ${form.smsNotifications ? alpha('#3498DB', 0.3) : 'rgba(0,0,0,0.07)'}`,
+                                        bgcolor: form.smsNotifications ? alpha('#3498DB', 0.04) : '#FAFBFC',
+                                        transition: 'all 0.15s ease',
+                                    }}
+                                >
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                checked={form.smsNotifications}
+                                                onChange={e =>
+                                                    updateField('smsNotifications', e.target.checked)
+                                                }
+                                                size="small"
+                                            />
+                                        }
+                                        label={
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                                                <MessageSquare size={15} color="#3498DB" />
+                                                <Typography sx={{ fontWeight: 700, fontSize: '0.875rem', color: '#0f172a' }}>
+                                                    SMS Alerts
+                                                </Typography>
+                                            </Box>
+                                        }
+                                    />
+                                    <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mt: 0.5, pl: 4 }}>
+                                        Send alerts to mobile number
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                        )}
+
+                        {/* Email input + chips */}
+                        {form.emailNotifications && (
+                            <>
+                                <Grid size={{ xs: 12 }}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label="Add Notification Email"
+                                        placeholder="Type email and press Enter"
+                                        value={emailDraft}
+                                        onChange={e => setEmailDraft(e.target.value)}
+                                        onKeyDown={e => handleKeyAdd(e, addEmail)}
+                                        error={!!errors.notificationEmails}
+                                        helperText={
+                                            errors.notificationEmails ||
+                                            'Add recipients one by one. Press Enter after each.'
+                                        }
+                                        InputProps={{
+                                            startAdornment: (
+                                                <Mail size={15} style={{ marginRight: 8, color: '#94a3b8', flexShrink: 0 }} />
+                                            ),
+                                            endAdornment: (
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={addEmail}
+                                                    sx={{ color: '#0A3D62' }}
+                                                >
+                                                    <Plus size={16} />
+                                                </IconButton>
+                                            ),
+                                        }}
+                                    />
+                                </Grid>
+                                {notificationEmails.length > 0 && (
+                                    <Grid size={{ xs: 12 }}>
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+                                            {notificationEmails.map(email => (
+                                                <Chip
+                                                    key={email}
+                                                    label={email}
+                                                    size="small"
+                                                    onDelete={() =>
+                                                        setNotificationEmails(prev =>
+                                                            prev.filter(e => e !== email)
+                                                        )
+                                                    }
+                                                    deleteIcon={<Trash2 size={12} />}
+                                                    icon={<Mail size={12} />}
+                                                    sx={{
+                                                        fontWeight: 600,
+                                                        bgcolor: alpha('#2ECC71', 0.08),
+                                                        color: '#15803d',
+                                                        border: '1px solid',
+                                                        borderColor: alpha('#2ECC71', 0.25),
+                                                        '& .MuiChip-icon': { color: '#15803d' },
+                                                    }}
+                                                />
+                                            ))}
+                                        </Box>
+                                    </Grid>
+                                )}
+                            </>
+                        )}
+
+                        {/* SMS number inputs */}
+                        {form.smsNotifications && (
+                            <>
+                                <Grid size={{ xs: 12, md: 4 }}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label="Country Code"
+                                        placeholder="+91"
+                                        value={form.notificationCountryCode}
+                                        onChange={e =>
+                                            updateField('notificationCountryCode', e.target.value)
+                                        }
+                                    />
+                                </Grid>
+                                <Grid size={{ xs: 12, md: 8 }}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label="Mobile Number"
+                                        placeholder="9876543210"
+                                        value={form.notificationMobile}
+                                        onChange={e =>
+                                            updateField('notificationMobile', e.target.value)
+                                        }
+                                        error={!!errors.notificationMobile}
+                                        helperText={errors.notificationMobile}
+                                        InputProps={{
+                                            startAdornment: (
+                                                <MessageSquare
+                                                    size={15}
+                                                    style={{ marginRight: 8, color: '#94a3b8', flexShrink: 0 }}
+                                                />
+                                            ),
+                                        }}
+                                    />
+                                </Grid>
+                            </>
+                        )}
+                    </Grid>
+                </SectionPanel>
+            </Box>
         </FormModal>
     );
 };
