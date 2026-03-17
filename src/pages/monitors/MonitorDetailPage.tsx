@@ -9,6 +9,7 @@ import {
     Chip,
     alpha,
     useTheme,
+    useMediaQuery,
     CircularProgress,
     Alert,
     IconButton,
@@ -101,6 +102,7 @@ const MonitorDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const [monitor, setMonitor] = useState<any>(null);
     const [logs, setLogs] = useState<any[]>([]);
@@ -300,12 +302,13 @@ const MonitorDetailPage: React.FC = () => {
                     All Monitors
                 </Button>
 
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'flex-start' }, gap: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, minWidth: 0 }}>
                         {/* Status dot */}
                         <Box sx={{
                             width: 48,
                             height: 48,
+                            flexShrink: 0,
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
@@ -325,9 +328,9 @@ const MonitorDetailPage: React.FC = () => {
                             }
                         </Box>
 
-                        <Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                <Typography variant="h4" sx={{ fontWeight: 900, color: '#0A3D62', letterSpacing: '-0.02em' }}>
+                        <Box sx={{ minWidth: 0 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                <Typography variant={isMobile ? 'h6' : 'h4'} sx={{ fontWeight: 900, color: '#0A3D62', letterSpacing: '-0.02em', wordBreak: 'break-word' }}>
                                     {monitor.name}
                                 </Typography>
                                 <Link
@@ -338,14 +341,14 @@ const MonitorDetailPage: React.FC = () => {
                                     <ExternalLink size={16} />
                                 </Link>
                             </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5, flexWrap: 'wrap' }}>
                                 <Chip
                                     label={MONITOR_TYPE_LABELS[monitor.type] || 'HTTP'}
                                     size="small"
                                     variant="outlined"
                                     sx={{ fontWeight: 700, fontSize: '0.7rem', borderRadius: 1, height: 22 }}
                                 />
-                                <Typography variant="body2" color="text.secondary">
+                                <Typography variant="body2" color="text.secondary" sx={{ wordBreak: 'break-all', fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                                     {monitor.url}
                                 </Typography>
                             </Box>
@@ -353,7 +356,7 @@ const MonitorDetailPage: React.FC = () => {
                     </Box>
 
                     {/* Action buttons */}
-                    <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap', flexShrink: 0 }}>
                         <Tooltip title="Refresh">
                             <IconButton
                                 size="small"
@@ -372,6 +375,7 @@ const MonitorDetailPage: React.FC = () => {
                             sx={{
                                 borderRadius: 2,
                                 fontWeight: 700,
+                                whiteSpace: 'nowrap',
                                 borderColor: monitor.isActive ? '#f59e0b' : '#10b981',
                                 color: monitor.isActive ? '#f59e0b' : '#10b981',
                                 '&:hover': {
@@ -390,6 +394,7 @@ const MonitorDetailPage: React.FC = () => {
                             sx={{
                                 borderRadius: 2,
                                 fontWeight: 700,
+                                whiteSpace: 'nowrap',
                                 bgcolor: '#0A3D62',
                                 boxShadow: 'none',
                                 '&:hover': { bgcolor: '#0d4d7a', boxShadow: '0 4px 12px rgba(10,61,98,0.25)' }
@@ -406,6 +411,7 @@ const MonitorDetailPage: React.FC = () => {
                             sx={{
                                 borderRadius: 2,
                                 fontWeight: 700,
+                                whiteSpace: 'nowrap',
                                 bgcolor: '#16a34a',
                                 boxShadow: 'none',
                                 '&:hover': { bgcolor: '#15803d', boxShadow: '0 4px 12px rgba(21,128,61,0.25)' }
@@ -455,8 +461,8 @@ const MonitorDetailPage: React.FC = () => {
                             <Grid size={{ xs: 12, md: 8 }}>
                                 <Card sx={{ borderRadius: 4, height: '100%', border: '1px solid rgba(0,0,0,0.06)' }}>
                                     <CardContent sx={{ p: 3 }}>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                                            <Typography variant="h6" sx={{ fontWeight: 800, color: '#0A3D62' }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, gap: 1, flexWrap: 'wrap' }}>
+                                            <Typography variant="h6" sx={{ fontWeight: 800, color: '#0A3D62', whiteSpace: 'nowrap' }}>
                                                 Performance Trends
                                             </Typography>
                                             <Stack direction="row" spacing={1}>
@@ -466,7 +472,7 @@ const MonitorDetailPage: React.FC = () => {
                                                         size="small"
                                                         variant={performanceDays === (d === 24 ? 1 : d) ? 'contained' : 'outlined'}
                                                         onClick={() => setPerformanceDays(d === 24 ? 1 : d)}
-                                                        sx={{ borderRadius: 2, minWidth: 60, textTransform: 'none', fontWeight: 700 }}
+                                                        sx={{ borderRadius: 2, minWidth: 48, textTransform: 'none', fontWeight: 700, px: 1 }}
                                                     >
                                                         {d === 24 ? '24h' : `${d}d`}
                                                     </Button>
