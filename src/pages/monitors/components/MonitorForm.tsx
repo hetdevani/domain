@@ -2,6 +2,7 @@ import React from 'react';
 import {
     alpha,
     Box,
+    Button,
     Chip,
     FormControl,
     FormControlLabel,
@@ -26,6 +27,7 @@ import {
     FileSearch,
     Mail,
     Plus,
+    Save,
     Trash2,
     ShieldCheck,
     CalendarClock,
@@ -33,8 +35,11 @@ import {
     MessageSquare,
     CheckCircle2,
     AlertCircle,
+    ChevronLeft,
+    ChevronRight,
 } from 'lucide-react';
 import FormModal from '../../../components/common/FormModal';
+import { ButtonLoader } from '../../../components/common/Loaders';
 import { MONITOR_TYPE, USER_TYPES } from '../../../types';
 import { useAuth } from '../../../contexts/AuthContext';
 import { monitorApi } from '../api/monitorApi';
@@ -145,21 +150,21 @@ const SectionPanel: React.FC<{
         className={className}
         sx={{
             position: 'relative',
-            p: 3,
+            p: { xs: 2, md: 2 },
             borderRadius: '14px',
             border: '1px solid rgba(0,0,0,0.07)',
             bgcolor: '#ffffff',
             overflow: 'hidden',
-            '&::before': {
-                content: '""',
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                bottom: 0,
-                width: 4,
-                borderRadius: '14px 0 0 14px',
-                background: accentColor,
-            },
+            // '&::before': {
+            //     content: '""',
+            //     position: 'absolute',
+            //     left: 0,
+            //     top: 0,
+            //     bottom: 0,
+            //     width: 4,
+            //     borderRadius: '14px 0 0 14px',
+            //     background: accentColor,
+            // },
         }}
     >
         {/* Step header */}
@@ -225,6 +230,7 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
     const [targetPreview, setTargetPreview] = React.useState<TargetPreview | null>(null);
     const [previewLoading, setPreviewLoading] = React.useState(false);
     const [lastPreviewKey, setLastPreviewKey] = React.useState('');
+    const [activeStep, setActiveStep] = React.useState(0);
 
     React.useEffect(() => {
         if (open && user?.type === USER_TYPES.MASTER_ADMIN) {
@@ -252,6 +258,7 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
             setErrors({});
             setTargetPreview(null);
             setLastPreviewKey('');
+            setActiveStep(0);
             return;
         }
 
@@ -502,6 +509,54 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
         onSubmit(payload);
     };
 
+    const handleNext = async () => {
+        const nextErrors: Record<string, string> = {};
+
+        if (activeStep === 0) {
+            if (!form.name.trim()) nextErrors.name = 'Monitor name is required';
+            if (!form.type) nextErrors.type = 'Monitor type is required';
+            const minInterval = user?.type === USER_TYPES.MASTER_ADMIN ? 1 : user?.plan?.minCheckInterval || 5;
+            const interval = Number(form.checkInterval);
+            if (!Number.isInteger(interval) || interval < minInterval) {
+                nextErrors.checkInterval = `Minimum ${minInterval} minute(s) required`;
+            }
+        }
+
+        if (activeStep === 1) {
+            if (form.type === MONITOR_TYPE.TCP) {
+                if (!form.tcpHost.trim()) nextErrors.tcpHost = 'TCP host is required';
+                if (!tcpPorts.length) nextErrors.tcpPorts = 'Add at least one port';
+            } else if (![MONITOR_TYPE.CRON, MONITOR_TYPE.HEARTBEAT].includes(form.type)) {
+                if (!form.url.trim()) nextErrors.url = 'Target is required';
+            }
+            if (form.type === MONITOR_TYPE.KEYWORD && !form.keyword.trim()) {
+                nextErrors.keyword = 'Keyword is required for keyword monitoring';
+            }
+        }
+
+        if (Object.keys(nextErrors).length > 0) {
+            setErrors(nextErrors);
+            return;
+        }
+
+        if (activeStep === 1) {
+            const hasTarget = form.type === MONITOR_TYPE.TCP
+                ? !!form.tcpHost.trim() && tcpPorts.length > 0
+                : !!form.url.trim();
+            if (hasTarget && ![MONITOR_TYPE.CRON, MONITOR_TYPE.HEARTBEAT].includes(form.type)) {
+                const isPreviewValid = await validateTargetPreview(false);
+                if (!isPreviewValid) return;
+            }
+        }
+
+        setActiveStep(prev => prev + 1);
+    };
+
+    const handleBack = () => {
+        setErrors({});
+        setActiveStep(prev => prev - 1);
+    };
+
     const showEmailSection =
         user?.type === USER_TYPES.MASTER_ADMIN || !!user?.plan?.emailNotifications;
     const showSmsSection =
@@ -528,56 +583,61 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
         form.type === MONITOR_TYPE.PING
             ? 'Host or IP'
             : form.type === MONITOR_TYPE.DNS
-            ? 'Domain Name'
-            : form.type === MONITOR_TYPE.CRON
-            ? 'Cron Job Name or Source'
-            : form.type === MONITOR_TYPE.HEARTBEAT
-            ? 'Heartbeat Name or Source'
-            : form.type === MONITOR_TYPE.BROWSER
-            ? 'Browser Test URL'
-            : 'Target URL / Domain';
+                ? 'Domain Name'
+                : form.type === MONITOR_TYPE.CRON
+                    ? 'Cron Job Name or Source'
+                    : form.type === MONITOR_TYPE.HEARTBEAT
+                        ? 'Heartbeat Name or Source'
+                        : form.type === MONITOR_TYPE.BROWSER
+                            ? 'Browser Test URL'
+                            : 'Target URL / Domain';
 
     const targetPlaceholder =
         form.type === MONITOR_TYPE.HTTP
             ? 'https://example.com'
             : form.type === MONITOR_TYPE.PING
-            ? 'example.com or 8.8.8.8'
-            : form.type === MONITOR_TYPE.DNS
-            ? 'example.com'
-            : form.type === MONITOR_TYPE.CRON
-            ? 'nightly-data-sync'
-            : form.type === MONITOR_TYPE.HEARTBEAT
-            ? 'primary-worker-heartbeat'
-            : form.type === MONITOR_TYPE.BROWSER
-            ? 'https://example.com/login'
-            : 'example.com';
+                ? 'example.com or 8.8.8.8'
+                : form.type === MONITOR_TYPE.DNS
+                    ? 'example.com'
+                    : form.type === MONITOR_TYPE.CRON
+                        ? 'nightly-data-sync'
+                        : form.type === MONITOR_TYPE.HEARTBEAT
+                            ? 'primary-worker-heartbeat'
+                            : form.type === MONITOR_TYPE.BROWSER
+                                ? 'https://example.com/login'
+                                : 'example.com';
 
     const targetHelper =
         form.type === MONITOR_TYPE.CRON
             ? 'Missing pings will mark the monitor as down.'
             : form.type === MONITOR_TYPE.HEARTBEAT
-            ? 'Stay healthy by sending a ping on time.'
-            : form.type === MONITOR_TYPE.BROWSER
-            ? 'Runs a browser-style reachability check.'
-            : errors.url;
+                ? 'Stay healthy by sending a ping on time.'
+                : form.type === MONITOR_TYPE.BROWSER
+                    ? 'Runs a browser-style reachability check.'
+                    : errors.url;
 
     const tourSteps = React.useMemo<StepType[]>(() => {
-        const steps: StepType[] = [
-            { selector: '.tour-monitor-step-basic', content: 'Step 1: Set monitor name, type, and check interval.' },
-            { selector: '.tour-monitor-step-target', content: 'Step 2: Fill target based on the monitor type.' },
-        ];
-        if (showExtraOptionsStep) {
-            steps.push({ selector: '.tour-monitor-step-options', content: 'Step 3: Optional SSL/domain monitoring.' });
+        switch (activeStep) {
+            case 0:
+                return [
+                    { selector: '.tour-monitor-step-basic', content: 'Start here — give your monitor a name, pick a type, and set the check interval.' },
+                ];
+            case 1:
+                return [
+                    { selector: '.tour-monitor-step-target', content: 'Enter the target for your monitor — URL, hostname, or IP depending on the type selected.' },
+                    ...(form.type === MONITOR_TYPE.TCP ? [{ selector: '.tour-monitor-tcp-ports', content: 'Add the TCP ports you want to check for this host.' }] : []),
+                ];
+            case 2:
+                return showExtraOptionsStep ? [
+                    { selector: '.tour-monitor-step-options', content: 'Optional extras — enable domain expiry tracking, SSL certificate alerts, and blacklist monitoring.' },
+                    ...(form.domainMonitoring ? [{ selector: '.tour-monitor-domain-live', content: 'Live domain details fetched in real-time from WHOIS.' }] : []),
+                ] : [];
+            default:
+                return [
+                    { selector: '.tour-monitor-step-alerts', content: 'Set up your notification channels — get alerted via email or SMS when your monitor goes down.' },
+                ];
         }
-        steps.push({ selector: '.tour-monitor-step-alerts', content: `${notificationStepNum}: Configure email and SMS alerts.` });
-        if (form.type === MONITOR_TYPE.TCP) {
-            steps.push({ selector: '.tour-monitor-tcp-ports', content: 'Add multiple TCP ports here.' });
-        }
-        if (form.domainMonitoring) {
-            steps.push({ selector: '.tour-monitor-domain-live', content: 'Live domain details show here after validation.' });
-        }
-        return steps;
-    }, [form.type, form.domainMonitoring, notificationStepNum, showExtraOptionsStep]);
+    }, [activeStep, form.type, form.domainMonitoring, showExtraOptionsStep]);
 
     const startGuidedTour = () => {
         if (!isCustomerLogin) return;
@@ -593,6 +653,88 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
 
     const selectedTypeOption = MONITOR_TYPE_OPTIONS.find(o => o.value === form.type);
 
+    const steps = React.useMemo(() => {
+        const s = [
+            { label: 'Basic Setup', color: '#0A3D62' },
+            { label: 'Target', color: selectedTypeOption?.color || '#3498DB' },
+        ];
+        if (showExtraOptionsStep) s.push({ label: 'Options', color: '#f59e0b' });
+        s.push({ label: 'Notifications', color: '#2ECC71' });
+        return s;
+    }, [showExtraOptionsStep, selectedTypeOption?.color]);
+
+    const isLastStep = activeStep === steps.length - 1;
+
+    // If extra options step disappears (type change), clamp activeStep
+    React.useEffect(() => {
+        if (!showExtraOptionsStep && activeStep >= 2) {
+            setActiveStep(1);
+        }
+    }, [showExtraOptionsStep]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const footerActions = (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
+            <Button
+                variant="text"
+                color="inherit"
+                onClick={onClose}
+                disabled={loading}
+                sx={{ px: { xs: 1.5, md: 2.5 }, py: 1, borderRadius: '10px', fontWeight: 600, color: 'text.secondary', fontSize: { xs: '0.82rem', md: '0.875rem' }, '&:hover': { bgcolor: alpha('#000', 0.05) } }}
+            >
+                Cancel
+            </Button>
+            <Box sx={{ flex: 1 }} />
+            {activeStep > 0 && (
+                <Button
+                    variant="outlined"
+                    onClick={handleBack}
+                    disabled={loading}
+                    startIcon={<ChevronLeft size={15} />}
+                    sx={{ px: { xs: 1.5, md: 3 }, py: 1, borderRadius: '10px', fontWeight: 600, fontSize: { xs: '0.82rem', md: '0.875rem' }, borderColor: '#e2e8f0', color: '#334155', '&:hover': { borderColor: '#94a3b8', bgcolor: '#f8fafc' } }}
+                >
+                    Back
+                </Button>
+            )}
+            {isLastStep ? (
+                <Button
+                    variant="contained"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    startIcon={loading ? null : (initialData ? <Save size={16} /> : <Plus size={16} />)}
+                    sx={{
+                        px: { xs: 2, md: 4 }, py: 1, borderRadius: '10px', fontWeight: 700,
+                        fontSize: { xs: '0.82rem', md: '0.95rem' },
+                        backgroundColor: initialData ? '#0A3D62' : '#2ECC71',
+                        boxShadow: `0 8px 20px -4px ${alpha(initialData ? '#0A3D62' : '#2ECC71', 0.4)}`,
+                        minWidth: { xs: 'unset', md: 160 },
+                        '&:hover': { backgroundColor: initialData ? '#072e4a' : '#27ae60' },
+                        '&.Mui-disabled': { backgroundColor: alpha(initialData ? '#0A3D62' : '#2ECC71', 0.5), color: '#fff' },
+                    }}
+                >
+                    {loading ? <ButtonLoader /> : (initialData ? 'Update' : 'Confirm & Add')}
+                </Button>
+            ) : (
+                <Button
+                    variant="contained"
+                    onClick={handleNext}
+                    disabled={previewLoading}
+                    endIcon={<ChevronRight size={15} />}
+                    sx={{
+                        px: { xs: 2, md: 4 }, py: 1, borderRadius: '10px', fontWeight: 700,
+                        fontSize: { xs: '0.82rem', md: '0.875rem' },
+                        minWidth: { xs: 'unset', md: 130 },
+                        backgroundColor: steps[activeStep]?.color || '#0A3D62',
+                        boxShadow: `0 8px 20px -4px ${alpha(steps[activeStep]?.color || '#0A3D62', 0.35)}`,
+                        '&:hover': { backgroundColor: steps[activeStep]?.color || '#0A3D62', filter: 'brightness(0.9)' },
+                        '&.Mui-disabled': { backgroundColor: alpha(steps[activeStep]?.color || '#0A3D62', 0.5), color: '#fff' },
+                    }}
+                >
+                    {previewLoading ? <ButtonLoader /> : 'Next'}
+                </Button>
+            )}
+        </Box>
+    );
+
     return (
         <FormModal
             open={open}
@@ -602,11 +744,91 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
             loading={loading}
             onSubmit={handleSubmit}
             maxWidth="xl"
+            footerActions={footerActions}
         >
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                {/* Guide Me button */}
+                {/* {isCustomerLogin && (
+                    <Chip
+                        label="Guide Me"
+                        size="small"
+                        clickable
+                        onClick={startGuidedTour}
+                        sx={{
+                            ml: 2,
+                            flexShrink: 0,
+                            fontWeight: 700,
+                            fontSize: '0.72rem',
+                            bgcolor: alpha(steps[activeStep]?.color || '#0A3D62', 0.08),
+                            color: steps[activeStep]?.color || '#0A3D62',
+                            border: '1px solid',
+                            borderColor: alpha(steps[activeStep]?.color || '#0A3D62', 0.2),
+                            alignSelf: 'flex-start',
+                        }}
+                    />
+                )} */}
+                {/* ── Custom Step Indicator ── */}
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+                    {/* Step circles + connectors */}
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', flex: 1 }}>
+                        {steps.map((step, idx) => (
+                            <React.Fragment key={step.label}>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.75 }}>
+                                    <Box
+                                        onClick={() => idx < activeStep && setActiveStep(idx)}
+                                        sx={{
+                                            width: { xs: 30, md: 36 },
+                                            height: { xs: 30, md: 36 },
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            bgcolor: idx < activeStep ? '#2ECC71' : idx === activeStep ? step.color : '#f1f5f9',
+                                            color: idx <= activeStep ? '#fff' : '#94a3b8',
+                                            fontWeight: 800,
+                                            fontSize: { xs: '0.78rem', md: '0.875rem' },
+                                            border: `2px solid ${idx < activeStep ? '#2ECC71' : idx === activeStep ? step.color : '#e2e8f0'}`,
+                                            boxShadow: idx === activeStep ? `0 4px 14px ${alpha(step.color, 0.35)}` : 'none',
+                                            cursor: idx < activeStep ? 'pointer' : 'default',
+                                            transition: 'all 0.2s',
+                                            flexShrink: 0,
+                                        }}
+                                    >
+                                        {idx < activeStep ? <CheckCircle2 size={15} /> : idx + 1}
+                                    </Box>
+                                    <Typography sx={{
+                                        fontSize: { xs: '0.62rem', md: '0.7rem' },
+                                        fontWeight: idx === activeStep ? 700 : 500,
+                                        color: idx === activeStep ? step.color : idx < activeStep ? '#64748b' : '#94a3b8',
+                                        whiteSpace: 'nowrap',
+                                        textAlign: 'center',
+                                        display: { xs: idx === activeStep ? 'block' : 'none', md: 'block' },
+                                        transition: 'color 0.2s',
+                                        letterSpacing: '0.01em',
+                                    }}>
+                                        {step.label}
+                                    </Typography>
+                                </Box>
+                                {idx < steps.length - 1 && (
+                                    <Box sx={{
+                                        flex: 1,
+                                        height: 2,
+                                        mt: { xs: '14px', md: '17px' },
+                                        bgcolor: idx < activeStep ? '#2ECC71' : '#e2e8f0',
+                                        transition: 'background-color 0.3s ease',
+                                        mx: { xs: 0.5, md: 1 },
+                                        borderRadius: 1,
+                                    }} />
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </Box>
 
-                {/* ── Customer Assignment (admin only) ── */}
-                {user?.type === USER_TYPES.MASTER_ADMIN && (
+
+                </Box>
+
+                {/* ── Customer Assignment (admin only, shown on step 0) ── */}
+                {activeStep === 0 && user?.type === USER_TYPES.MASTER_ADMIN && (
                     <FormControl fullWidth size="small">
                         <InputLabel>Assign to Customer</InputLabel>
                         <Select
@@ -625,31 +847,13 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
                 )}
 
                 {/* ── Step 1: Basic Setup ── */}
-                <SectionPanel
+                {activeStep === 0 && <SectionPanel
                     step="1"
                     title="Basic Setup"
                     info="Choose monitor name, type, and check interval."
                     accentColor="#0A3D62"
                     className="tour-monitor-step-basic"
                 >
-                    {isCustomerLogin && (
-                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2, mt: -1 }}>
-                            <Chip
-                                label="Guide Me"
-                                size="small"
-                                clickable
-                                onClick={startGuidedTour}
-                                sx={{
-                                    fontWeight: 700,
-                                    bgcolor: alpha('#0A3D62', 0.08),
-                                    color: '#0A3D62',
-                                    border: '1px solid',
-                                    borderColor: alpha('#0A3D62', 0.2),
-                                }}
-                            />
-                        </Box>
-                    )}
-
                     <Grid container spacing={2.5}>
                         {/* Monitor Name */}
                         <Grid size={{ xs: 12, md: 6 }}>
@@ -699,11 +903,8 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
                             <Box
                                 sx={{
                                     display: 'grid',
-                                    gridTemplateColumns: 'repeat(5, 1fr)',
-                                    gap: 1.25,
-                                    '@media (max-width: 600px)': {
-                                        gridTemplateColumns: 'repeat(3, 1fr)',
-                                    },
+                                    gridTemplateColumns: { xs: 'repeat(3, 1fr)', sm: 'repeat(5, 1fr)' },
+                                    gap: { xs: 1, md: 1.25 },
                                 }}
                             >
                                 {MONITOR_TYPE_OPTIONS.map(option => {
@@ -713,7 +914,7 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
                                             key={option.value}
                                             onClick={() => updateField('type', option.value)}
                                             sx={{
-                                                p: 1.75,
+                                                p: { xs: 1.25, md: 1.75 },
                                                 borderRadius: '12px',
                                                 border: `1.5px solid ${isSelected ? option.color : 'rgba(0,0,0,0.09)'}`,
                                                 bgcolor: isSelected
@@ -788,9 +989,10 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
                         </Grid>
                     </Grid>
                 </SectionPanel>
+                }
 
                 {/* ── Step 2: Target Configuration ── */}
-                <SectionPanel
+                {activeStep === 1 && <SectionPanel
                     step="2"
                     title="Target Configuration"
                     info="Input fields adapt based on the monitor type selected above."
@@ -983,9 +1185,10 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
                         )}
                     </Grid>
                 </SectionPanel>
+                }
 
                 {/* ── Step 3: Extra Monitoring Options ── */}
-                {showExtraOptionsStep && (
+                {activeStep === 2 && showExtraOptionsStep && (
                     <SectionPanel
                         step="3"
                         title="Extra Monitoring Options"
@@ -1214,7 +1417,7 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
                 )}
 
                 {/* ── Step 4: Notification Channels ── */}
-                <SectionPanel
+                {isLastStep && <SectionPanel
                     step={notificationStepNum}
                     title="Notification Channels"
                     info="Configure recipients for monitor down/up alerts."
@@ -1403,6 +1606,7 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
                         )}
                     </Grid>
                 </SectionPanel>
+                }
             </Box>
         </FormModal>
     );
