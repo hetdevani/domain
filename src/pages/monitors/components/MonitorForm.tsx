@@ -43,8 +43,8 @@ import { ButtonLoader } from '../../../components/common/Loaders';
 import { MONITOR_TYPE, USER_TYPES } from '../../../types';
 import { useAuth } from '../../../contexts/AuthContext';
 import { monitorApi } from '../api/monitorApi';
-import { useTour } from '@reactour/tour';
-import type { StepType } from '@reactour/tour';
+// import { useTour } from '@reactour/tour';
+// import type { StepType } from '@reactour/tour';
 
 interface MonitorFormProps {
     open: boolean;
@@ -219,7 +219,7 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
     loading = false,
 }) => {
     const { user } = useAuth();
-    const { setSteps, setCurrentStep, setIsOpen } = useTour();
+    // const { setSteps, setCurrentStep, setIsOpen } = useTour();
     const [customers, setCustomers] = React.useState<any[]>([]);
     const [form, setForm] = React.useState<FormState>(defaultState);
     const [notificationEmails, setNotificationEmails] = React.useState<string[]>([]);
@@ -561,7 +561,7 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
         user?.type === USER_TYPES.MASTER_ADMIN || !!user?.plan?.emailNotifications;
     const showSmsSection =
         user?.type === USER_TYPES.MASTER_ADMIN || !!user?.plan?.smsNotifications;
-    const isCustomerLogin = user?.type === USER_TYPES.CUSTOMER;
+    // const isCustomerLogin = user?.type === USER_TYPES.CUSTOMER;
     const supportsSslMonitoring = [
         MONITOR_TYPE.HTTP,
         MONITOR_TYPE.KEYWORD,
@@ -616,35 +616,35 @@ const MonitorForm: React.FC<MonitorFormProps> = ({
                     ? 'Runs a browser-style reachability check.'
                     : errors.url;
 
-    const tourSteps = React.useMemo<StepType[]>(() => {
-        switch (activeStep) {
-            case 0:
-                return [
-                    { selector: '.tour-monitor-step-basic', content: 'Start here — give your monitor a name, pick a type, and set the check interval.' },
-                ];
-            case 1:
-                return [
-                    { selector: '.tour-monitor-step-target', content: 'Enter the target for your monitor — URL, hostname, or IP depending on the type selected.' },
-                    ...(form.type === MONITOR_TYPE.TCP ? [{ selector: '.tour-monitor-tcp-ports', content: 'Add the TCP ports you want to check for this host.' }] : []),
-                ];
-            case 2:
-                return showExtraOptionsStep ? [
-                    { selector: '.tour-monitor-step-options', content: 'Optional extras — enable domain expiry tracking, SSL certificate alerts, and blacklist monitoring.' },
-                    ...(form.domainMonitoring ? [{ selector: '.tour-monitor-domain-live', content: 'Live domain details fetched in real-time from WHOIS.' }] : []),
-                ] : [];
-            default:
-                return [
-                    { selector: '.tour-monitor-step-alerts', content: 'Set up your notification channels — get alerted via email or SMS when your monitor goes down.' },
-                ];
-        }
-    }, [activeStep, form.type, form.domainMonitoring, showExtraOptionsStep]);
+    // const tourSteps = React.useMemo<StepType[]>(() => {
+    //     switch (activeStep) {
+    //         case 0:
+    //             return [
+    //                 { selector: '.tour-monitor-step-basic', content: 'Start here — give your monitor a name, pick a type, and set the check interval.' },
+    //             ];
+    //         case 1:
+    //             return [
+    //                 { selector: '.tour-monitor-step-target', content: 'Enter the target for your monitor — URL, hostname, or IP depending on the type selected.' },
+    //                 ...(form.type === MONITOR_TYPE.TCP ? [{ selector: '.tour-monitor-tcp-ports', content: 'Add the TCP ports you want to check for this host.' }] : []),
+    //             ];
+    //         case 2:
+    //             return showExtraOptionsStep ? [
+    //                 { selector: '.tour-monitor-step-options', content: 'Optional extras — enable domain expiry tracking, SSL certificate alerts, and blacklist monitoring.' },
+    //                 ...(form.domainMonitoring ? [{ selector: '.tour-monitor-domain-live', content: 'Live domain details fetched in real-time from WHOIS.' }] : []),
+    //             ] : [];
+    //         default:
+    //             return [
+    //                 { selector: '.tour-monitor-step-alerts', content: 'Set up your notification channels — get alerted via email or SMS when your monitor goes down.' },
+    //             ];
+    //     }
+    // }, [activeStep, form.type, form.domainMonitoring, showExtraOptionsStep]);
 
-    const startGuidedTour = () => {
-        if (!isCustomerLogin) return;
-        setSteps?.(tourSteps);
-        setCurrentStep?.(0);
-        setIsOpen?.(true);
-    };
+    // const startGuidedTour = () => {
+    //     if (!isCustomerLogin) return;
+    //     setSteps?.(tourSteps);
+    //     setCurrentStep?.(0);
+    //     setIsOpen?.(true);
+    // };
 
     React.useEffect(() => {
         if (!supportsSslMonitoring && form.sslMonitoring) updateField('sslMonitoring', false);
