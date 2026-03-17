@@ -66,7 +66,7 @@ const LandingPage: React.FC = () => {
             <LandingNavbar />
 
             {/* Hero Section */}
-            <Box sx={{ background: 'linear-gradient(180deg, rgba(46,204,113,0.06) 0%, rgba(255,255,255,0) 60%)', pt: { xs: 12, md: 18 }, pb: { xs: 6, md: 12 }, px: 2 }}>
+            <Box sx={{ background: 'linear-gradient(180deg, rgba(46,204,113,0.06) 0%, rgba(255,255,255,0) 60%)', pt: { xs: 12, md: 18 }, pb: { xs: 4, md: 12 }, px: 0 }}>
                 <Container maxWidth="lg" sx={{ textAlign: 'center' }}>
                     <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
                         <Chip
@@ -78,7 +78,7 @@ const LandingPage: React.FC = () => {
                             Monitor Everything.<br />
                             <Box component="span" sx={{ color: '#2ECC71' }}>Miss Nothing.</Box>
                         </Typography>
-                        <Typography variant="h6" sx={{ color: '#64748b', maxWidth: 700, mx: 'auto', mb: 5, fontWeight: 400, lineHeight: 1.7, fontSize: { xs: '1rem', md: '1.15rem' } }}>
+                        <Typography variant="h6" sx={{ color: '#64748b', maxWidth: 700, mx: 'auto', mb: { xs: 2, md: 5 }, fontWeight: 400, lineHeight: 1.7, fontSize: { xs: '1rem', md: '1.15rem' } }}>
                             The ultimate infrastructure monitoring platform for your servers, websites, and APIs. Get real-time alerts and brilliant analytics instantly.
                         </Typography>
                         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
@@ -103,8 +103,8 @@ const LandingPage: React.FC = () => {
                     </motion.div>
 
                     {/* Stats Bar */}
-                    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }} style={{ marginTop: '56px' }}>
-                        <Grid container spacing={3}>
+                    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }} style={{ marginTop: 'clamp(28px, 5vw, 56px)' }}>
+                        <Grid container spacing={{ xs: 1.5, md: 3 }}>
                             {[
                                 { icon: <Zap size={24} color="#2ECC71" />, value: '12ms', label: 'Avg Response Time', color: '#2ECC71' },
                                 { icon: <Monitor size={24} color="#3498DB" />, value: '10,000+', label: 'Monitors Tracked', color: '#3498DB' },
@@ -113,7 +113,7 @@ const LandingPage: React.FC = () => {
                             ].map((stat, idx) => (
                                 <Grid size={{ xs: 6, md: 3 }} key={idx}>
                                     <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.5 + idx * 0.1 }}>
-                                        <Box sx={{ p: 3, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', textAlign: 'center', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', transition: 'all 0.2s', '&:hover': { border: `1px solid ${stat.color}40`, boxShadow: `0 8px 24px ${stat.color}15`, transform: 'translateY(-4px)' } }}>
+                                        <Box sx={{ pt: 3, pb:3, pl:1, pr:1, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', textAlign: 'center', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', transition: 'all 0.2s', '&:hover': { border: `1px solid ${stat.color}40`, boxShadow: `0 8px 24px ${stat.color}15`, transform: 'translateY(-4px)' } }}>
                                             <Box sx={{ mb: 1.5, display: 'flex', justifyContent: 'center', p: 1.2, bgcolor: `${stat.color}12`, borderRadius: '10px', width: 'fit-content', mx: 'auto' }}>{stat.icon}</Box>
                                             <Typography variant="h4" sx={{ color: '#0f172a', fontWeight: 800, mb: 0.5, fontSize: { xs: '1.6rem', md: '2rem' } }}>{stat.value}</Typography>
                                             <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.78rem', fontWeight: 500 }}>{stat.label}</Typography>
@@ -125,7 +125,7 @@ const LandingPage: React.FC = () => {
                     </motion.div>
 
                     {/* Chart */}
-                    <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }} style={{ marginTop: '60px' }}>
+                    <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }} style={{ marginTop: 'clamp(28px, 5vw, 60px)' }}>
                         <Box sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '24px', p: { xs: 3, md: 5 }, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
                             <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 4, flexWrap: 'wrap', gap: 2 }}>
                                 <Box sx={{ textAlign: 'left' }}>
@@ -134,7 +134,7 @@ const LandingPage: React.FC = () => {
                                 </Box>
                                 <Chip label="● Live" size="small" sx={{ bgcolor: 'rgba(46,204,113,0.1)', color: '#16a34a', border: '1px solid rgba(46,204,113,0.2)', fontWeight: 700, fontSize: '0.75rem' }} />
                             </Box>
-                            <Box sx={{ height: 320, width: '100%' }}>
+                            <Box sx={{ height: { xs: 200, md: 320 }, width: '100%' }}>
                                 <ResponsiveContainer width="100%" height="100%">
                                     <AreaChart data={chartData}>
                                         <defs>
@@ -157,9 +157,9 @@ const LandingPage: React.FC = () => {
             </Box>
 
             {/* How It Works */}
-            <Box sx={{ bgcolor: '#f8fafc', py: { xs: 8, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
+            <Box sx={{ bgcolor: '#f8fafc', py: { xs: 5, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
                 <Container maxWidth="lg">
-                    <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 10 } }}>
+                    <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 10 } }}>
                         <Typography variant="overline" sx={{ color: '#2ECC71', fontWeight: 700, letterSpacing: '0.12em', fontSize: '0.8rem' }}>Simple Setup</Typography>
                         <Typography variant="h3" sx={{ color: '#0f172a', fontWeight: 800, mt: 1, mb: 2, fontSize: { xs: '1.9rem', md: '2.6rem' } }}>How It Works</Typography>
                         <Typography variant="h6" sx={{ color: '#64748b', fontWeight: 400, fontSize: '1rem' }}>Get started in three simple steps</Typography>
@@ -186,9 +186,9 @@ const LandingPage: React.FC = () => {
             </Box>
 
             {/* Features Grid */}
-            <Box sx={{ bgcolor: '#ffffff', py: { xs: 8, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
+            <Box sx={{ bgcolor: '#ffffff', py: { xs: 5, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
                 <Container maxWidth="lg">
-                    <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 10 } }}>
+                    <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 10 } }}>
                         <Typography variant="overline" sx={{ color: '#2ECC71', fontWeight: 700, letterSpacing: '0.12em', fontSize: '0.8rem' }}>Full Coverage</Typography>
                         <Typography variant="h3" sx={{ color: '#0f172a', fontWeight: 800, mt: 1, mb: 2, fontSize: { xs: '1.9rem', md: '2.6rem' } }}>Comprehensive Monitoring Solutions</Typography>
                         <Typography variant="h6" sx={{ color: '#64748b', fontWeight: 400, fontSize: '1rem', maxWidth: 600, mx: 'auto' }}>Everything you need to keep your infrastructure online and performing optimally.</Typography>
@@ -212,9 +212,9 @@ const LandingPage: React.FC = () => {
             </Box>
 
             {/* Integrations */}
-            <Box sx={{ bgcolor: '#f8fafc', py: { xs: 8, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
+            <Box sx={{ bgcolor: '#f8fafc', py: { xs: 5, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
                 <Container maxWidth="lg">
-                    <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 10 } }}>
+                    <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 10 } }}>
                         <Typography variant="overline" sx={{ color: '#2ECC71', fontWeight: 700, letterSpacing: '0.12em', fontSize: '0.8rem' }}>Notifications</Typography>
                         <Typography variant="h3" sx={{ color: '#0f172a', fontWeight: 800, mt: 1, mb: 2, fontSize: { xs: '1.9rem', md: '2.6rem' } }}>Connect Your Favorite Tools</Typography>
                         <Typography variant="h6" sx={{ color: '#64748b', fontWeight: 400, fontSize: '1rem' }}>Get instant alerts through multiple notification channels</Typography>
@@ -243,9 +243,9 @@ const LandingPage: React.FC = () => {
             </Box>
 
             {/* Trust Metrics */}
-            <Box sx={{ bgcolor: '#ffffff', py: { xs: 8, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
+            <Box sx={{ bgcolor: '#ffffff', py: { xs: 5, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
                 <Container maxWidth="lg">
-                    <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 10 } }}>
+                    <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 10 } }}>
                         <Typography variant="overline" sx={{ color: '#2ECC71', fontWeight: 700, letterSpacing: '0.12em', fontSize: '0.8rem' }}>By the Numbers</Typography>
                         <Typography variant="h3" sx={{ color: '#0f172a', fontWeight: 800, mt: 1, mb: 2, fontSize: { xs: '1.9rem', md: '2.6rem' } }}>Trusted by Thousands Worldwide</Typography>
                         <Typography variant="h6" sx={{ color: '#64748b', fontWeight: 400, fontSize: '1rem' }}>Join our growing community of satisfied users</Typography>
@@ -272,9 +272,9 @@ const LandingPage: React.FC = () => {
             </Box>
 
             {/* FAQ */}
-            <Box sx={{ bgcolor: '#f8fafc', py: { xs: 8, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
+            <Box sx={{ bgcolor: '#f8fafc', py: { xs: 5, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
                 <Container maxWidth="md">
-                    <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
+                    <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 8 } }}>
                         <Typography variant="overline" sx={{ color: '#2ECC71', fontWeight: 700, letterSpacing: '0.12em', fontSize: '0.8rem' }}>FAQ</Typography>
                         <Typography variant="h3" sx={{ color: '#0f172a', fontWeight: 800, mt: 1, mb: 2, fontSize: { xs: '1.9rem', md: '2.6rem' } }}>Frequently Asked Questions</Typography>
                         <Typography variant="h6" sx={{ color: '#64748b', fontWeight: 400, fontSize: '1rem' }}>Everything you need to know about our monitoring platform</Typography>
@@ -306,10 +306,10 @@ const LandingPage: React.FC = () => {
             </Box>
 
             {/* CTA Banner */}
-            <Box sx={{ bgcolor: '#ffffff', py: { xs: 8, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
+            <Box sx={{ bgcolor: '#ffffff', py: { xs: 5, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
                 <Container maxWidth="md">
                     <motion.div initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-                        <Box sx={{ background: '#0A3D62', borderRadius: '28px', p: { xs: 5, md: 8 }, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+                        <Box sx={{ background: '#0A3D62', borderRadius: '28px', p: { xs: 3, md: 8 }, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
                             <Box sx={{ position: 'absolute', top: -60, right: -60, width: 220, height: 220, borderRadius: '50%', background: 'radial-gradient(circle, rgba(46,204,113,0.15) 0%, transparent 70%)', pointerEvents: 'none' }} />
                             <Box sx={{ position: 'absolute', bottom: -40, left: -40, width: 160, height: 160, borderRadius: '50%', background: 'radial-gradient(circle, rgba(46,204,113,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
                             <Box sx={{ position: 'relative', zIndex: 1 }}>
@@ -321,7 +321,7 @@ const LandingPage: React.FC = () => {
                                     Join thousands of businesses monitoring their infrastructure with confidence. Start in 30 seconds.
                                 </Typography>
                                 <Button variant="contained" size="large" onClick={() => navigate('/signup')} endIcon={<ArrowRight size={18} />}
-                                    sx={{ bgcolor: '#2ECC71', px: 5, py: 1.8, fontSize: '1rem', fontWeight: 700, borderRadius: '12px', boxShadow: '0 8px 24px rgba(46,204,113,0.4)', '&:hover': { bgcolor: '#27ae60', transform: 'translateY(-2px)', boxShadow: '0 12px 32px rgba(46,204,113,0.5)' }, transition: 'all 0.2s' }}>
+                                    sx={{ bgcolor: '#2ECC71', px: { xs: 3, md: 5 }, py: 1.8, fontSize: '1rem', fontWeight: 700, borderRadius: '12px', boxShadow: '0 8px 24px rgba(46,204,113,0.4)', '&:hover': { bgcolor: '#27ae60', transform: 'translateY(-2px)', boxShadow: '0 12px 32px rgba(46,204,113,0.5)' }, transition: 'all 0.2s' }}>
                                     Start Monitoring Free
                                 </Button>
                             </Box>
@@ -331,7 +331,7 @@ const LandingPage: React.FC = () => {
             </Box>
 
             {/* Footer */}
-            <Box sx={{ py: 5, px: 2, textAlign: 'center', borderTop: '1px solid #f1f5f9', bgcolor: '#f8fafc' }}>
+            <Box sx={{ py: { xs: 3, md: 5 }, px: 2, textAlign: 'center', borderTop: '1px solid #f1f5f9', bgcolor: '#f8fafc' }}>
                 {/* <img src="/logo-white.png" alt="Logo" style={{ height: 28, marginBottom: 12, filter: 'brightness(0) saturate(100%) invert(10%) sepia(20%) saturate(500%) hue-rotate(180deg)' }} /> */}
                 <Typography variant="body2" sx={{ color: '#94a3b8', mt: 1 }}>
                     © {new Date().getFullYear()} Lease Packet Tools. All rights reserved.

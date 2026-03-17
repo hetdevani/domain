@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter, useLocation } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { theme } from './theme';
 import { AuthProvider } from './contexts/AuthContext';
@@ -7,9 +7,16 @@ import AppRoutes from './routes';
 import { Toaster } from 'react-hot-toast';
 import { TourProvider } from '@reactour/tour';
 
+const ScrollToTop: React.FC = () => {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+};
+
 const App: React.FC = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Toaster

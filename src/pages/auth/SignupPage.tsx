@@ -90,17 +90,17 @@ const SignupPage: React.FC = () => {
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <Box sx={{ mb: 3 }}>
                             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700, color: '#475569' }}>Full Name</Typography>
-                            <TextField {...register('name', { required: 'Name is required' })} error={!!errors.name} helperText={errors.name?.message as string} fullWidth placeholder="John Doe" InputProps={{ startAdornment: (<InputAdornment position="start"><User size={18} color="#94a3b8" /></InputAdornment>), }} />
+                            <TextField {...register('name', { required: 'Name is required' })} error={!!errors.name} helperText={errors.name?.message as string} fullWidth placeholder="John Doe" inputProps={{ style: { paddingTop: 14, paddingBottom: 14 } }} InputProps={{ startAdornment: (<InputAdornment position="start"><User size={18} color="#94a3b8" /></InputAdornment>), }} />
                         </Box>
 
                         <Box sx={{ mb: 3 }}>
                             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700, color: '#475569' }}>Email Address</Typography>
-                            <TextField {...register('email', { required: 'Email is required' })} error={!!errors.email} helperText={errors.email?.message as string} fullWidth placeholder="name@company.com" InputProps={{ startAdornment: (<InputAdornment position="start"><Mail size={18} color="#94a3b8" /></InputAdornment>), }} />
+                            <TextField {...register('email', { required: 'Email is required' })} error={!!errors.email} helperText={errors.email?.message as string} fullWidth placeholder="name@company.com" inputProps={{ style: { paddingTop: 14, paddingBottom: 14 } }} InputProps={{ startAdornment: (<InputAdornment position="start"><Mail size={18} color="#94a3b8" /></InputAdornment>), }} />
                         </Box>
 
                         <Box sx={{ mb: 4 }}>
                             <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#475569', mb: 1 }}>Password</Typography>
-                            <TextField {...register('password', { required: 'Password is required' })} error={!!errors.password} helperText={errors.password?.message as string} fullWidth type={showPassword ? 'text' : 'password'} placeholder="••••••••" InputProps={{ startAdornment: (<InputAdornment position="start"><Lock size={18} color="#94a3b8" /></InputAdornment>), endAdornment: (<InputAdornment position="end"><IconButton onClick={() => setShowPassword(!showPassword)} edge="end" size="small">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</IconButton></InputAdornment>), }} />
+                            <TextField {...register('password', { required: 'Password is required' })} error={!!errors.password} helperText={errors.password?.message as string} fullWidth type={showPassword ? 'text' : 'password'} placeholder="••••••••" inputProps={{ style: { paddingTop: 14, paddingBottom: 14 } }} InputProps={{ startAdornment: (<InputAdornment position="start"><Lock size={18} color="#94a3b8" /></InputAdornment>), endAdornment: (<InputAdornment position="end"><IconButton onClick={() => setShowPassword(!showPassword)} edge="end" size="small">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</IconButton></InputAdornment>), }} />
                         </Box>
 
                         <Button fullWidth variant="contained" size="large" type="submit" disabled={isSubmitting} sx={{ py: 1.8, fontSize: '1rem', fontWeight: 700, borderRadius: '12px', backgroundColor: '#2ECC71', boxShadow: '0 4px 14px 0 rgba(46, 204, 113, 0.39)', '&:hover': { backgroundColor: '#27ae60' }, }}>

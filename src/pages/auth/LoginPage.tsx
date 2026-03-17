@@ -217,6 +217,7 @@ const LoginPage: React.FC = () => {
                                             error={!!errors.username}
                                             helperText={errors.username?.message as string}
                                             fullWidth placeholder="name@company.com"
+                                            inputProps={{ style: { paddingTop: 14, paddingBottom: 14 } }}
                                             InputProps={{ startAdornment: (<InputAdornment position="start"><Mail size={18} color="#94a3b8" /></InputAdornment>) }}
                                         />
                                     </Box>
@@ -232,6 +233,7 @@ const LoginPage: React.FC = () => {
                                             {...register('password', { required: 'Password is required' })}
                                             error={!!errors.password} helperText={errors.password?.message as string}
                                             fullWidth type={showPassword ? 'text' : 'password'} placeholder="••••••••"
+                                            inputProps={{ style: { paddingTop: 14, paddingBottom: 14 } }}
                                             InputProps={{
                                                 startAdornment: (<InputAdornment position="start"><Lock size={18} color="#94a3b8" /></InputAdornment>),
                                                 endAdornment: (
@@ -277,6 +279,7 @@ const LoginPage: React.FC = () => {
                                             {...register('name', { required: 'Name is required' })}
                                             error={!!errors.name} helperText={errors.name?.message as string}
                                             fullWidth placeholder="John Doe"
+                                            inputProps={{ style: { paddingTop: 14, paddingBottom: 14 } }}
                                             InputProps={{ startAdornment: (<InputAdornment position="start"><User size={18} color="#94a3b8" /></InputAdornment>) }}
                                         />
                                     </Box>
@@ -286,6 +289,7 @@ const LoginPage: React.FC = () => {
                                             {...register('username', { required: 'Email is required' })}
                                             error={!!errors.username} helperText={errors.username?.message as string}
                                             fullWidth placeholder="name@company.com"
+                                            inputProps={{ style: { paddingTop: 14, paddingBottom: 14 } }}
                                             InputProps={{ startAdornment: (<InputAdornment position="start"><Mail size={18} color="#94a3b8" /></InputAdornment>) }}
                                         />
                                     </Box>
@@ -296,6 +300,7 @@ const LoginPage: React.FC = () => {
                                             {...register('password', { required: 'Password is required' })}
                                             error={!!errors.password} helperText={errors.password?.message as string}
                                             fullWidth type={showPassword ? 'text' : 'password'} placeholder="••••••••"
+                                            inputProps={{ style: { paddingTop: 14, paddingBottom: 14 } }}
                                             InputProps={{
                                                 startAdornment: (<InputAdornment position="start"><Lock size={18} color="#94a3b8" /></InputAdornment>),
                                                 endAdornment: (
@@ -353,6 +358,7 @@ const LoginPage: React.FC = () => {
                                             {...register('username', { required: 'Email is required' })}
                                             error={!!errors.username} helperText={errors.username?.message as string}
                                             fullWidth placeholder="name@company.com"
+                                            inputProps={{ style: { paddingTop: 14, paddingBottom: 14 } }}
                                             InputProps={{ startAdornment: (<InputAdornment position="start"><Mail size={18} color="#94a3b8" /></InputAdornment>) }}
                                         />
                                     </Box>

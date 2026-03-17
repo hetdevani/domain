@@ -123,7 +123,7 @@ const StatCard: React.FC<{
             )}
         </CardContent>
         {/* Ghost icon watermark */}
-        <Box
+        {/* <Box
             sx={{
                 position: 'absolute',
                 bottom: -20,
@@ -135,7 +135,7 @@ const StatCard: React.FC<{
             }}
         >
             {React.cloneElement(icon as React.ReactElement<any>, { size: 100 })}
-        </Box>
+        </Box> */}
     </Card>
 );
 
@@ -456,7 +456,7 @@ const DashboardPage: React.FC = () => {
             <Grid container spacing={2.5} sx={{ mb: 4 }}>
                 {/* Chart */}
                 <Grid size={{ xs: 12, md: 8 }} sx={{ minWidth: 0 }}>
-                    <Card sx={{ height: 380, borderRadius: '16px', border: '1px solid rgba(0,0,0,0.06)' }}>
+                    <Card sx={{ height: 425, borderRadius: '16px', border: '1px solid rgba(0,0,0,0.06)' }}>
                         <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 3 }}>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2.5 }}>
                                 <Box>

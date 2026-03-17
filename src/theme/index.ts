@@ -195,7 +195,7 @@ export const theme = createTheme({
                     // Remove the notch gap in the fieldset border
                     '& .MuiOutlinedInput-root': {
                         borderRadius: 10,
-                        backgroundColor: '#ffffff',
+                        backgroundColor: 'transparent',
                         fontSize: '0.875rem',
                         '& legend': { display: 'none' },
                         '& fieldset': {
@@ -208,6 +208,11 @@ export const theme = createTheme({
                             borderWidth: '1.5px',
                         },
                         '&.Mui-error fieldset': { borderColor: '#ef4444' },
+                        '& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus': {
+                            WebkitBoxShadow: '0 0 0 100px #ffffff inset',
+                            WebkitTextFillColor: 'inherit',
+                            transition: 'background-color 5000s ease-in-out 0s',
+                        },
                     },
                 },
             },
@@ -236,7 +241,7 @@ export const theme = createTheme({
             styleOverrides: {
                 root: {
                     borderRadius: 10,
-                    backgroundColor: '#ffffff',
+                    backgroundColor: 'transparent',
                     fontSize: '0.875rem',
                     '& legend': { display: 'none' },
                     '& fieldset': { top: 0, borderColor: borderColor },

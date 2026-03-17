@@ -270,12 +270,12 @@ const LandingNavbar: React.FC = () => {
                 anchor="right"
                 open={mobileOpen}
                 onClose={() => setMobileOpen(false)}
-                PaperProps={{ sx: { width: '85vw', maxWidth: 360, bgcolor: '#0f172a', borderLeft: '1px solid rgba(255,255,255,0.08)' } }}
+                PaperProps={{ sx: { width: '85vw', maxWidth: 360, bgcolor: '#ffffff', borderLeft: '1px solid #e2e8f0' } }}
             >
                 {/* Drawer Header */}
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2.5, py: 2, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-                    <img src="/logo-white.png" alt="Logo" style={{ height: 32 }} />
-                    <IconButton onClick={() => setMobileOpen(false)} sx={{ color: 'rgba(255,255,255,0.5)', '&:hover': { color: '#fff' } }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2.5, py: 2, borderBottom: '1px solid #f1f5f9' }}>
+                    <img src="/logo-dark.png" alt="Logo" style={{ height: 32 }} />
+                    <IconButton onClick={() => setMobileOpen(false)} sx={{ color: '#64748b', '&:hover': { color: '#1e293b', bgcolor: '#f1f5f9' } }}>
                         <X size={20} />
                     </IconButton>
                 </Box>
@@ -284,17 +284,17 @@ const LandingNavbar: React.FC = () => {
                     {/* Tools section toggle */}
                     <ListItemButton
                         onClick={() => setMobileToolsOpen(!mobileToolsOpen)}
-                        sx={{ px: 2.5, py: 1.5, '&:hover': { bgcolor: 'rgba(255,255,255,0.04)' } }}
+                        sx={{ px: 2.5, py: 1.5, '&:hover': { bgcolor: '#f8fafc' } }}
                     >
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1 }}>
-                            <Zap size={16} color={isToolsActive ? '#2ECC71' : 'rgba(255,255,255,0.5)'} />
-                            <Typography sx={{ color: isToolsActive ? '#2ECC71' : '#e2e8f0', fontWeight: 700, fontSize: '0.95rem' }}>
+                            <Zap size={16} color={isToolsActive ? '#2ECC71' : '#94a3b8'} />
+                            <Typography sx={{ color: isToolsActive ? '#2ECC71' : '#1e293b', fontWeight: 700, fontSize: '0.95rem' }}>
                                 Tools
                             </Typography>
                         </Box>
                         <ChevronDown
                             size={16}
-                            color="rgba(255,255,255,0.4)"
+                            color="#94a3b8"
                             style={{ transition: 'transform 0.2s', transform: mobileToolsOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
                         />
                     </ListItemButton>
@@ -305,7 +305,7 @@ const LandingNavbar: React.FC = () => {
                                 <Box key={group.group}>
                                     {/* Group header */}
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 1.5, pt: gIdx === 0 ? 1 : 1.5, pb: 0.5 }}>
-                                        <Box sx={{ p: 0.5, bgcolor: `${group.groupColor}20`, borderRadius: '5px', color: group.groupColor, display: 'flex' }}>
+                                        <Box sx={{ p: 0.5, bgcolor: `${group.groupColor}18`, borderRadius: '5px', color: group.groupColor, display: 'flex' }}>
                                             {group.groupIcon}
                                         </Box>
                                         <Typography sx={{ color: group.groupColor, fontWeight: 700, fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
@@ -314,7 +314,7 @@ const LandingNavbar: React.FC = () => {
                                     </Box>
 
                                     {/* Tools */}
-                                    <Box sx={{ bgcolor: 'rgba(0,0,0,0.2)', borderRadius: '10px', overflow: 'hidden' }}>
+                                    <Box sx={{ bgcolor: '#f8fafc', borderRadius: '10px', overflow: 'hidden', border: '1px solid #f1f5f9' }}>
                                         <List disablePadding>
                                             {group.tools.map((tool) => {
                                                 const active = location.pathname === tool.path;
@@ -324,19 +324,19 @@ const LandingNavbar: React.FC = () => {
                                                         onClick={() => handleMobileNav(tool.path)}
                                                         sx={{
                                                             px: 2, py: 1.1, gap: 1.5,
-                                                            bgcolor: active ? `${tool.color}12` : 'transparent',
+                                                            bgcolor: active ? `${tool.color}0D` : 'transparent',
                                                             borderLeft: active ? `3px solid ${tool.color}` : '3px solid transparent',
                                                             '&:hover': { bgcolor: `${tool.color}08` },
                                                         }}
                                                     >
-                                                        <Box sx={{ p: 0.6, bgcolor: `${tool.color}20`, borderRadius: '6px', color: tool.color, display: 'flex', flexShrink: 0 }}>
+                                                        <Box sx={{ p: 0.6, bgcolor: `${tool.color}15`, borderRadius: '6px', color: tool.color, display: 'flex', flexShrink: 0 }}>
                                                             {tool.icon}
                                                         </Box>
                                                         <Box sx={{ flex: 1, minWidth: 0 }}>
-                                                            <Typography sx={{ color: active ? tool.color : '#e2e8f0', fontWeight: 600, fontSize: '0.83rem', lineHeight: 1.3 }}>
+                                                            <Typography sx={{ color: active ? tool.color : '#1e293b', fontWeight: 600, fontSize: '0.83rem', lineHeight: 1.3 }}>
                                                                 {tool.label}
                                                             </Typography>
-                                                            <Typography sx={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                            <Typography sx={{ color: '#94a3b8', fontSize: '0.7rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                                                 {tool.desc}
                                                             </Typography>
                                                         </Box>
@@ -348,7 +348,7 @@ const LandingNavbar: React.FC = () => {
                                     </Box>
 
                                     {gIdx < TOOL_GROUPS.length - 1 && (
-                                        <Divider sx={{ borderColor: 'rgba(255,255,255,0.05)', my: 0.5 }} />
+                                        <Divider sx={{ borderColor: '#f1f5f9', my: 0.5 }} />
                                     )}
                                 </Box>
                             ))}
@@ -357,13 +357,13 @@ const LandingNavbar: React.FC = () => {
                 </Box>
 
                 {/* Drawer Footer */}
-                <Box sx={{ px: 2, py: 2.5, borderTop: '1px solid rgba(255,255,255,0.07)', display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                <Box sx={{ px: 2, py: 2.5, borderTop: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                     {isAuthenticated ? (
                         <Button
                             variant="outlined" fullWidth
                             onClick={() => handleMobileNav('/dashboard')}
                             startIcon={<User size={16} />}
-                            sx={{ color: '#fff', borderColor: 'rgba(255,255,255,0.2)', borderRadius: '10px', textTransform: 'none', fontWeight: 600, py: 1.2 }}
+                            sx={{ color: '#1e293b', borderColor: '#e2e8f0', borderRadius: '10px', textTransform: 'none', fontWeight: 600, py: 1.2, '&:hover': { borderColor: '#94a3b8', bgcolor: '#f8fafc' } }}
                         >
                             Dashboard
                         </Button>
@@ -372,7 +372,7 @@ const LandingNavbar: React.FC = () => {
                             <Button
                                 variant="outlined" fullWidth
                                 onClick={() => handleMobileNav('/login')}
-                                sx={{ color: '#fff', borderColor: 'rgba(255,255,255,0.2)', borderRadius: '10px', textTransform: 'none', fontWeight: 600, py: 1.2 }}
+                                sx={{ color: '#1e293b', borderColor: '#e2e8f0', borderRadius: '10px', textTransform: 'none', fontWeight: 600, py: 1.2, '&:hover': { borderColor: '#94a3b8', bgcolor: '#f8fafc' } }}
                             >
                                 Log In
                             </Button>
