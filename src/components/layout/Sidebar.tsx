@@ -345,7 +345,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                             <Typography
                                 sx={{
                                     fontSize: '0.688rem',
-                                    color: 'rgba(100,116,139,0.85)',
+                                    color: 'rgba(255,255,255,0.45)',
                                     fontWeight: 500,
                                 }}
                             >
@@ -367,7 +367,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                             py: 1.1,
                             px: open ? 1.5 : 0,
                             justifyContent: open ? 'initial' : 'center',
-                            color: 'rgba(100,116,139,0.75)',
+                            color: 'rgba(255,255,255,0.45)',
                             transition: 'all 0.15s ease',
                             '&:hover': {
                                 backgroundColor: 'rgba(239,68,68,0.1)',
