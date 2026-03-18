@@ -148,7 +148,7 @@ const SitemapCheckerPage: React.FC = () => {
                 <Paper elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
                     <Typography variant="h6" sx={{ fontWeight: 700, mb: 1, color: '#334155' }}>Check Sitemap</Typography>
                     <Typography sx={{ color: '#94a3b8', fontSize: '0.875rem', mb: 3 }}>Enter the sitemap URL directly (e.g., https://example.com/sitemap.xml) or the root domain to auto-detect.</Typography>
-                    <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                    <Box sx={{ display: 'flex', alignItems: 'end', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                         <TextField
                             fullWidth label="Sitemap URL" placeholder="https://example.com/sitemap.xml"
                             value={url} onChange={(e) => setUrl(e.target.value)}
@@ -157,7 +157,7 @@ const SitemapCheckerPage: React.FC = () => {
                             sx={{ '& .MuiOutlinedInput-root': { color: '#1e293b', bgcolor: '#f8fafc', height: '56px', '& fieldset': { borderColor: '#e2e8f0' }, '&:hover fieldset': { borderColor: 'rgba(142,68,173,0.5)' }, '&.Mui-focused fieldset': { borderColor: '#8E44AD' } } }}
                         />
                         <Button variant="contained" onClick={handleCheck} disabled={loading || !url}
-                            sx={{ bgcolor: '#8E44AD', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, whiteSpace: 'nowrap', '&:hover': { bgcolor: '#7d3c98' }, '&.Mui-disabled': { bgcolor: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.3)' } }}>
+                            sx={{ bgcolor: '#8E44AD', height: '56px', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140, whiteSpace: 'nowrap', '&:hover': { bgcolor: '#7d3c98' }, '&.Mui-disabled': { bgcolor: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.3)' } }}>
                             {loading ? <CircularProgress size={22} color="inherit" /> : 'Check Sitemap'}
                         </Button>
                     </Box>

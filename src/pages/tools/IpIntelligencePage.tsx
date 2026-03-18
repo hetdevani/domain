@@ -250,7 +250,7 @@ const IpIntelligencePage: React.FC = () => {
                     <Typography sx={{ color: '#94a3b8', fontSize: '0.875rem', mb: 3 }}>
                         Leave blank to detect your own public IP address automatically.
                     </Typography>
-                    <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                    <Box sx={{ display: 'flex', alignItems: 'end', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                         <TextField
                             fullWidth
                             label="IP Address or Hostname"
@@ -273,7 +273,7 @@ const IpIntelligencePage: React.FC = () => {
                             onClick={handleCheck}
                             disabled={loading}
                             sx={{
-                                bgcolor: '#3498DB', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140,
+                                bgcolor: '#3498DB', height: '56px', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 140,
                                 '&:hover': { bgcolor: '#2980b9' },
                                 '&.Mui-disabled': { bgcolor: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.3)' },
                             }}

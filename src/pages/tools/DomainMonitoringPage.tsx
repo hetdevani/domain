@@ -227,7 +227,7 @@ const DomainMonitoringPage: React.FC = () => {
             <Container maxWidth="md" sx={{ pb: 8 }}>
                 <Paper elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', p: { xs: 3, md: 5 }, mb: 4 }}>
                     <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#334155' }}>Check Domain Expiration</Typography>
-                    <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                    <Box sx={{ display: 'flex', alignItems: 'end', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                         <TextField
                             fullWidth label="Domain Name" placeholder="example.com"
                             value={domain} onChange={(e) => setDomain(e.target.value)}
@@ -236,7 +236,7 @@ const DomainMonitoringPage: React.FC = () => {
                             sx={{ '& .MuiOutlinedInput-root': { color: '#1e293b', bgcolor: '#f8fafc', height: '56px', '& fieldset': { borderColor: '#e2e8f0' }, '&:hover fieldset': { borderColor: `${ACCENT}80` }, '&.Mui-focused fieldset': { borderColor: ACCENT } } }}
                         />
                         <Button variant="contained" onClick={handleCheck} disabled={loading || !domain.trim()}
-                            sx={{ bgcolor: ACCENT, px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 160, whiteSpace: 'nowrap', '&:hover': { filter: 'brightness(0.9)', bgcolor: ACCENT }, '&.Mui-disabled': { bgcolor: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.3)' } }}>
+                            sx={{ bgcolor: ACCENT, height: '56px', px: 4, fontWeight: 700, borderRadius: '10px', minWidth: 160, whiteSpace: 'nowrap', '&:hover': { filter: 'brightness(0.9)', bgcolor: ACCENT }, '&.Mui-disabled': { bgcolor: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.3)' } }}>
                             {loading ? <><CircularProgress size={18} color="inherit" sx={{ mr: 1 }} />Checking…</> : 'Check Domain'}
                         </Button>
                     </Box>

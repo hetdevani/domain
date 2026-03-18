@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import {
     Box, Typography, Container, TextField, Button, Paper,
     CircularProgress, Accordion, AccordionSummary, AccordionDetails,
-    Switch, FormControlLabel, Grid, Collapse, Divider
+    Switch, FormControlLabel, Grid, Collapse
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Mail, ChevronDown, AlertCircle, CheckCircle, XCircle,
+    Mail, ChevronDown, AlertCircle, CheckCircle,
     Lock, Shield, Settings, Send, Server
 } from 'lucide-react';
 import ToolPageLayout from '../../components/layout/ToolPageLayout';
@@ -57,21 +57,6 @@ const SectionLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     </Typography>
 );
 
-interface ResultItem {
-    label: string;
-    status: 'success' | 'error' | 'warning' | 'info';
-    detail?: string;
-}
-
-const STATUS_ICON: Record<string, React.ReactNode> = {
-    success: <CheckCircle size={16} color="#2ECC71" />,
-    error: <XCircle size={16} color="#E74C3C" />,
-    warning: <AlertCircle size={16} color="#F39C12" />,
-    info: <AlertCircle size={16} color="#3498DB" />,
-};
-const STATUS_COLOR: Record<string, string> = {
-    success: '#2ECC71', error: '#E74C3C', warning: '#F39C12', info: '#3498DB',
-};
 
 const SmtpTestPage: React.FC = () => {
     const [smtpServer, setSmtpServer] = useState('');
@@ -122,55 +107,21 @@ const SmtpTestPage: React.FC = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             });
-            const data = await res.json();
+            const text = await res.text();
+            let data: any;
+            try { data = JSON.parse(text); } catch { setError(`Server returned non-JSON (${res.status}): ${text.slice(0, 200)}`); return; }
             if (data.status === 'success' || data.code === 'SUCCESS' || data.status === 200) {
-                setResult(data.data);
+                setResult(data.data ?? data);
             } else {
-                setError(data.message || 'SMTP test failed');
+                setError(data.message || `SMTP test failed (${res.status})`);
             }
-        } catch {
-            setError('Failed to reach the server. Please check your connection and try again.');
+        } catch (err: any) {
+            setError(err?.message || 'Failed to reach the server.');
         } finally {
             setLoading(false);
         }
     };
 
-    // Parse result into display items
-    const parseResultItems = (data: any): ResultItem[] => {
-        if (!data) return [];
-        const items: ResultItem[] = [];
-
-        if ('connectionSuccess' in data || 'connected' in data) {
-            const ok = data.connectionSuccess ?? data.connected;
-            items.push({ label: 'Connection', status: ok ? 'success' : 'error', detail: ok ? `Connected to ${smtpServer}:${port}` : (data.connectionError || 'Connection failed') });
-        }
-        if ('authSuccess' in data || 'authenticated' in data) {
-            const ok = data.authSuccess ?? data.authenticated;
-            items.push({ label: 'Authentication', status: ok ? 'success' : 'error', detail: ok ? `Authenticated as ${username}` : (data.authError || 'Authentication failed') });
-        }
-        if (!skipSend && ('sendSuccess' in data || 'sent' in data || 'emailSent' in data)) {
-            const ok = data.sendSuccess ?? data.sent ?? data.emailSent;
-            items.push({ label: 'Email Sent', status: ok ? 'success' : 'error', detail: ok ? `Email delivered to ${emailTo}` : (data.sendError || 'Send failed') });
-        }
-        if ('tlsVersion' in data || 'encryptionUsed' in data) {
-            items.push({ label: 'Encryption', status: 'info', detail: data.tlsVersion || data.encryptionUsed || securityType });
-        }
-        if ('responseTime' in data || 'latencyMs' in data) {
-            const ms = data.responseTime ?? data.latencyMs;
-            items.push({ label: 'Response Time', status: ms < 2000 ? 'success' : 'warning', detail: `${ms}ms` });
-        }
-        if ('serverBanner' in data || 'banner' in data) {
-            items.push({ label: 'Server Banner', status: 'info', detail: data.serverBanner || data.banner });
-        }
-        // If no structured keys, show raw
-        if (items.length === 0 && data.message) {
-            items.push({ label: 'Result', status: 'success', detail: data.message });
-        }
-        return items;
-    };
-
-    const resultItems = parseResultItems(result);
-    const overallSuccess = resultItems.length > 0 && resultItems.every(i => i.status === 'success' || i.status === 'info');
 
     return (
         <ToolPageLayout>
@@ -419,46 +370,21 @@ const SmtpTestPage: React.FC = () => {
                     {/* Result */}
                     {result && (
                         <motion.div key="res" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                            <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, bgcolor: '#ffffff', border: `1px solid ${overallSuccess ? 'rgba(46,204,113,0.2)' : 'rgba(231,76,60,0.2)'}`, borderRadius: '20px', mb: 4 }}>
-                                {/* Header */}
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-                                    {overallSuccess
-                                        ? <CheckCircle size={22} color="#2ECC71" />
-                                        : <XCircle size={22} color="#E74C3C" />
-                                    }
-                                    <Typography variant="h6" sx={{ fontWeight: 700, color: overallSuccess ? '#2ECC71' : '#E74C3C' }}>
-                                        {overallSuccess ? 'SMTP Test Passed' : 'SMTP Test Failed'}
-                                    </Typography>
-                                    <Box sx={{ ml: 'auto', px: 2, py: 0.5, bgcolor: overallSuccess ? 'rgba(46,204,113,0.12)' : 'rgba(231,76,60,0.12)', borderRadius: '20px', border: `1px solid ${overallSuccess ? 'rgba(46,204,113,0.3)' : 'rgba(231,76,60,0.3)'}` }}>
-                                        <Typography sx={{ fontSize: '0.75rem', fontWeight: 700, color: overallSuccess ? '#2ECC71' : '#E74C3C' }}>
-                                            {smtpServer}:{port}
-                                        </Typography>
-                                    </Box>
+                            <Paper elevation={0} sx={{
+                                p: { xs: 3, md: 4 },
+                                bgcolor: 'rgba(46,204,113,0.05)',
+                                border: '2px solid rgba(46,204,113,0.3)',
+                                borderRadius: '20px', mb: 4, textAlign: 'center'
+                            }}>
+                                <Box sx={{ display: 'inline-flex', p: 2.5, bgcolor: 'rgba(46,204,113,0.12)', borderRadius: '50%', mb: 2 }}>
+                                    <CheckCircle size={40} color="#2ECC71" />
                                 </Box>
-
-                                <Divider sx={{ borderColor: '#e2e8f0', mb: 3 }} />
-
-                                {/* Result items */}
-                                {resultItems.length > 0 ? (
-                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                                        {resultItems.map((item, i) => (
-                                            <Box key={i} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, p: 2, bgcolor: `${STATUS_COLOR[item.status]}08`, border: `1px solid ${STATUS_COLOR[item.status]}25`, borderRadius: '10px' }}>
-                                                <Box sx={{ mt: 0.2, flexShrink: 0 }}>{STATUS_ICON[item.status]}</Box>
-                                                <Box>
-                                                    <Typography sx={{ color: '#1e293b', fontWeight: 700, fontSize: '0.88rem' }}>{item.label}</Typography>
-                                                    {item.detail && (
-                                                        <Typography sx={{ color: '#64748b', fontSize: '0.8rem', mt: 0.3 }}>{item.detail}</Typography>
-                                                    )}
-                                                </Box>
-                                            </Box>
-                                        ))}
-                                    </Box>
-                                ) : (
-                                    /* Fallback: raw JSON */
-                                    <Box sx={{ p: 3, bgcolor: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '12px', fontFamily: 'monospace', fontSize: '0.82rem', color: '#475569', whiteSpace: 'pre-wrap', lineHeight: 1.8 }}>
-                                        {JSON.stringify(result, null, 2)}
-                                    </Box>
-                                )}
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: '#2ECC71', mb: 1 }}>
+                                    SMTP Test Passed
+                                </Typography>
+                                <Typography sx={{ color: '#64748b', fontSize: '0.9rem' }}>
+                                    {smtpServer}:{port}
+                                </Typography>
                             </Paper>
                         </motion.div>
                     )}

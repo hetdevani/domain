@@ -268,6 +268,7 @@ const DnsPropagationPage: React.FC = () => {
                                 sx={{
                                     color: '#1e293b',
                                     bgcolor: '#f8fafc',
+                                    height: '56px',
                                     '& .MuiOutlinedInput-notchedOutline': { borderColor: '#e2e8f0' },
                                     '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(46,204,113,0.5)' },
                                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#2ECC71' },
