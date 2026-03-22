@@ -19,6 +19,7 @@ const PublicStatusPage = lazy(() => import('../pages/status-pages/PublicStatusPa
 const IncidentPage = lazy(() => import('../pages/monitors/IncidentPage'));
 const PlanManagementPage = lazy(() => import('../pages/plans/PlanManagementPage'));
 const MasterManagementPage = lazy(() => import('../pages/master/MasterManagementPage'));
+const RoleManagementPage = lazy(() => import('../pages/roles/RoleManagementPage'));
 const SettingsPage = lazy(() => import('../pages/settings/SettingsPage'));
 
 // Tool Pages
@@ -155,6 +156,14 @@ const AppRoutes: React.FC = () => {
                     element={
                         <ProtectedRoute module={MODULES.MASTER}>
                             <MasterManagementPage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/roles"
+                    element={
+                        <ProtectedRoute module={MODULES.ROLE}>
+                            <RoleManagementPage />
                         </ProtectedRoute>
                     }
                 />

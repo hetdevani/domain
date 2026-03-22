@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Chip, Avatar, Typography, IconButton, Tooltip } from '@mui/material';
-import { ShieldCheck, Ban, Key, Shield } from 'lucide-react';
+import { ShieldCheck, Ban, Key, Shield, LogIn } from 'lucide-react';
+
 import DynamicTable, { type Column } from '../../components/table/DynamicTable';
 import Breadcrumb from '../../components/layout/Breadcrumb';
 import CustomerForm from './components/CustomerForm';
@@ -10,6 +11,8 @@ import UserPermissionModal from '../users/components/UserPermissionModal';
 import { useUserLogic } from '../users/hooks/useUserLogic';
 import { userApi } from '../users/api/userApi';
 import { USER_TYPES } from '../../types';
+import { useAuth } from '../../contexts/AuthContext';
+
 
 const CustomerManagementPage: React.FC = () => {
     // Reusing useUserLogic as the backend logic is identical
@@ -36,6 +39,8 @@ const CustomerManagementPage: React.FC = () => {
         onResetPassword,
         onPermissionSubmit
     } = useUserLogic();
+    const { impersonate, user: currentUser } = useAuth();
+
 
     const columns: Column[] = [
         {
@@ -147,7 +152,18 @@ const CustomerManagementPage: React.FC = () => {
                                 <Key size={16} color="#8b5cf6" />
                             </IconButton>
                         </Tooltip>
+                        {Number(currentUser?.type) === USER_TYPES.MASTER_ADMIN && (
+                            <Tooltip title="Login As Customer">
+                                <IconButton
+                                    size="small"
+                                    onClick={(e) => { e.stopPropagation(); impersonate(row.id); }}
+                                >
+                                    <LogIn size={16} color="#f97316" />
+                                </IconButton>
+                            </Tooltip>
+                        )}
                     </>
+
                 )}
             />
 

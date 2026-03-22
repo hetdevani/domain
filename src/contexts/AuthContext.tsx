@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import type { IUser, PermissionModule } from '../types';
+import { MODULES, USER_TYPES } from '../types';
 
 interface AuthContextType {
     user: IUser | null;
@@ -15,7 +16,11 @@ interface AuthContextType {
     hasPermission: (module: number, action: string) => boolean;
     registerUser: (userData: any) => Promise<void>;
     forgotPassword: (email: string) => Promise<void>;
+    impersonate: (userId: string) => Promise<void>;
+    stopImpersonating: () => void;
+    isImpersonated: boolean;
 }
+
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -68,7 +73,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             setToken(token);
             setUser(user);
-            navigate('/dashboard');
+            
+            // Redirect based on user type
+            const userType = Number(user?.type);
+            if (userType === USER_TYPES.CUSTOMER) {
+                navigate('/status-pages');
+            } else {
+                navigate('/dashboard');
+            }
             return 'success';
         } catch (error) {
             throw error;
@@ -89,7 +101,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             setToken(token);
             setUser(user);
-            navigate('/dashboard');
+
+            // Redirect based on user type
+            const userType = Number(user?.type);
+            if (userType === USER_TYPES.CUSTOMER) {
+                navigate('/status-pages');
+            } else {
+                navigate('/dashboard');
+            }
         } catch (error) {
             throw error;
         }
@@ -109,7 +128,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             setToken(token);
             setUser(user);
-            navigate('/dashboard');
+
+            // Redirect based on user type
+            const userType = Number(user?.type);
+            if (userType === USER_TYPES.CUSTOMER) {
+                navigate('/status-pages');
+            } else {
+                navigate('/dashboard');
+            }
         } catch (error) {
             throw error;
         }
@@ -131,6 +157,66 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const impersonate = async (userId: string) => {
+        try {
+            // 1. Store current admin session to "park" it
+            const currentToken = localStorage.getItem('token');
+            const currentRefreshToken = localStorage.getItem('refreshToken');
+            const currentUser = localStorage.getItem('user');
+
+            if (currentToken) localStorage.setItem('adminToken', currentToken);
+            if (currentRefreshToken) localStorage.setItem('adminRefreshToken', currentRefreshToken);
+            if (currentUser) localStorage.setItem('adminUser', currentUser);
+
+            // 2. Call impersonation API
+            const response = await api.post(`/web/auth/impersonate/${userId}`);
+            const { token, refreshToken, user: impersonatedUser } = response.data.data;
+
+            // 3. Swap main tokens with impersonated ones
+            localStorage.setItem('token', token);
+            localStorage.setItem('refreshToken', refreshToken);
+            localStorage.setItem('user', JSON.stringify(impersonatedUser));
+
+            setToken(token);
+            setUser(impersonatedUser);
+
+            // 4. Redirect to home or status pages
+            navigate('/dashboard');
+        } catch (error) {
+            // Restore admin session if impersonation fails
+            const adminToken = localStorage.getItem('adminToken');
+            if (adminToken) {
+                localStorage.setItem('token', adminToken);
+                setToken(adminToken);
+            }
+            throw error;
+        }
+    };
+
+    const stopImpersonating = () => {
+        const adminToken = localStorage.getItem('adminToken');
+        const adminRefreshToken = localStorage.getItem('adminRefreshToken');
+        const adminUser = localStorage.getItem('adminUser');
+
+        if (adminToken && adminUser) {
+            // Restore parked admin session
+            localStorage.setItem('token', adminToken);
+            localStorage.setItem('refreshToken', adminRefreshToken || '');
+            localStorage.setItem('user', adminUser);
+
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminRefreshToken');
+            localStorage.removeItem('adminUser');
+
+            setToken(adminToken);
+            setUser(JSON.parse(adminUser));
+            navigate('/dashboard');
+        } else {
+            // Fallback to logout if no admin session found
+            logout();
+        }
+    };
+
     const logout = useCallback(async () => {
         try {
             await api.post('/web/auth/logout');
@@ -140,17 +226,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             localStorage.removeItem('token');
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('user');
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminRefreshToken');
+            localStorage.removeItem('adminUser');
             setToken(null);
             setUser(null);
             navigate('/login');
         }
     }, [navigate]);
 
+
     const hasPermission = (moduleNum: number, action: string) => {
         if (!user) return false;
 
+        const userType = Number(user.type);
+
         // Master Admin has all permissions
-        if (user.type === 1) return true;
+        if (userType === USER_TYPES.MASTER_ADMIN) return true;
+
+        // Customers (type 3) can always access these modules by default
+        if (userType === USER_TYPES.CUSTOMER && [MODULES.STATUS_PAGE, MODULES.MONITOR, MODULES.INCIDENT, MODULES.DASH_BOARD].includes(moduleNum)) {
+            return true;
+        }
 
         let permissions: PermissionModule[] = [];
         if (Array.isArray(user.accessPermission)) {
@@ -188,7 +285,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         hasPermission,
         registerUser,
         forgotPassword,
+        impersonate,
+        stopImpersonating,
+        isImpersonated: !!localStorage.getItem('adminToken'),
     };
+
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -31,7 +31,7 @@ const chartData = [
 
 const LandingPage: React.FC = () => {
     const navigate = useNavigate();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user } = useAuth();
 
     const features = [
         { icon: <Globe size={28} color="#2ECC71" />, bg: 'rgba(46,204,113,0.1)', title: 'HTTP/HTTPS Monitoring', desc: 'Monitor website uptime and response times with detailed performance metrics and status code tracking.' },
@@ -83,9 +83,13 @@ const LandingPage: React.FC = () => {
                         </Typography>
                         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
                             {isAuthenticated ? (
-                                <Button variant="contained" size="large" onClick={() => navigate('/dashboard')} endIcon={<ArrowRight size={18} />}
+                                <Button 
+                                    variant="contained" 
+                                    size="large" 
+                                    onClick={() => navigate(user?.type === 3 ? '/status-pages' : '/dashboard')} 
+                                    endIcon={<ArrowRight size={18} />}
                                     sx={{ bgcolor: '#2ECC71', px: 5, py: 1.8, fontSize: '1rem', fontWeight: 700, borderRadius: '12px', boxShadow: '0 8px 24px rgba(46,204,113,0.35)', '&:hover': { bgcolor: '#27ae60', transform: 'translateY(-2px)', boxShadow: '0 12px 28px rgba(46,204,113,0.4)' }, transition: 'all 0.2s' }}>
-                                    Go to Dashboard
+                                    Go to {user?.type === 3 ? 'Status Pages' : 'Dashboard'}
                                 </Button>
                             ) : (
                                 <>

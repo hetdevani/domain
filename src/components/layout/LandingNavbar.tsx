@@ -78,7 +78,7 @@ export const TOOL_LINKS: ToolLink[] = TOOL_GROUPS.flatMap(g => g.tools);
 const LandingNavbar: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user } = useAuth();
 
     const [toolsAnchor, setToolsAnchor] = useState<null | HTMLElement>(null);
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -216,7 +216,7 @@ const LandingNavbar: React.FC = () => {
                     {isAuthenticated ? (
                         <Button
                             variant="outlined"
-                            onClick={() => navigate('/dashboard')}
+                            onClick={() => navigate(user?.type === 3 ? '/status-pages' : '/dashboard')}
                             startIcon={<User size={16} />}
                             sx={{
                                 display: { xs: 'none', md: 'flex' },
@@ -225,7 +225,7 @@ const LandingNavbar: React.FC = () => {
                                 '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,0.08)' },
                             }}
                         >
-                            Dashboard
+                            {user?.type === 3 ? 'Status Pages' : 'Dashboard'}
                         </Button>
                     ) : (
                         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5 }}>
@@ -361,11 +361,11 @@ const LandingNavbar: React.FC = () => {
                     {isAuthenticated ? (
                         <Button
                             variant="outlined" fullWidth
-                            onClick={() => handleMobileNav('/dashboard')}
+                            onClick={() => handleMobileNav(user?.type === 3 ? '/status-pages' : '/dashboard')}
                             startIcon={<User size={16} />}
                             sx={{ color: '#1e293b', borderColor: '#e2e8f0', borderRadius: '10px', textTransform: 'none', fontWeight: 600, py: 1.2, '&:hover': { borderColor: '#94a3b8', bgcolor: '#f8fafc' } }}
                         >
-                            Dashboard
+                            {user?.type === 3 ? 'Status Pages' : 'Dashboard'}
                         </Button>
                     ) : (
                         <>
