@@ -181,7 +181,7 @@ const DashboardPage: React.FC = () => {
     if (error) return <Alert severity="error" sx={{ borderRadius: 3 }}>{error}</Alert>;
     if (!stats) return null;
 
-    const isMasterAdmin = user?.type === 1;
+    const isMasterAdmin = Number(user?.type) === 1;
     const averageUptime = Number(stats.monitors?.averageUptime || 0);
     const uptimePct = Math.round(averageUptime);
     const recentIncidentList = stats.incidents.recentList || [];

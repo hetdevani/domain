@@ -98,10 +98,11 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
         .map(group => ({
             ...group,
             items: group.items.filter(item => {
-                if (user && user.type === 3) {
+                const userType = user ? Number(user.type) : null;
+                if (userType === 3) {
                     if (['User', 'Customer', 'Plans', 'Masters'].includes(item.title)) return false;
                 }
-                if (user && (user.type === 1 || user.type === 2 || user.type === 3)) {
+                if (userType === 1 || userType === 2 || userType === 3) {
                     if (item.title === 'Status Pages') return true;
                 }
                 return !item.module || hasPermission(item.module, 'list');
@@ -349,9 +350,9 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                                     fontWeight: 500,
                                 }}
                             >
-                                {user?.type === 1
+                                {Number(user?.type) === 1
                                     ? 'Master Admin'
-                                    : user?.type === 2
+                                    : Number(user?.type) === 2
                                     ? 'Admin'
                                     : 'Customer'}
                             </Typography>

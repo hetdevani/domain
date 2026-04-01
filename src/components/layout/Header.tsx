@@ -243,9 +243,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }) => {
                                 {user?.name}
                             </Typography>
                             <Typography sx={{ fontSize: '0.75rem', color: '#94a3b8', mt: 0.125 }}>
-                                {user?.type === 1
+                                {Number(user?.type) === 1
                                     ? 'Master Admin'
-                                    : user?.type === 2
+                                    : Number(user?.type) === 2
                                     ? 'Administrator'
                                     : 'Customer'}
                             </Typography>

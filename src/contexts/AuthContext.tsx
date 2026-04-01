@@ -36,10 +36,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<IUser | null>(null);
     const [token, setToken] = useState<string | null>(getValidStoredToken());
     const [isLoading, setIsLoading] = useState(true);
+    const [isImpersonated, setIsImpersonated] = useState(!!localStorage.getItem('adminToken'));
     const navigate = useNavigate();
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
+        const adminToken = localStorage.getItem('adminToken');
+        setIsImpersonated(!!adminToken);
+
         if (storedUser && token) {
             try {
                 setUser(JSON.parse(storedUser));
@@ -179,6 +183,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             setToken(token);
             setUser(impersonatedUser);
+            setIsImpersonated(true);
 
             // 4. Redirect to home or status pages
             navigate('/dashboard');
@@ -210,7 +215,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             setToken(adminToken);
             setUser(JSON.parse(adminUser));
-            navigate('/dashboard');
+            setIsImpersonated(false);
+            
+            // Forces refresh of dashboard or redirect back
+            navigate('/dashboard', { replace: true });
         } else {
             // Fallback to logout if no admin session found
             logout();
@@ -231,6 +239,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             localStorage.removeItem('adminUser');
             setToken(null);
             setUser(null);
+            setIsImpersonated(false);
             navigate('/login');
         }
     }, [navigate]);
@@ -287,7 +296,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         forgotPassword,
         impersonate,
         stopImpersonating,
-        isImpersonated: !!localStorage.getItem('adminToken'),
+        isImpersonated,
     };
 
 
