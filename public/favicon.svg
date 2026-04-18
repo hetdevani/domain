@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Amber rounded square background -->
+  <rect width="48" height="48" rx="12" fill="url(#grad)"/>
+  <!-- Globe body -->
+  <circle cx="24" cy="24" r="13" stroke="white" stroke-width="2" fill="none"/>
+  <!-- Equator line -->
+  <line x1="11" y1="24" x2="37" y2="24" stroke="white" stroke-width="2"/>
+  <!-- Vertical meridian ellipse -->
+  <ellipse cx="24" cy="24" rx="6.5" ry="13" stroke="white" stroke-width="2" fill="none"/>
+  <!-- Top latitude arc -->
+  <path d="M13 17.5 Q24 14 35 17.5" stroke="white" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <!-- Bottom latitude arc -->
+  <path d="M13 30.5 Q24 34 35 30.5" stroke="white" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fcd34d"/>
+      <stop offset="60%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+</svg>

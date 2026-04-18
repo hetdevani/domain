@@ -43,12 +43,20 @@ api.interceptors.response.use(
         const status = error.response?.status;
         const errorCode = (error.response?.data as any)?.code;
 
-        // If the error is 401 and not a retry, try to refresh token
+        // If the error is 401 or specific error codes, handle accordingly
         const isAuthEndpoint = originalRequest.url?.includes('/auth/');
-        const shouldTryRefresh =
-            (status === 401 || (status === 422 && errorCode === 'MISSING_TOKEN')) &&
-            !originalRequest._retry &&
-            !isAuthEndpoint;
+        
+        // Check for common unauthorized status codes and error codes
+        const isUnauthorized = 
+            status === 401 || 
+            (status === 403 && errorCode === 'INSUFFICIENT_PERMISSION') ||
+            (status === 422 && errorCode === 'MISSING_TOKEN') ||
+            errorCode === 'E_UNAUTHORIZED' ||
+            errorCode === 'INVALID_TOKEN' ||
+            errorCode === 'USER_NOT_FOUND' ||
+            errorCode === 'USER_NOT_ACTIVE';
+
+        const shouldTryRefresh = isUnauthorized && !originalRequest._retry && !isAuthEndpoint;
 
         if (shouldTryRefresh) {
             originalRequest._retry = true;
@@ -61,18 +69,31 @@ api.interceptors.response.use(
 
                 if (token) {
                     localStorage.setItem('token', token);
+                    // Update headers for the retry
+                    originalRequest.headers.Authorization = `Bearer ${token}`;
+                    return api(originalRequest);
                 }
-
-                // If it succeeds, the new token is now in the cookie
-                return api(originalRequest);
+                
+                throw new Error('Refresh failed - No token returned');
             } catch (refreshError) {
                 // Refresh token failed, clear storage and redirect to login
                 localStorage.removeItem('token');
                 localStorage.removeItem('refreshToken');
                 localStorage.removeItem('user');
-                window.location.href = '/login';
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminRefreshToken');
+                localStorage.removeItem('adminUser');
+                
+                // Use window.location.replace to prevent back button from going back to protected page
+                window.location.replace('/login');
                 return Promise.reject(refreshError);
             }
+        }
+
+        // If it's an auth error but we already retried or it's an auth endpoint
+        if (isUnauthorized && (originalRequest._retry || isAuthEndpoint)) {
+            localStorage.clear(); // Clear all to be safe
+            window.location.replace('/login');
         }
 
         // Handle other errors

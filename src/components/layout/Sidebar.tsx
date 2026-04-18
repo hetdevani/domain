@@ -30,6 +30,7 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { MODULES } from '../../types';
+import { BRAND } from '../../theme';
 
 interface SidebarProps {
     open: boolean;
@@ -38,8 +39,8 @@ interface SidebarProps {
 
 interface MenuItem {
     title: string;
-    path: string;
-    icon: React.ReactElement<LucideProps>;
+    path:  string;
+    icon:  React.ReactElement<LucideProps>;
     module?: number;
 }
 
@@ -48,37 +49,34 @@ interface MenuGroup {
     items: MenuItem[];
 }
 
-const GREEN = '#2ECC71';
-const SIDEBAR_BG = '#0a3d62';
-
 const menuGroups: MenuGroup[] = [
     {
         label: null,
         items: [
-            { title: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard />, module: MODULES.DASH_BOARD },
+            { title: 'Dashboard',    path: '/dashboard',    icon: <LayoutDashboard />, module: MODULES.DASH_BOARD },
         ],
     },
     {
         label: 'Monitoring',
         items: [
-            { title: 'Monitors', path: '/monitors', icon: <Activity />, module: MODULES.MONITOR },
-            { title: 'Incidents', path: '/incidents', icon: <AlertCircle />, module: MODULES.INCIDENT },
-            { title: 'Status Pages', path: '/status-pages', icon: <Globe />, module: MODULES.STATUS_PAGE },
+            { title: 'Monitors',     path: '/monitors',     icon: <Activity />,     module: MODULES.MONITOR    },
+            { title: 'Incidents',    path: '/incidents',    icon: <AlertCircle />,  module: MODULES.INCIDENT   },
+            { title: 'Status Pages', path: '/status-pages', icon: <Globe />,        module: MODULES.STATUS_PAGE},
         ],
     },
     {
         label: 'Management',
         items: [
-            { title: 'User', path: '/users', icon: <Shield />, module: MODULES.USER },
-            { title: 'Customer', path: '/customers', icon: <Users />, module: MODULES.USER },
-            { title: 'Plans', path: '/plans', icon: <CreditCard />, module: MODULES.PLAN },
-            { title: 'Masters', path: '/masters', icon: <Database />, module: MODULES.MASTER },
+            { title: 'User',         path: '/users',        icon: <Shield />,       module: MODULES.USER  },
+            { title: 'Customer',     path: '/customers',    icon: <Users />,        module: MODULES.USER  },
+            { title: 'Plans',        path: '/plans',        icon: <CreditCard />,   module: MODULES.PLAN  },
+            { title: 'Masters',      path: '/masters',      icon: <Database />,     module: MODULES.MASTER},
         ],
     },
     {
         label: 'Account',
         items: [
-            { title: 'Settings', path: '/settings', icon: <Settings />, module: MODULES.SETTING },
+            { title: 'Settings',     path: '/settings',     icon: <Settings />,     module: MODULES.SETTING },
         ],
     },
 ];
@@ -86,25 +84,21 @@ const menuGroups: MenuGroup[] = [
 const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
     const { user, hasPermission, logout } = useAuth();
     const location = useLocation();
-    const navigate = useNavigate();
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const navigate  = useNavigate();
+    const theme     = useTheme();
+    const isMobile  = useMediaQuery(theme.breakpoints.down('md'));
 
-    const drawerWidth = 256;
+    const drawerWidth     = 256;
     const miniDrawerWidth = 72;
-    const headerHeight = 64;
+    const headerHeight    = 64;
 
     const filteredGroups = menuGroups
         .map(group => ({
             ...group,
             items: group.items.filter(item => {
                 const userType = user ? Number(user.type) : null;
-                if (userType === 3) {
-                    if (['User', 'Customer', 'Plans', 'Masters'].includes(item.title)) return false;
-                }
-                if (userType === 1 || userType === 2 || userType === 3) {
-                    if (item.title === 'Status Pages') return true;
-                }
+                if (userType === 3 && ['User', 'Customer', 'Plans', 'Masters'].includes(item.title)) return false;
+                if ([1, 2, 3].includes(userType as number) && item.title === 'Status Pages') return true;
                 return !item.module || hasPermission(item.module, 'list');
             }),
         }))
@@ -115,54 +109,47 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
 
         const button = (
             <ListItemButton
-                onClick={() => {
-                    navigate(item.path);
-                    if (isMobile) onClose();
-                }}
+                onClick={() => { navigate(item.path); if (isMobile) onClose(); }}
                 sx={{
-                    borderRadius: '10px',
-                    py: 1.1,
-                    px: open ? 1.5 : 0,
-                    justifyContent: open ? 'initial' : 'center',
-                    position: 'relative',
-                    backgroundColor: isActive ? 'rgba(46,204,113,0.09)' : 'transparent',
-                    color: isActive ? '#ffffff' : 'rgba(229, 240, 255, 0.85)',
-                    transition: 'all 0.15s ease',
+                    borderRadius:    '10px',
+                    py:              1.1,
+                    px:              open ? 1.5 : 0,
+                    justifyContent:  open ? 'initial' : 'center',
+                    position:        'relative',
+                    backgroundColor: isActive ? BRAND.amberBg : 'transparent',
+                    color:           isActive ? BRAND.textLt   : 'rgba(148,163,184,0.85)',
+                    transition:      'all 0.15s ease',
                     '&:hover': {
-                        backgroundColor: isActive
-                            ? 'rgba(46,204,113,0.12)'
-                            : 'rgba(255,255,255,0.05)',
-                        color: '#ffffff',
-                        '& .nav-icon': { color: isActive ? GREEN : '#cbd5e1' },
+                        backgroundColor: isActive ? BRAND.amberBg2 : 'rgba(255,255,255,0.05)',
+                        color:           '#ffffff',
+                        '& .nav-icon':   { color: isActive ? BRAND.amber : 'rgba(203,213,225,0.9)' },
                     },
-                    '&::before': isActive
-                        ? {
-                              content: '""',
-                              position: 'absolute',
-                              left: -8,
-                              top: '50%',
-                              transform: 'translateY(-50%)',
-                              width: 3,
-                              height: '55%',
-                              bgcolor: GREEN,
-                              borderRadius: '0 3px 3px 0',
-                              boxShadow: `0 0 10px ${GREEN}88`,
-                          }
-                        : {},
+                    '&::before': isActive ? {
+                        content:   '""',
+                        position:  'absolute',
+                        left:      -8,
+                        top:       '50%',
+                        transform: 'translateY(-50%)',
+                        width:     3,
+                        height:    '55%',
+                        bgcolor:   BRAND.amber,
+                        borderRadius: '0 3px 3px 0',
+                        boxShadow: `0 0 10px ${BRAND.amberGlow}`,
+                    } : {},
                 }}
             >
                 <ListItemIcon
                     className="nav-icon"
                     sx={{
-                        minWidth: 0,
-                        mr: open ? 1.75 : 0,
+                        minWidth:   0,
+                        mr:         open ? 1.75 : 0,
                         justifyContent: 'center',
-                        color: isActive ? GREEN : 'rgba(188, 206, 231, 0.9)',
+                        color:      isActive ? BRAND.amber : 'rgba(148,163,184,0.7)',
                         transition: 'color 0.15s ease',
                     }}
                 >
                     {React.cloneElement(item.icon as React.ReactElement<LucideProps>, {
-                        size: 18,
+                        size:        18,
                         strokeWidth: isActive ? 2.5 : 2,
                     })}
                 </ListItemIcon>
@@ -170,85 +157,114 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                     <ListItemText
                         primary={item.title}
                         primaryTypographyProps={{
-                            fontWeight: isActive ? 700 : 500,
-                            fontSize: '0.855rem',
+                            fontWeight:    isActive ? 700 : 500,
+                            fontSize:      '0.855rem',
                             letterSpacing: '0.01em',
-                            color: isActive ? '#ffffff' : 'rgba(229, 240, 255, 0.85)',
+                            color:         isActive ? '#ffffff' : 'rgba(148,163,184,0.85)',
                         }}
                     />
                 )}
             </ListItemButton>
         );
 
-        if (!open) {
-            return (
-                <ListItem disablePadding sx={{ display: 'block', px: 1, mb: 0.25 }}>
+        return (
+            <ListItem disablePadding sx={{ display: 'block', px: 1, mb: 0.25 }}>
+                {!open ? (
                     <Tooltip title={item.title} placement="right" arrow>
                         {button}
                     </Tooltip>
-                </ListItem>
-            );
-        }
-        return (
-            <ListItem disablePadding sx={{ display: 'block', px: 1, mb: 0.25 }}>
-                {button}
+                ) : button}
             </ListItem>
         );
     };
 
     const drawerContent = (
-        <Box
-            sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden',
-                background: SIDEBAR_BG,
-                color: '#ffffff',
-            }}
-        >
+        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative',
+            background: `linear-gradient(160deg, ${BRAND.bgDeep} 0%, #070b1c 55%, #0c1230 100%)`, color: '#ffffff' }}>
+
+            {/* Aurora overlay */}
+            <Box aria-hidden sx={{
+                position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0,
+                background: [
+                    `radial-gradient(ellipse 120% 40% at 50% 0%,   ${BRAND.amberGlow}  0%, transparent 60%)`,
+                    `radial-gradient(ellipse 80%  50% at 0%   80%,  ${BRAND.violetGlow} 0%, transparent 55%)`,
+                ].join(','),
+            }} />
+
             {/* Logo */}
             <Box
                 sx={{
-                    px: open ? 2.5 : 1.5,
-                    display: 'flex',
-                    alignItems: 'center',
+                    px:             open ? 2.5 : 1.5,
+                    display:        'flex',
+                    alignItems:     'center',
                     justifyContent: open ? 'flex-start' : 'center',
-                    minHeight: headerHeight,
-                    flexShrink: 0,
-                    borderBottom: '1px solid rgba(255,255,255,0.05)',
-                    transition: 'all 0.3s ease',
+                    minHeight:      headerHeight,
+                    flexShrink:     0,
+                    borderBottom:   `1px solid rgba(148,163,184,0.08)`,
+                    transition:     'all 0.3s ease',
+                    cursor:         'pointer',
+                    position:       'relative',
+                    zIndex:         1,
                 }}
+                onClick={() => navigate('/dashboard')}
             >
-                <Box
-                    sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-                    onClick={() => navigate('/dashboard')}
-                >
-                    <img
-                        src={open ? '/logo-white.png' : '/icon.png'}
-                        alt="Logo"
-                        style={{
-                            height: open ? 42 : 34,
-                            width: 'auto',
-                            objectFit: 'contain',
-                            transition: 'all 0.3s ease',
+                {open ? (
+                    /* Expanded: icon + text */
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Box
+                            sx={{
+                                width:      38, height: 38,
+                                borderRadius: '11px',
+                                background: `linear-gradient(135deg, ${BRAND.amber}, ${BRAND.amberDk})`,
+                                display:    'flex', alignItems: 'center', justifyContent: 'center',
+                                boxShadow:  `0 4px 16px ${BRAND.amberGlow}`,
+                                flexShrink: 0,
+                            }}
+                        >
+                            <Globe size={19} color="#0a0f1e" strokeWidth={2.5} />
+                        </Box>
+                        <Box>
+                            <Typography
+                                sx={{ fontWeight: 800, fontSize: '1rem', color: BRAND.textLt,
+                                    fontFamily: '"Outfit","DM Sans",sans-serif', lineHeight: 1.15 }}
+                            >
+                                Plan A
+                            </Typography>
+                            <Typography
+                                sx={{ fontSize: '0.58rem', fontWeight: 700, color: BRAND.amber,
+                                    letterSpacing: '0.14em', textTransform: 'uppercase' }}
+                            >
+                                Hosting
+                            </Typography>
+                        </Box>
+                    </Box>
+                ) : (
+                    /* Collapsed: icon only */
+                    <Box
+                        sx={{
+                            width:      34, height: 34,
+                            borderRadius: '10px',
+                            background: `linear-gradient(135deg, ${BRAND.amber}, ${BRAND.amberDk})`,
+                            display:    'flex', alignItems: 'center', justifyContent: 'center',
+                            boxShadow:  `0 3px 12px ${BRAND.amberGlow}`,
                         }}
-                    />
-                </Box>
+                    >
+                        <Globe size={17} color="#0a0f1e" strokeWidth={2.5} />
+                    </Box>
+                )}
             </Box>
 
             {/* Navigation groups */}
             <Box
                 sx={{
-                    flexGrow: 1,
-                    overflowY: 'auto',
-                    overflowX: 'hidden',
-                    py: 2,
-                    '&::-webkit-scrollbar': { width: '3px' },
-                    '&::-webkit-scrollbar-thumb': {
-                        backgroundColor: 'rgba(255,255,255,0.08)',
-                        borderRadius: '10px',
-                    },
+                    flexGrow:    1,
+                    overflowY:   'auto',
+                    overflowX:   'hidden',
+                    py:          2,
+                    position:    'relative',
+                    zIndex:      1,
+                    '&::-webkit-scrollbar':       { width: '3px' },
+                    '&::-webkit-scrollbar-thumb': { backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '10px' },
                 }}
             >
                 {filteredGroups.map((group, gi) => (
@@ -256,31 +272,19 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                         {open && group.label && (
                             <Typography
                                 sx={{
-                                    px: 2.5,
-                                    py: 0.75,
-                                    fontSize: '0.6rem',
-                                    fontWeight: 800,
-                                    letterSpacing: '0.14em',
-                                    textTransform: 'uppercase',
-                                    color: 'rgba(255,255,255,0.45)',
-                                    fontFamily: '"DM Sans", monospace',
-                                    userSelect: 'none',
-                                    mt: gi > 0 ? 1.5 : 0,
+                                    px:            2.5, py: 0.75,
+                                    fontSize:      '0.6rem', fontWeight: 800,
+                                    letterSpacing: '0.14em', textTransform: 'uppercase',
+                                    color:         'rgba(148,163,184,0.4)',
+                                    userSelect:    'none',
+                                    mt:            gi > 0 ? 1.5 : 0,
                                 }}
                             >
                                 {group.label}
                             </Typography>
                         )}
                         {!open && gi > 0 && (
-                            <Box
-                                sx={{
-                                    width: 24,
-                                    height: '1px',
-                                    bgcolor: 'rgba(255,255,255,0.07)',
-                                    mx: 'auto',
-                                    my: 1.5,
-                                }}
-                            />
+                            <Box sx={{ width: 24, height: '1px', bgcolor: 'rgba(148,163,184,0.08)', mx: 'auto', my: 1.5 }} />
                         )}
                         <List disablePadding>
                             {group.items.map(item => (
@@ -291,39 +295,26 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                 ))}
             </Box>
 
-            {/* User + Logout */}
-            <Box
-                sx={{
-                    flexShrink: 0,
-                    borderTop: '1px solid rgba(255,255,255,0.06)',
-                    p: 1.5,
-                    pb: 2,
-                }}
-            >
+            {/* User card + logout */}
+            <Box sx={{ flexShrink: 0, borderTop: `1px solid rgba(148,163,184,0.08)`, p: 1.5, pb: 2, position: 'relative', zIndex: 1 }}>
                 {open && (
                     <Box
                         sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1.25,
-                            px: 1.25,
-                            py: 1.25,
-                            mb: 0.75,
+                            display:     'flex', alignItems: 'center', gap: 1.25,
+                            px:          1.25, py: 1.25, mb: 0.75,
                             borderRadius: '10px',
-                            bgcolor: 'rgba(255,255,255,0.04)',
-                            border: '1px solid rgba(255,255,255,0.05)',
+                            bgcolor:     'rgba(255,255,255,0.035)',
+                            border:      `1px solid ${BRAND.border}`,
                         }}
                     >
                         <Avatar
                             src={user?.image}
                             sx={{
-                                width: 32,
-                                height: 32,
-                                fontSize: '0.75rem',
-                                fontWeight: 800,
-                                bgcolor: alpha(GREEN, 0.18),
-                                color: GREEN,
-                                border: `1.5px solid ${alpha(GREEN, 0.3)}`,
+                                width: 32, height: 32,
+                                fontSize:  '0.75rem', fontWeight: 800,
+                                background: `linear-gradient(135deg, ${BRAND.amber}, ${BRAND.amberDk})`,
+                                color:      '#0a0f1e',
+                                border:     `1.5px solid ${alpha(BRAND.amber, 0.3)}`,
                                 flexShrink: 0,
                             }}
                         >
@@ -332,29 +323,15 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                         <Box sx={{ minWidth: 0 }}>
                             <Typography
                                 sx={{
-                                    fontWeight: 700,
-                                    fontSize: '0.8125rem',
-                                    color: '#e2e8f0',
-                                    lineHeight: 1.25,
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    whiteSpace: 'nowrap',
+                                    fontWeight: 700, fontSize: '0.8125rem',
+                                    color:      BRAND.textLt, lineHeight: 1.25,
+                                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                                 }}
                             >
                                 {user?.name}
                             </Typography>
-                            <Typography
-                                sx={{
-                                    fontSize: '0.688rem',
-                                    color: 'rgba(255,255,255,0.45)',
-                                    fontWeight: 500,
-                                }}
-                            >
-                                {Number(user?.type) === 1
-                                    ? 'Master Admin'
-                                    : Number(user?.type) === 2
-                                    ? 'Admin'
-                                    : 'Customer'}
+                            <Typography sx={{ fontSize: '0.688rem', color: 'rgba(148,163,184,0.55)', fontWeight: 500 }}>
+                                {Number(user?.type) === 1 ? 'Master Admin' : Number(user?.type) === 2 ? 'Admin' : 'Customer'}
                             </Typography>
                         </Box>
                     </Box>
@@ -364,39 +341,28 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                     <ListItemButton
                         onClick={() => logout()}
                         sx={{
-                            borderRadius: '10px',
-                            py: 1.1,
-                            px: open ? 1.5 : 0,
+                            borderRadius:  '10px', py: 1.1,
+                            px:            open ? 1.5 : 0,
                             justifyContent: open ? 'initial' : 'center',
-                            color: 'rgba(255,255,255,0.45)',
-                            transition: 'all 0.15s ease',
+                            color:         'rgba(148,163,184,0.5)',
+                            transition:    'all 0.15s ease',
                             '&:hover': {
-                                backgroundColor: 'rgba(239,68,68,0.1)',
-                                color: '#f87171',
+                                backgroundColor: BRAND.dangerBg,
+                                color:           '#f87171',
                                 '& .logout-icon': { color: '#f87171' },
                             },
                         }}
                     >
                         <ListItemIcon
                             className="logout-icon"
-                            sx={{
-                                minWidth: 0,
-                                mr: open ? 1.75 : 0,
-                                justifyContent: 'center',
-                                color: 'inherit',
-                                transition: 'color 0.15s ease',
-                            }}
+                            sx={{ minWidth: 0, mr: open ? 1.75 : 0, justifyContent: 'center', color: 'inherit', transition: 'color 0.15s ease' }}
                         >
                             <LogOut size={18} />
                         </ListItemIcon>
                         {open && (
                             <ListItemText
                                 primary="Sign Out"
-                                primaryTypographyProps={{
-                                    fontWeight: 600,
-                                    fontSize: '0.855rem',
-                                    color: 'inherit',
-                                }}
+                                primaryTypographyProps={{ fontWeight: 600, fontSize: '0.855rem', color: 'inherit' }}
                             />
                         )}
                     </ListItemButton>
@@ -412,23 +378,24 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
             open={isMobile ? open : true}
             onClose={onClose}
             sx={{
-                width: open ? drawerWidth : miniDrawerWidth,
-                flexShrink: 0,
-                whiteSpace: 'nowrap',
-                boxSizing: 'border-box',
-                zIndex: theme.zIndex.drawer + 2,
+                width:       open ? drawerWidth : miniDrawerWidth,
+                flexShrink:  0,
+                whiteSpace:  'nowrap',
+                boxSizing:   'border-box',
+                zIndex:      theme.zIndex.drawer + 2,
                 '& .MuiDrawer-paper': {
-                    width: open ? drawerWidth : miniDrawerWidth,
+                    width:      open ? drawerWidth : miniDrawerWidth,
                     transition: theme.transitions.create('width', {
-                        easing: theme.transitions.easing.sharp,
+                        easing:   theme.transitions.easing.sharp,
                         duration: open
                             ? theme.transitions.duration.enteringScreen
                             : theme.transitions.duration.leavingScreen,
                     }),
-                    overflowX: 'hidden',
-                    backgroundColor: SIDEBAR_BG,
-                    border: 'none',
-                    boxShadow: '4px 0 24px rgba(0,0,0,0.15)',
+                    overflowX:       'hidden',
+                    backgroundColor: BRAND.bgDeep,
+                    border:          'none',
+                    borderRight:     `1px solid ${BRAND.border}`,
+                    boxShadow:       `4px 0 32px rgba(0,0,0,0.4)`,
                 },
             }}
         >

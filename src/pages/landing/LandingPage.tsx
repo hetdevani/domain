@@ -1,345 +1,1124 @@
-import React from 'react';
-import { Box, Typography, Button, Container, Grid, Accordion, AccordionSummary, AccordionDetails, Chip } from '@mui/material';
-import SEOHead from '../../components/seo/SEOHead';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
 import {
-    Activity, Globe, Bell, Server, ArrowRight,
-    Search, Wifi, Lock, MapPin,
-    Zap, Mail, MessageSquare, Send,
-    Cloud, ChevronDown, Plus, Eye, Monitor,
-    Users, TrendingUp, CheckCircle
+    Box,
+    Typography,
+    Button,
+    Container,
+    Stack,
+    TextField,
+    CircularProgress,
+    Paper,
+    Chip,
+    Grid,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+    Divider,
+} from '@mui/material';
+import SEOHead from '../../components/seo/SEOHead';
+import { motion, AnimatePresence, useReducedMotion, useInView } from 'framer-motion';
+import {
+    Globe,
+    Search,
+    Shield,
+    ArrowRight,
+    Sparkles,
+    Check,
+    Users,
+    Headphones,
+    Zap,
+    Lock,
+    BarChart2,
+    Clock,
+    ChevronDown,
+    Star,
+    Phone,
+    Mail,
+    MapPin,
+    Twitter,
+    Linkedin,
+    Facebook,
+    Instagram,
+    CheckCircle,
+    XCircle,
+    RefreshCw,
+    Award,
+    TrendingUp,
+    Layers,
+    HardDrive,
+    Cpu,
 } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
 import LandingNavbar from '../../components/layout/LandingNavbar';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import api from '../../api';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
-const chartData = [
-    { time: '10:00', responseTime: 120 },
-    { time: '10:05', responseTime: 110 },
-    { time: '10:10', responseTime: 130 },
-    { time: '10:15', responseTime: 125 },
-    { time: '10:20', responseTime: 150 },
-    { time: '10:25', responseTime: 800 },
-    { time: '10:30', responseTime: 120 },
-    { time: '10:35', responseTime: 115 },
-    { time: '10:40', responseTime: 118 },
-    { time: '10:45', responseTime: 125 },
-    { time: '10:50', responseTime: 110 },
-    { time: '10:55', responseTime: 112 },
+/* ═══════════════════════════ DESIGN TOKENS ══════════════════════════════ */
+const T = {
+    /* backgrounds */
+    bgDeep:    '#04060f',
+    bgDark:    '#070c1d',
+    bgCard:    'rgba(255,255,255,0.035)',
+    bgCardHov: 'rgba(255,255,255,0.065)',
+    bgLight:   '#f0f4ff',
+    bgWhite:   '#ffffff',
+
+    /* amber – primary brand accent */
+    amber:     '#f59e0b',
+    amberLt:   '#fcd34d',
+    amberDk:   '#d97706',
+    amberGlow: 'rgba(245,158,11,0.22)',
+    amberBg:   'rgba(245,158,11,0.08)',
+
+    /* violet – secondary depth accent */
+    violet:    '#7c3aed',
+    violetLt:  '#a78bfa',
+    violetGlow:'rgba(124,58,237,0.22)',
+
+    /* cyan – tertiary highlight */
+    cyan:      '#06b6d4',
+    cyanGlow:  'rgba(6,182,212,0.18)',
+
+    /* neutrals */
+    textLt:    '#f8fafc',
+    textMid:   'rgba(248,250,252,0.75)',
+    textDk:    '#0f172a',
+    muted:     '#94a3b8',
+    mutedDk:   '#64748b',
+
+    /* borders */
+    border:    'rgba(148,163,184,0.12)',
+    borderLt:  '#e2e8f0',
+    borderGold:'rgba(245,158,11,0.28)',
+
+    /* status */
+    success:   '#10b981',
+    danger:    '#ef4444',
+};
+
+/* ════════════════════════ ANIMATION EASINGS ════════════════════════════ */
+const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const EASE_SPRING = { type: 'spring', stiffness: 380, damping: 32 } as const;
+
+const fadeUp = {
+    hidden:  { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } },
+};
+const fadeIn = {
+    hidden:  { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.4 } },
+};
+const stagger = (d = 0.09) => ({ visible: { transition: { staggerChildren: d } } });
+const scaleIn = {
+    hidden:  { opacity: 0, scale: 0.88 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.48, ease: EASE } },
+};
+
+/* ══════════════════════ REUSABLE RADIUS ════════════════════════════════ */
+const R  = '16px';
+const RS = '12px';
+
+/* ═══════════════════════════ DATA ══════════════════════════════════════ */
+const popularTlds = [
+    { ext: '.com',     price: '₹899',   popular: true  },
+    { ext: '.in',      price: '₹699',   popular: true  },
+    { ext: '.net',     price: '₹999',   popular: false },
+    { ext: '.org',     price: '₹849',   popular: false },
+    { ext: '.co',      price: '₹1,299', popular: true  },
+    { ext: '.io',      price: '₹3,499', popular: false },
+    { ext: '.store',   price: '₹599',   popular: true  },
+    { ext: '.online',  price: '₹499',   popular: true  },
+    { ext: '.tech',    price: '₹1,099', popular: false },
+    { ext: '.website', price: '₹449',   popular: false },
+    { ext: '.co.in',   price: '₹499',   popular: true  },
+    { ext: '.info',    price: '₹799',   popular: false },
 ];
 
-const LandingPage: React.FC = () => {
-    const navigate = useNavigate();
-    const { isAuthenticated, user } = useAuth();
+const statsData = [
+    { value: 50,   suffix: 'K+',  label: 'Domains Managed' },
+    { value: 99.9, suffix: '%',   label: 'Uptime SLA'      },
+    { value: 24,   suffix: '/7',  label: 'Expert Support'  },
+    { value: 10,   suffix: '+',   label: 'Years Experience' },
+];
 
-    const features = [
-        { icon: <Globe size={28} color="#2ECC71" />, bg: 'rgba(46,204,113,0.1)', title: 'HTTP/HTTPS Monitoring', desc: 'Monitor website uptime and response times with detailed performance metrics and status code tracking.' },
-        { icon: <Wifi size={28} color="#3498DB" />, bg: 'rgba(52,152,219,0.1)', title: 'Ping Monitoring', desc: 'Check server connectivity and latency across your infrastructure with real-time network diagnostics.' },
-        { icon: <Server size={28} color="#9B59B6" />, bg: 'rgba(155,89,182,0.1)', title: 'Port Monitoring', desc: 'Verify specific ports are open and responsive to ensure your services are accessible.' },
-        { icon: <Search size={28} color="#F39C12" />, bg: 'rgba(243,156,18,0.1)', title: 'DNS Monitoring', desc: 'Track DNS record changes and resolution times to prevent configuration issues.' },
-        { icon: <Lock size={28} color="#E74C3C" />, bg: 'rgba(231,76,60,0.1)', title: 'SSL Certificate Monitoring', desc: 'Get alerts before certificates expire and ensure your sites remain secure and trusted.' },
-        { icon: <Eye size={28} color="#1ABC9C" />, bg: 'rgba(26,188,156,0.1)', title: 'Keyword Monitoring', desc: 'Detect content changes on your pages and monitor for specific keywords or phrases.' },
-        { icon: <MapPin size={28} color="#E67E22" />, bg: 'rgba(230,126,34,0.1)', title: 'Multi-Location Checks', desc: 'Global monitoring from 15+ locations to eliminate false positives and ensure accuracy.' },
-        { icon: <Bell size={28} color="#3498DB" />, bg: 'rgba(52,152,219,0.1)', title: 'Custom Alerts', desc: 'Flexible notification rules and escalation policies tailored to your team\'s workflow.' }
-    ];
+const features = [
+    { icon: Search,   title: 'Instant Domain Search',    desc: 'Check availability across 100+ TLDs in under 2 seconds. See pricing, status and alternatives side by side.',              grad: 'linear-gradient(145deg,#f59e0b,#d97706)' },
+    { icon: Zap,      title: 'One-Click Registration',   desc: 'Register your perfect domain in minutes. Automated DNS configuration, instant activation, no technical knowledge needed.',  grad: 'linear-gradient(145deg,#7c3aed,#4f46e5)' },
+    { icon: Lock,     title: 'Free WHOIS Privacy',       desc: 'Protect your personal information from public WHOIS databases. Your privacy is included at no extra cost.',                 grad: 'linear-gradient(145deg,#10b981,#059669)' },
+    { icon: BarChart2,title: 'Advanced Dashboard',       desc: 'Manage all your domains, renewals, DNS records and hosting services from one beautiful control panel.',                    grad: 'linear-gradient(145deg,#3b82f6,#2563eb)' },
+    { icon: RefreshCw,title: 'Auto Renewal',             desc: 'Never lose your domain accidentally. Smart reminders 60, 30 and 7 days before expiry with auto-renew.',                   grad: 'linear-gradient(145deg,#ec4899,#db2777)' },
+    { icon: Headphones,title: '24/7 Expert Support',    desc: 'Get help from real domain experts round the clock. Chat, email, or call — we respond in under 5 minutes.',                 grad: 'linear-gradient(145deg,#f97316,#ea580c)' },
+];
+
+const howItWorks = [
+    { step: '01', title: 'Search Your Name',     desc: 'Type the domain name you want. We instantly check availability across all major TLDs and show you pricing.', icon: Search },
+    { step: '02', title: 'Create Your Account',  desc: 'Sign up in 30 seconds. No credit card required to browse. Add your details and verify your email.',          icon: Users  },
+    { step: '03', title: 'Register & Go Live',   desc: 'Complete your purchase with UPI, card or netbanking. Your domain is active within minutes.',                  icon: Globe  },
+];
+
+const hostingPlans = [
+    {
+        name: 'Starter', price: '₹99',   period: '/mo', highlight: false, badge: null,
+        desc: 'Perfect for personal websites and small projects.',
+        features: ['1 Website','5 GB SSD Storage','10 GB Bandwidth','Free SSL Certificate','5 Email Accounts','cPanel Access','99.9% Uptime'],
+        cta: 'Get Started',
+    },
+    {
+        name: 'Business', price: '₹299', period: '/mo', highlight: true,  badge: 'Most Popular',
+        desc: 'For growing businesses that need more power.',
+        features: ['10 Websites','50 GB SSD Storage','Unlimited Bandwidth','Free SSL Certificate','Unlimited Emails','cPanel Access','Free Domain (1 yr)','Daily Backups','Priority Support'],
+        cta: 'Start Free Trial',
+    },
+    {
+        name: 'Pro',     price: '₹599',  period: '/mo', highlight: false, badge: null,
+        desc: 'High-performance hosting for serious websites.',
+        features: ['Unlimited Websites','200 GB NVMe Storage','Unlimited Bandwidth','Free SSL + Wildcard','Unlimited Emails','cPanel Access','Free Domain (1 yr)','Daily Backups','Priority Support','Dedicated IP','LiteSpeed Server'],
+        cta: 'Go Pro',
+    },
+    {
+        name: 'Agency',  price: '₹1,199',period: '/mo', highlight: false, badge: null,
+        desc: 'Manage unlimited client sites with ease.',
+        features: ['Unlimited Websites','500 GB NVMe Storage','Unlimited Bandwidth','Free SSL + Wildcard','Unlimited Emails','Reseller cPanel','5 Free Domains (1 yr)','Hourly Backups','Dedicated Support Line','3 Dedicated IPs','LiteSpeed + Redis','White-label Ready'],
+        cta: 'Contact Sales',
+    },
+];
+
+const testimonials = [
+    { name: 'Rahul Sharma',  role: 'Founder, TechStartup.in',    av: 'RS', stars: 5, text: 'Plan A Hosting made it incredibly easy to register our startup domain and get hosting up within minutes. The dashboard is clean and the support team is extremely responsive.' },
+    { name: 'Priya Nair',    role: 'E-commerce Owner',           av: 'PN', stars: 5, text: 'I have used many domain registrars before but the pricing here is unbeatable for Indian businesses. The auto-renewal feature means I never worry about losing my domain.' },
+    { name: 'Arjun Mehta',   role: 'Web Developer & Freelancer', av: 'AM', stars: 5, text: 'Managing 30+ client domains from a single dashboard is a game changer. The agency plan is perfect for my freelance business. Highly recommended.' },
+    { name: 'Deepika Rao',   role: 'Digital Marketing Agency',   av: 'DR', stars: 5, text: 'GST-ready invoices are a huge plus for our business accounting. The support team helped us migrate 50 domains seamlessly. Excellent service.' },
+];
+
+const faqs = [
+    { q: 'How long does domain registration take?',                a: 'Most domains (.com, .in, .net, etc.) are registered instantly upon successful payment. You will receive a confirmation email with your domain details within minutes.' },
+    { q: 'Can I transfer my existing domain to Plan A Hosting?',   a: 'Yes! You can transfer any domain to us. The process typically takes 5-7 days and we guide you every step. Your remaining registration period carries over.' },
+    { q: 'What payment methods do you accept?',                    a: 'We accept all major Indian payment methods — UPI (PhonePe, Google Pay, Paytm), Credit/Debit Cards (Visa, Mastercard, RuPay), and Netbanking from all major Indian banks.' },
+    { q: 'Do you provide free WHOIS privacy protection?',          a: 'Yes! WHOIS privacy is included free with all domain registrations. Your personal contact information is shielded from public WHOIS databases at no extra cost.' },
+    { q: 'What is the renewal price for domains?',                 a: 'Renewal prices match registration prices listed on our TLD page — no hidden fees. We send reminders 60, 30 and 7 days before expiry.' },
+    { q: 'Do you offer refunds on domain registrations?',          a: 'Domain registrations are generally non-refundable once registered. However, hosting plans come with a 30-day money-back guarantee — no questions asked.' },
+    { q: 'Can I host multiple websites on one account?',           a: 'Yes! Our Business, Pro and Agency plans support multiple websites. The Agency plan supports unlimited websites, perfect for freelancers and agencies.' },
+    { q: 'Is customer support available in Hindi?',                a: 'Yes! Our support team is fluent in both English and Hindi. Reach us via live chat, email, or phone 24 hours a day, 7 days a week.' },
+];
+
+const whyUs = [
+    { icon: Award,     title: 'ICANN Accredited',        desc: 'Registered and accredited registrar meeting international standards.' },
+    { icon: TrendingUp,title: 'Lowest Prices',           desc: 'No inflated renewal rates. What you see is what you pay, every year.' },
+    { icon: Layers,    title: 'All-in-One Platform',     desc: 'Domains, hosting, email and billing — managed from one dashboard.' },
+    { icon: HardDrive, title: 'Indian Data Centres',     desc: 'Servers in Mumbai & Chennai for ultra-low latency across India.' },
+    { icon: Cpu,       title: 'NVMe SSD Speed',          desc: 'Up to 10× faster than traditional HDD. Your site loads in milliseconds.' },
+    { icon: Clock,     title: '99.9% Uptime',            desc: 'Enterprise-grade infrastructure with redundant power, network & cooling.' },
+];
+
+/* ═══════════════════════════ INTERFACES ════════════════════════════════ */
+interface AvailableDomain { domain: string; extension: string; status: string; price: number; }
+interface DomainSearchResponse { searchedDomain: string; available: AvailableDomain[]; taken: string[]; }
+
+/* ═══════════════════════════ HOOKS ═════════════════════════════════════ */
+function useCountUp(target: number, duration = 1800, start = false) {
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        if (!start) return;
+        let startTime: number | null = null;
+        const step = (ts: number) => {
+            if (!startTime) startTime = ts;
+            const progress = Math.min((ts - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setCount(parseFloat((eased * target).toFixed(target % 1 !== 0 ? 1 : 0)));
+            if (progress < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+    }, [start, target, duration]);
+    return count;
+}
+
+/* ═══════════════════════════ SMALL UI PIECES ═══════════════════════════ */
+function SectionBadge({ children }: { children: React.ReactNode }) {
+    return (
+        <Box
+            sx={{
+                display: 'inline-flex', alignItems: 'center', gap: 0.75,
+                bgcolor: T.amberBg, border: `1px solid ${T.amberGlow}`,
+                borderRadius: 99, px: 1.75, py: 0.55, mb: 2,
+            }}
+        >
+            <Sparkles size={12} color={T.amber} />
+            <Typography sx={{ color: T.amber, fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.11em', textTransform: 'uppercase' }}>
+                {children}
+            </Typography>
+        </Box>
+    );
+}
+
+function SectionTitle({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
+    return (
+        <Typography sx={{
+            color: light ? T.textLt : T.textDk,
+            fontSize: { xs: '1.8rem', md: '2.3rem' },
+            fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1.14,
+            mb: 1.5, fontFamily: '"Outfit","DM Sans",sans-serif',
+        }}>
+            {children}
+        </Typography>
+    );
+}
+
+function SectionSub({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
+    return (
+        <Typography sx={{
+            color: light ? T.muted : T.mutedDk,
+            fontSize: '1.0375rem', lineHeight: 1.68, maxWidth: 560, mx: 'auto',
+        }}>
+            {children}
+        </Typography>
+    );
+}
+
+/* scroll-reveal wrapper */
+function Reveal({ children, delay = 0, from = 'bottom' }:
+    { children: React.ReactNode; delay?: number; from?: 'bottom' | 'left' | 'right' | 'scale' }) {
+    const ref = useRef<HTMLDivElement>(null);
+    const inView = useInView(ref, { once: true, margin: '-64px' });
+    const variants = from === 'scale' ? scaleIn
+        : from === 'left'  ? { hidden: { opacity: 0, x: -28 }, visible: { opacity: 1, x: 0, transition: { duration: 0.52, ease: EASE } } }
+        : from === 'right' ? { hidden: { opacity: 0, x:  28 }, visible: { opacity: 1, x: 0, transition: { duration: 0.52, ease: EASE } } }
+        : fadeUp;
+    return (
+        <motion.div ref={ref} variants={variants} initial="hidden"
+            animate={inView ? 'visible' : 'hidden'} transition={{ delay }}>
+            {children}
+        </motion.div>
+    );
+}
+
+/* animated stat card */
+function StatCard({ value, suffix, label }: { value: number; suffix: string; label: string }) {
+    const ref = useRef<HTMLDivElement>(null);
+    const inView = useInView(ref, { once: true, margin: '-40px' });
+    const count = useCountUp(value, 1600, inView);
+    return (
+        <Box ref={ref} sx={{ textAlign: 'center', py: 2 }}>
+            <Typography sx={{
+                fontSize: { xs: '2.2rem', md: '2.9rem' }, fontWeight: 900, lineHeight: 1,
+                fontFamily: '"Outfit",sans-serif', mb: 0.75,
+                background: `linear-gradient(135deg, ${T.amberLt} 0%, ${T.amber} 60%, ${T.amberDk} 100%)`,
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            }}>
+                {count}{suffix}
+            </Typography>
+            <Typography sx={{ color: T.muted, fontWeight: 600, fontSize: '0.9375rem' }}>
+                {label}
+            </Typography>
+        </Box>
+    );
+}
+
+/* ═══════════════════════════════ PAGE ══════════════════════════════════ */
+const LandingPage: React.FC = () => {
+    const rm = useReducedMotion();
+    const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
+    const [searchResults, setSearchResults] = useState<DomainSearchResponse | null>(null);
+    const [openFaq, setOpenFaq] = useState<number | false>(false);
+
+    const handleSearch = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        const q = searchQuery.trim().toLowerCase().replace(/^www\./, '').replace(/\.[a-z.]+$/, '');
+        if (!q || q.length < 2) { toast.error('Enter at least 2 characters (e.g. mybrand).'); return; }
+        setIsSearching(true); setSearchResults(null);
+        try {
+            const res = await api.get('/domains/check', { params: { domainName: q } });
+            const data = res.data?.data as DomainSearchResponse | undefined;
+            if (data) {
+                setSearchResults(data);
+                if (!data.available?.length && !data.taken?.length)
+                    toast('No results returned for that search.', { icon: 'ℹ️' });
+            } else { toast.error('Something went wrong. Please try again.'); }
+        } catch (err: unknown) {
+            toast.error(err && typeof err === 'object' && 'message' in err
+                ? String((err as { message: string }).message)
+                : 'Could not check that name right now. Please try again.');
+        } finally { setIsSearching(false); }
+    };
+
+    /* floating orb helper */
+    const Orb = ({ sx }: { sx: object }) =>
+        !rm ? (
+            <motion.div
+                aria-hidden
+                style={{ position: 'absolute', borderRadius: '50%', pointerEvents: 'none', ...sx as React.CSSProperties }}
+                animate={{ y: [0, -20, 0], scale: [1, 1.06, 1] }}
+                transition={{ duration: 10 + Math.random() * 4, repeat: Infinity, ease: 'easeInOut' }}
+            />
+        ) : null;
 
     return (
-        <Box sx={{ minHeight: '100vh', bgcolor: '#ffffff', color: '#1e293b', overflowX: 'hidden' }}>
+        <Box sx={{ bgcolor: T.bgWhite, color: T.textDk, overflowX: 'hidden' }}>
             <SEOHead
-                title="Lease Packet Tools — Free Website Monitoring Services"
-                description="Free online tools for developers and SEO professionals. DNS lookup, page speed analysis, IP intelligence, domain monitoring, SMTP testing and more. Monitor everything, miss nothing."
-                keywords="website monitoring, uptime monitoring, dns tools, seo tools, developer tools, page speed test, domain monitoring, ip lookup, sitemap checker"
+                title="Plan A Hosting — Domain Registration & Web Hosting in India"
+                description="Register your domain name, get blazing-fast web hosting, and manage everything from one dashboard. Best domain prices in India with free WHOIS privacy."
+                keywords="domain registration india, web hosting india, buy domain name, cheap domain india, .in domain, .com domain, shared hosting india"
                 canonical="/"
-                ogType="website"
-                schema={{
-                    '@context': 'https://schema.org',
-                    '@type': 'WebApplication',
-                    'name': 'Lease Packet Tools',
-                    'url': 'https://tools.leasepacket.com',
-                    'description': 'Free online tools for developers and SEO professionals.',
-                    'applicationCategory': 'DeveloperApplication',
-                    'operatingSystem': 'Any',
-                    'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' }
-                }}
             />
             <LandingNavbar />
 
-            {/* Hero Section */}
-            <Box sx={{ background: 'linear-gradient(180deg, rgba(46,204,113,0.06) 0%, rgba(255,255,255,0) 60%)', pt: { xs: 12, md: 18 }, pb: { xs: 4, md: 12 }, px: 0 }}>
-                <Container maxWidth="lg" sx={{ textAlign: 'center' }}>
-                    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-                        <Chip
-                            label="Trusted by 10,000+ monitors worldwide"
-                            icon={<CheckCircle size={14} color="#2ECC71" />}
-                            sx={{ mb: 3, bgcolor: 'rgba(46,204,113,0.1)', color: '#16a34a', border: '1px solid rgba(46,204,113,0.25)', fontWeight: 600, px: 1 }}
-                        />
-                        <Typography variant="h1" sx={{ color: '#0f172a', fontSize: { xs: '2.6rem', md: '4.5rem' }, fontWeight: 900, lineHeight: 1.1, mb: 3, letterSpacing: '-0.02em' }}>
-                            Monitor Everything.<br />
-                            <Box component="span" sx={{ color: '#2ECC71' }}>Miss Nothing.</Box>
-                        </Typography>
-                        <Typography variant="h6" sx={{ color: '#64748b', maxWidth: 700, mx: 'auto', mb: { xs: 2, md: 5 }, fontWeight: 400, lineHeight: 1.7, fontSize: { xs: '1rem', md: '1.15rem' } }}>
-                            The ultimate infrastructure monitoring platform for your servers, websites, and APIs. Get real-time alerts and brilliant analytics instantly.
-                        </Typography>
-                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
-                            {isAuthenticated ? (
-                                <Button 
-                                    variant="contained" 
-                                    size="large" 
-                                    onClick={() => navigate(user?.type === 3 ? '/status-pages' : '/dashboard')} 
-                                    endIcon={<ArrowRight size={18} />}
-                                    sx={{ bgcolor: '#2ECC71', px: 5, py: 1.8, fontSize: '1rem', fontWeight: 700, borderRadius: '12px', boxShadow: '0 8px 24px rgba(46,204,113,0.35)', '&:hover': { bgcolor: '#27ae60', transform: 'translateY(-2px)', boxShadow: '0 12px 28px rgba(46,204,113,0.4)' }, transition: 'all 0.2s' }}>
-                                    Go to {user?.type === 3 ? 'Status Pages' : 'Dashboard'}
-                                </Button>
-                            ) : (
-                                <>
-                                    <Button variant="contained" size="large" onClick={() => navigate('/signup')} endIcon={<ArrowRight size={18} />}
-                                        sx={{ bgcolor: '#2ECC71', px: 5, py: 1.8, fontSize: '1rem', fontWeight: 700, borderRadius: '12px', boxShadow: '0 8px 24px rgba(46,204,113,0.35)', '&:hover': { bgcolor: '#27ae60', transform: 'translateY(-2px)', boxShadow: '0 12px 28px rgba(46,204,113,0.4)' }, transition: 'all 0.2s' }}>
-                                        Start Monitoring Free
-                                    </Button>
-                                    <Button variant="outlined" size="large" onClick={() => navigate('/login')}
-                                        sx={{ color: '#334155', borderColor: '#e2e8f0', px: 4, py: 1.8, fontSize: '1rem', fontWeight: 600, borderRadius: '12px', '&:hover': { borderColor: '#2ECC71', color: '#2ECC71', bgcolor: 'rgba(46,204,113,0.04)' }, transition: 'all 0.2s' }}>
-                                        Sign In
-                                    </Button>
-                                </>
-                            )}
-                        </Box>
-                    </motion.div>
+            {/* ═══════════════════════ HERO ═══════════════════════════ */}
+            <Box id="search" component="section" sx={{
+                background: `linear-gradient(160deg, ${T.bgDeep} 0%, #070b1c 45%, #0c1230 100%)`,
+                pt: { xs: 7, md: 10 }, pb: { xs: 10, md: 15 },
+                position: 'relative', overflow: 'hidden', scrollMarginTop: '80px',
+            }}>
+                {/* Aurora gradient layers */}
+                <Box aria-hidden sx={{
+                    position: 'absolute', inset: 0, pointerEvents: 'none',
+                    background: [
+                        `radial-gradient(ellipse 80% 60% at 10% 0%,  ${T.violetGlow} 0%, transparent 55%)`,
+                        `radial-gradient(ellipse 70% 50% at 90% 10%, ${T.amberGlow}  0%, transparent 52%)`,
+                        `radial-gradient(ellipse 50% 40% at 50% 80%, ${T.cyanGlow}   0%, transparent 48%)`,
+                    ].join(','),
+                }} />
 
-                    {/* Stats Bar */}
-                    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }} style={{ marginTop: 'clamp(28px, 5vw, 56px)' }}>
-                        <Grid container spacing={{ xs: 1.5, md: 3 }}>
-                            {[
-                                { icon: <Zap size={24} color="#2ECC71" />, value: '12ms', label: 'Avg Response Time', color: '#2ECC71' },
-                                { icon: <Monitor size={24} color="#3498DB" />, value: '10,000+', label: 'Monitors Tracked', color: '#3498DB' },
-                                { icon: <Globe size={24} color="#F39C12" />, value: '15+', label: 'Global Locations', color: '#F39C12' },
-                                { icon: <TrendingUp size={24} color="#9B59B6" />, value: '99.9%', label: 'Uptime', color: '#9B59B6' }
-                            ].map((stat, idx) => (
-                                <Grid size={{ xs: 6, md: 3 }} key={idx}>
-                                    <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.5 + idx * 0.1 }}>
-                                        <Box sx={{ pt: 3, pb:3, pl:1, pr:1, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', textAlign: 'center', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', transition: 'all 0.2s', '&:hover': { border: `1px solid ${stat.color}40`, boxShadow: `0 8px 24px ${stat.color}15`, transform: 'translateY(-4px)' } }}>
-                                            <Box sx={{ mb: 1.5, display: 'flex', justifyContent: 'center', p: 1.2, bgcolor: `${stat.color}12`, borderRadius: '10px', width: 'fit-content', mx: 'auto' }}>{stat.icon}</Box>
-                                            <Typography variant="h4" sx={{ color: '#0f172a', fontWeight: 800, mb: 0.5, fontSize: { xs: '1.6rem', md: '2rem' } }}>{stat.value}</Typography>
-                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.78rem', fontWeight: 500 }}>{stat.label}</Typography>
-                                        </Box>
-                                    </motion.div>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </motion.div>
+                {/* Animated orbs */}
+                <Orb sx={{ top: '8%', left: '6%', width: 440, height: 440, background: `radial-gradient(circle, ${T.amberGlow} 0%, transparent 68%)`, filter: 'blur(2px)' }} />
+                <Orb sx={{ bottom: '10%', right: '4%', width: 360, height: 360, background: `radial-gradient(circle, ${T.violetGlow} 0%, transparent 65%)` }} />
+                <Orb sx={{ top: '30%', right: '22%', width: 200, height: 200, background: `radial-gradient(circle, ${T.cyanGlow} 0%, transparent 65%)` }} />
 
-                    {/* Chart */}
-                    <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }} style={{ marginTop: 'clamp(28px, 5vw, 60px)' }}>
-                        <Box sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '24px', p: { xs: 3, md: 5 }, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
-                            <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 4, flexWrap: 'wrap', gap: 2 }}>
-                                <Box sx={{ textAlign: 'left' }}>
-                                    <Typography variant="h6" sx={{ color: '#0f172a', fontWeight: 800, mb: 0.5 }}>Live Response Metrics — google.com</Typography>
-                                    <Typography variant="body2" sx={{ color: '#94a3b8' }}>Visualizing API endpoint response times across the global CDN network</Typography>
+                {/* Dot-grid */}
+                <Box aria-hidden sx={{
+                    position: 'absolute', inset: 0, opacity: 0.035, pointerEvents: 'none',
+                    backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1px)`,
+                    backgroundSize: '36px 36px',
+                }} />
+
+                <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+                    <motion.div initial="hidden" animate="visible" variants={stagger(0.11)}>
+
+                        {/* Badge */}
+                        <motion.div variants={fadeUp} style={{ textAlign: 'center', marginBottom: 16 }}>
+                            <Box sx={{
+                                display: 'inline-flex', alignItems: 'center', gap: 1,
+                                bgcolor: T.amberBg, border: `1px solid ${T.amberGlow}`,
+                                borderRadius: 99, px: 2.25, py: 0.7,
+                            }}>
+                                <motion.div
+                                    animate={rm ? {} : { rotate: [0, 14, -8, 0], scale: [1, 1.1, 1] }}
+                                    transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+                                >
+                                    <Sparkles size={14} color={T.amber} />
+                                </motion.div>
+                                <Typography sx={{ color: T.amber, fontSize: '0.76rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                                    India's Trusted Domain & Hosting Partner
+                                </Typography>
+                            </Box>
+                        </motion.div>
+
+                        {/* Headline with gradient text */}
+                        <motion.div variants={fadeUp}>
+                            <Typography component="h1" sx={{
+                                textAlign: 'center',
+                                fontSize: { xs: '2.2rem', sm: '3rem', md: '4rem' },
+                                fontWeight: 900, lineHeight: 1.05, letterSpacing: '-0.035em',
+                                fontFamily: '"Outfit","DM Sans",sans-serif', mb: 2.5,
+                            }}>
+                                <Box component="span" sx={{ color: T.textLt }}>Find the Perfect{' '}</Box>
+                                <Box component="span" sx={{
+                                    background: `linear-gradient(135deg, ${T.amberLt} 0%, ${T.amber} 45%, ${T.amberDk} 100%)`,
+                                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                                    backgroundClip: 'text',
+                                }}>
+                                    Domain Name
                                 </Box>
-                                <Chip label="● Live" size="small" sx={{ bgcolor: 'rgba(46,204,113,0.1)', color: '#16a34a', border: '1px solid rgba(46,204,113,0.2)', fontWeight: 700, fontSize: '0.75rem' }} />
+                                <Box component="br" />
+                                <Box component="span" sx={{ color: T.textLt }}>for Your </Box>
+                                <Box component="span" sx={{
+                                    background: `linear-gradient(135deg, ${T.violetLt} 0%, ${T.violet} 60%, ${T.cyan} 100%)`,
+                                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                                    backgroundClip: 'text',
+                                }}>
+                                    Business
+                                </Box>
+                            </Typography>
+                        </motion.div>
+
+                        {/* Sub-headline */}
+                        <motion.div variants={fadeIn}>
+                            <Typography sx={{
+                                color: T.muted, maxWidth: 580, mx: 'auto',
+                                textAlign: 'center', fontSize: '1.0625rem', lineHeight: 1.72, mb: 5,
+                            }}>
+                                Search across 100+ domain extensions. Get free WHOIS privacy, instant activation,
+                                and GST-ready invoices — built for Indian businesses.
+                            </Typography>
+                        </motion.div>
+
+                        {/* Search box */}
+                        <motion.div variants={fadeUp}>
+                            <Box
+                                component="form" onSubmit={handleSearch}
+                                sx={{
+                                    display: 'flex', flexDirection: { xs: 'column', sm: 'row' },
+                                    maxWidth: 760, mx: 'auto',
+                                    borderRadius: R, overflow: 'hidden',
+                                    bgcolor: 'rgba(255,255,255,0.05)',
+                                    border: `1px solid rgba(255,255,255,0.1)`,
+                                    backdropFilter: 'blur(20px)',
+                                    boxShadow: `0 0 0 1px rgba(245,158,11,0.12) inset, 0 32px 80px rgba(0,0,0,0.5)`,
+                                    transition: 'box-shadow 0.25s',
+                                    '&:focus-within': {
+                                        boxShadow: `0 0 0 2px ${T.amber}60 inset, 0 32px 80px rgba(0,0,0,0.5)`,
+                                    },
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, px: 2.5 }}>
+                                    <Search size={20} color={T.muted} style={{ flexShrink: 0 }} />
+                                    <TextField
+                                        fullWidth
+                                        placeholder="Type your brand name (e.g. mycompany)"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        variant="standard"
+                                        InputProps={{
+                                            disableUnderline: true,
+                                            sx: { px: 1.5, py: 1.9, fontSize: '1.05rem', fontWeight: 500, color: '#e2e8f0' },
+                                        }}
+                                    />
+                                </Box>
+                                <Box
+                                    component={motion.div}
+                                    whileHover={!isSearching ? { scale: 1.02 } : {}}
+                                    whileTap={!isSearching ? { scale: 0.97 } : {}}
+                                    sx={{ display: 'flex', alignSelf: 'stretch', position: 'relative', overflow: 'hidden' }}
+                                >
+                                    <Button
+                                        type="submit" disabled={isSearching}
+                                        sx={{
+                                            flex: 1,
+                                            background: `linear-gradient(135deg, ${T.amberLt} 0%, ${T.amber} 50%, ${T.amberDk} 100%)`,
+                                            color: '#0a0f1e', fontWeight: 800, fontSize: '0.95rem',
+                                            px: { xs: 3, sm: 4 }, py: 2,
+                                            width: { xs: '100%', sm: 'auto' }, minWidth: { sm: 175 },
+                                            borderRadius: 0,
+                                            '&:hover': { filter: 'brightness(1.1)' },
+                                            '&:disabled': { bgcolor: '#92400e', color: '#fff' },
+                                            /* shimmer overlay */
+                                            '&::after': {
+                                                content: '""', position: 'absolute',
+                                                top: 0, left: '-100%', width: '60%', height: '100%',
+                                                background: 'linear-gradient(90deg,transparent,rgba(255,255,255,0.28),transparent)',
+                                                animation: isSearching ? 'none' : 'btnShimmer 2.4s infinite',
+                                            },
+                                            '@keyframes btnShimmer': {
+                                                '0%':   { left: '-100%' },
+                                                '100%': { left: '200%' },
+                                            },
+                                        }}
+                                    >
+                                        {isSearching
+                                            ? <CircularProgress size={22} sx={{ color: 'inherit' }} />
+                                            : <><Search size={18} style={{ marginRight: 8, verticalAlign: 'middle' }} />Search Domains</>
+                                        }
+                                    </Button>
+                                </Box>
                             </Box>
-                            <Box sx={{ height: { xs: 200, md: 320 }, width: '100%' }}>
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <AreaChart data={chartData}>
-                                        <defs>
-                                            <linearGradient id="colorResponse" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#2ECC71" stopOpacity={0.15} />
-                                                <stop offset="95%" stopColor="#2ECC71" stopOpacity={0} />
-                                            </linearGradient>
-                                        </defs>
-                                        <XAxis dataKey="time" stroke="#cbd5e1" tick={{ fill: '#94a3b8', fontSize: 12 }} />
-                                        <YAxis stroke="#cbd5e1" tick={{ fill: '#94a3b8', fontSize: 12 }} />
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                                        <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }} labelStyle={{ color: '#334155', fontWeight: 600 }} itemStyle={{ color: '#2ECC71' }} />
-                                        <Area type="monotone" dataKey="responseTime" stroke="#2ECC71" strokeWidth={2.5} fillOpacity={1} fill="url(#colorResponse)" dot={false} activeDot={{ r: 5, fill: '#2ECC71', strokeWidth: 0 }} />
-                                    </AreaChart>
-                                </ResponsiveContainer>
-                            </Box>
-                        </Box>
+
+                            {/* TLD quick chips */}
+                            <Stack direction="row" spacing={0.75} justifyContent="center" flexWrap="wrap" sx={{ mt: 2.5, gap: 0.5 }}>
+                                {['.com', '.in', '.co.in', '.store', '.online', '.co'].map((t) => (
+                                    <Chip key={t} label={t} size="small"
+                                        onClick={() => setSearchQuery(prev => prev.replace(/\.[a-z.]+$/, '') + t)}
+                                        sx={{
+                                            bgcolor: 'rgba(255,255,255,0.07)', color: T.muted,
+                                            border: `1px solid ${T.border}`, fontSize: '0.75rem',
+                                            cursor: 'pointer', transition: 'all 0.18s',
+                                            '&:hover': { bgcolor: T.amberBg, color: T.amber, borderColor: T.amberGlow },
+                                        }}
+                                    />
+                                ))}
+                                <Typography sx={{ color: T.muted, fontSize: '0.75rem', alignSelf: 'center' }}>
+                                    + 100 more
+                                </Typography>
+                            </Stack>
+                        </motion.div>
+
+                        {/* Trust micro row */}
+                        <motion.div variants={fadeIn}>
+                            <Stack direction="row" spacing={3} justifyContent="center" flexWrap="wrap" sx={{ mt: 4, gap: 1 }}>
+                                {['Free WHOIS Privacy', 'Instant Activation', 'GST Invoices', 'ICANN Accredited'].map((t) => (
+                                    <Stack key={t} direction="row" spacing={0.75} alignItems="center">
+                                        <CheckCircle size={14} color={T.success} />
+                                        <Typography sx={{ color: 'rgba(148,163,184,0.85)', fontSize: '0.8125rem', fontWeight: 500 }}>{t}</Typography>
+                                    </Stack>
+                                ))}
+                            </Stack>
+                        </motion.div>
                     </motion.div>
                 </Container>
             </Box>
 
-            {/* How It Works */}
-            <Box sx={{ bgcolor: '#f8fafc', py: { xs: 5, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
-                <Container maxWidth="lg">
-                    <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 10 } }}>
-                        <Typography variant="overline" sx={{ color: '#2ECC71', fontWeight: 700, letterSpacing: '0.12em', fontSize: '0.8rem' }}>Simple Setup</Typography>
-                        <Typography variant="h3" sx={{ color: '#0f172a', fontWeight: 800, mt: 1, mb: 2, fontSize: { xs: '1.9rem', md: '2.6rem' } }}>How It Works</Typography>
-                        <Typography variant="h6" sx={{ color: '#64748b', fontWeight: 400, fontSize: '1rem' }}>Get started in three simple steps</Typography>
-                    </Box>
-                    <Grid container spacing={4}>
-                        {[
-                            { icon: <Plus size={36} color="#2ECC71" />, bg: 'rgba(46,204,113,0.1)', step: '01', title: 'Add Your Monitors', desc: 'Set up monitoring for your websites, APIs, and servers in just 30 seconds. No complex configuration required.' },
-                            { icon: <Activity size={36} color="#3498DB" />, bg: 'rgba(52,152,219,0.1)', step: '02', title: 'We Check Continuously', desc: 'Our global network monitors your services 24/7 from multiple locations, ensuring accuracy and reliability.' },
-                            { icon: <Bell size={36} color="#F39C12" />, bg: 'rgba(243,156,18,0.1)', step: '03', title: 'Get Instant Alerts', desc: 'Receive immediate notifications via Email, SMS, Slack, or your preferred channel when issues are detected.' }
-                        ].map((item, idx) => (
-                            <Grid size={{ xs: 12, md: 4 }} key={idx}>
-                                <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: idx * 0.15 }} viewport={{ once: true }}>
-                                    <Box sx={{ p: 4, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', textAlign: 'center', position: 'relative', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', transition: 'all 0.25s', height: '100%', '&:hover': { border: '1px solid rgba(46,204,113,0.3)', boxShadow: '0 12px 32px rgba(46,204,113,0.1)', transform: 'translateY(-6px)' } }}>
-                                        <Typography variant="h2" sx={{ position: 'absolute', top: 16, right: 24, color: '#f1f5f9', fontWeight: 900, fontSize: '4.5rem', lineHeight: 1, userSelect: 'none' }}>{item.step}</Typography>
-                                        <Box sx={{ mb: 3, p: 2.5, bgcolor: item.bg, display: 'inline-flex', borderRadius: '16px' }}>{item.icon}</Box>
-                                        <Typography variant="h6" sx={{ color: '#0f172a', fontWeight: 700, mb: 1.5 }}>{item.title}</Typography>
-                                        <Typography variant="body2" sx={{ color: '#64748b', lineHeight: 1.75 }}>{item.desc}</Typography>
+            {/* ══════════════ SEARCH RESULTS ═══════════════════════════ */}
+            <AnimatePresence>
+                {searchResults && (
+                    <motion.section
+                        initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -16 }} transition={EASE_SPRING}
+                    >
+                        <Box sx={{ bgcolor: '#f1f5fb', borderTop: `1px solid ${T.borderLt}`, py: { xs: 5, md: 7 } }}>
+                            <Container maxWidth="md">
+                                <Typography sx={{ fontWeight: 800, fontSize: '1.25rem', mb: 3, color: T.textDk, fontFamily: '"Outfit",sans-serif' }}>
+                                    Results for{' '}
+                                    <Box component="span" sx={{ color: T.amber }}>"{searchResults.searchedDomain}"</Box>
+                                </Typography>
+
+                                {searchResults.available?.length > 0 && (
+                                    <Box sx={{ mb: 3 }}>
+                                        <Typography sx={{ fontSize: '0.78rem', fontWeight: 700, color: T.success, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 1.5 }}>
+                                            Available
+                                        </Typography>
+                                        <Stack spacing={1.5}>
+                                            {searchResults.available.map((d, i) => (
+                                                <motion.div key={d.domain} initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}>
+                                                    <Paper elevation={0} sx={{
+                                                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                                        p: 2, borderRadius: RS, border: `1.5px solid ${T.success}44`,
+                                                        bgcolor: '#fff', boxShadow: '0 2px 8px rgba(16,185,129,0.07)', flexWrap: 'wrap', gap: 1,
+                                                    }}>
+                                                        <Stack direction="row" alignItems="center" spacing={1.5}>
+                                                            <CheckCircle size={18} color={T.success} />
+                                                            <Typography sx={{ fontWeight: 700, fontSize: '1.0625rem', color: T.textDk }}>{d.domain}</Typography>
+                                                            <Chip label="Available" size="small" sx={{ bgcolor: '#d1fae5', color: '#065f46', fontWeight: 700, height: 22, fontSize: '0.68rem' }} />
+                                                        </Stack>
+                                                        <Stack direction="row" alignItems="center" spacing={2}>
+                                                            <Typography sx={{ fontWeight: 800, color: T.textDk, fontSize: '1.0625rem' }}>
+                                                                {d.price > 0 ? `₹${d.price.toLocaleString('en-IN')}/yr` : 'Check pricing'}
+                                                            </Typography>
+                                                            <Button variant="contained" size="small" onClick={() => navigate('/signup')} sx={{
+                                                                bgcolor: T.success, color: '#fff', fontWeight: 700,
+                                                                borderRadius: RS, px: 2.5, fontSize: '0.8125rem',
+                                                                '&:hover': { bgcolor: '#059669' },
+                                                            }}>
+                                                                Register
+                                                            </Button>
+                                                        </Stack>
+                                                    </Paper>
+                                                </motion.div>
+                                            ))}
+                                        </Stack>
                                     </Box>
-                                </motion.div>
+                                )}
+
+                                {searchResults.taken?.length > 0 && (
+                                    <Box>
+                                        <Typography sx={{ fontSize: '0.78rem', fontWeight: 700, color: T.mutedDk, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 1.5 }}>
+                                            Already Taken
+                                        </Typography>
+                                        <Stack spacing={1}>
+                                            {searchResults.taken.map((d) => (
+                                                <Paper key={d} elevation={0} sx={{
+                                                    display: 'flex', alignItems: 'center', p: 1.75,
+                                                    borderRadius: RS, border: `1px solid ${T.borderLt}`,
+                                                    bgcolor: '#f8fafc', gap: 1.5,
+                                                }}>
+                                                    <XCircle size={17} color={T.danger} />
+                                                    <Typography sx={{ fontWeight: 600, color: T.mutedDk, fontSize: '0.9375rem', textDecoration: 'line-through' }}>{d}</Typography>
+                                                    <Chip label="Taken" size="small" sx={{ bgcolor: '#fee2e2', color: '#991b1b', fontWeight: 700, height: 20, fontSize: '0.66rem' }} />
+                                                </Paper>
+                                            ))}
+                                        </Stack>
+                                    </Box>
+                                )}
+
+                                <Box sx={{ mt: 3, textAlign: 'center' }}>
+                                    <Button onClick={() => { setSearchResults(null); setSearchQuery(''); }}
+                                        sx={{ color: T.mutedDk, fontWeight: 600, fontSize: '0.875rem' }}>
+                                        Clear &amp; search again
+                                    </Button>
+                                </Box>
+                            </Container>
+                        </Box>
+                    </motion.section>
+                )}
+            </AnimatePresence>
+
+            {/* ══════════════ TLD PRICING STRIP ═══════════════════════ */}
+            <Box id="tlds" component="section" sx={{ bgcolor: T.bgLight, borderTop: `1px solid ${T.borderLt}`, py: { xs: 6, md: 8 }, scrollMarginTop: '80px' }}>
+                <Container maxWidth="lg">
+                    <Reveal>
+                        <Box sx={{ textAlign: 'center', mb: 5 }}>
+                            <SectionBadge>Domain Pricing</SectionBadge>
+                            <SectionTitle>Popular Domain Extensions</SectionTitle>
+                            <SectionSub>Transparent yearly pricing — no hidden renewal fees, ever.</SectionSub>
+                        </Box>
+                    </Reveal>
+                    <Grid container spacing={2}>
+                        {popularTlds.map((tld, i) => (
+                            <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2 }} key={tld.ext}>
+                                <Reveal delay={i * 0.04}>
+                                    <Paper elevation={0} onClick={() => document.getElementById('search')?.scrollIntoView({ behavior: 'smooth' })}
+                                        sx={{
+                                            p: 2.5, borderRadius: R, textAlign: 'center',
+                                            border: tld.popular ? `1.5px solid ${T.amberGlow}` : `1px solid ${T.borderLt}`,
+                                            cursor: 'pointer', position: 'relative', overflow: 'hidden',
+                                            bgcolor: tld.popular ? T.amberBg : '#fff',
+                                            transition: 'all 0.22s ease',
+                                            '&:hover': {
+                                                transform: 'translateY(-4px)',
+                                                boxShadow: `0 12px 32px ${T.amberGlow}`,
+                                                borderColor: T.amber,
+                                            },
+                                        }}>
+                                        {tld.popular && (
+                                            <Box sx={{
+                                                position: 'absolute', top: 0, right: 0,
+                                                bgcolor: T.amber, color: '#000', fontSize: '0.58rem', fontWeight: 800,
+                                                px: 1, py: 0.35, borderBottomLeftRadius: 8, letterSpacing: '0.08em',
+                                            }}>POPULAR</Box>
+                                        )}
+                                        <Typography sx={{ fontWeight: 800, fontSize: '1.15rem', color: T.textDk, fontFamily: '"Outfit",sans-serif' }}>
+                                            {tld.ext}
+                                        </Typography>
+                                        <Typography sx={{ color: T.amber, fontWeight: 700, fontSize: '0.9375rem', mt: 0.5 }}>
+                                            {tld.price}
+                                        </Typography>
+                                        <Typography sx={{ color: T.mutedDk, fontSize: '0.7rem', mt: 0.2 }}>/year</Typography>
+                                    </Paper>
+                                </Reveal>
+                            </Grid>
+                        ))}
+                    </Grid>
+                    <Reveal delay={0.15}>
+                        <Box sx={{ textAlign: 'center', mt: 4 }}>
+                            <Button variant="outlined" endIcon={<ArrowRight size={17} />} sx={{
+                                borderColor: T.amber, color: T.amber, fontWeight: 700, borderRadius: RS, px: 3,
+                                '&:hover': { bgcolor: T.amberBg, borderColor: T.amberDk },
+                            }}>
+                                View All Domain Extensions
+                            </Button>
+                        </Box>
+                    </Reveal>
+                </Container>
+            </Box>
+
+            {/* ══════════════ STATS BAR ════════════════════════════════ */}
+            <Box component="section" sx={{
+                background: `linear-gradient(135deg, ${T.bgDeep} 0%, #0a0f24 50%, #070c1d 100%)`,
+                py: { xs: 5, md: 7 }, borderTop: `1px solid ${T.border}`,
+                position: 'relative', overflow: 'hidden',
+            }}>
+                <Box aria-hidden sx={{
+                    position: 'absolute', inset: 0, pointerEvents: 'none',
+                    background: `radial-gradient(ellipse 80% 60% at 50% 50%, ${T.amberGlow} 0%, transparent 65%)`,
+                    opacity: 0.4,
+                }} />
+                <Container maxWidth="lg" sx={{ position: 'relative' }}>
+                    <Grid container spacing={2} justifyContent="center">
+                        {statsData.map((s, i) => (
+                            <Grid size={{ xs: 6, md: 3 }} key={s.label}>
+                                <Reveal delay={i * 0.08}>
+                                    <StatCard value={s.value} suffix={s.suffix} label={s.label} />
+                                </Reveal>
                             </Grid>
                         ))}
                     </Grid>
                 </Container>
             </Box>
 
-            {/* Features Grid */}
-            <Box sx={{ bgcolor: '#ffffff', py: { xs: 5, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
+            {/* ══════════════ FEATURES ════════════════════════════════ */}
+            <Box id="features" component="section" sx={{ bgcolor: T.bgLight, py: { xs: 7, md: 10 }, scrollMarginTop: '80px' }}>
                 <Container maxWidth="lg">
-                    <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 10 } }}>
-                        <Typography variant="overline" sx={{ color: '#2ECC71', fontWeight: 700, letterSpacing: '0.12em', fontSize: '0.8rem' }}>Full Coverage</Typography>
-                        <Typography variant="h3" sx={{ color: '#0f172a', fontWeight: 800, mt: 1, mb: 2, fontSize: { xs: '1.9rem', md: '2.6rem' } }}>Comprehensive Monitoring Solutions</Typography>
-                        <Typography variant="h6" sx={{ color: '#64748b', fontWeight: 400, fontSize: '1rem', maxWidth: 600, mx: 'auto' }}>Everything you need to keep your infrastructure online and performing optimally.</Typography>
-                    </Box>
+                    <Reveal>
+                        <Box sx={{ textAlign: 'center', mb: 6 }}>
+                            <SectionBadge>Everything You Need</SectionBadge>
+                            <SectionTitle>Built for Speed, Security &amp; Scale</SectionTitle>
+                            <SectionSub>Every feature you need to launch and grow your online presence — all included.</SectionSub>
+                        </Box>
+                    </Reveal>
                     <Grid container spacing={3}>
-                        {features.map((feature, idx) => (
-                            <Grid size={{ xs: 12, sm: 6, md: 6 }} key={idx}>
-                                <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: idx * 0.08 }} viewport={{ once: true }}>
-                                    <Box sx={{ p: 3.5, bgcolor: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', display: 'flex', gap: 2.5, alignItems: 'flex-start', transition: 'all 0.25s', '&:hover': { border: '1px solid rgba(46,204,113,0.3)', boxShadow: '0 8px 24px rgba(0,0,0,0.06)', transform: 'translateY(-3px)' } }}>
-                                        <Box sx={{ p: 1.8, bgcolor: feature.bg, borderRadius: '12px', flexShrink: 0, display: 'flex' }}>{feature.icon}</Box>
-                                        <Box>
-                                            <Typography sx={{ color: '#0f172a', fontWeight: 700, mb: 0.75, fontSize: '0.95rem' }}>{feature.title}</Typography>
-                                            <Typography variant="body2" sx={{ color: '#64748b', lineHeight: 1.7 }}>{feature.desc}</Typography>
-                                        </Box>
-                                    </Box>
-                                </motion.div>
-                            </Grid>
-                        ))}
+                        {features.map((f, i) => {
+                            const Icon = f.icon;
+                            return (
+                                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={f.title}>
+                                    <Reveal delay={i * 0.06}>
+                                        <motion.div whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 400, damping: 28 }}>
+                                            <Paper elevation={0} sx={{
+                                                p: 3.5, borderRadius: R, height: '100%',
+                                                border: `1px solid ${T.borderLt}`, bgcolor: '#fff',
+                                                transition: 'box-shadow 0.22s, border-color 0.22s',
+                                                '&:hover': {
+                                                    boxShadow: `0 20px 50px rgba(0,0,0,0.1)`,
+                                                    borderColor: `${T.amber}55`,
+                                                },
+                                            }}>
+                                                <Box sx={{
+                                                    width: 52, height: 52, borderRadius: '14px', mb: 2.5,
+                                                    background: f.grad, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    boxShadow: '0 8px 24px rgba(0,0,0,0.16)',
+                                                }}>
+                                                    <Icon size={25} color="#fff" strokeWidth={2} />
+                                                </Box>
+                                                <Typography sx={{ fontWeight: 700, fontSize: '1.05rem', mb: 1, color: T.textDk, fontFamily: '"Outfit",sans-serif' }}>
+                                                    {f.title}
+                                                </Typography>
+                                                <Typography sx={{ color: T.mutedDk, fontSize: '0.9rem', lineHeight: 1.68 }}>
+                                                    {f.desc}
+                                                </Typography>
+                                            </Paper>
+                                        </motion.div>
+                                    </Reveal>
+                                </Grid>
+                            );
+                        })}
                     </Grid>
                 </Container>
             </Box>
 
-            {/* Integrations */}
-            <Box sx={{ bgcolor: '#f8fafc', py: { xs: 5, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
+            {/* ══════════════ HOW IT WORKS ════════════════════════════ */}
+            <Box id="how-it-works" component="section" sx={{
+                background: `linear-gradient(160deg, #08102a 0%, ${T.bgDark} 55%, #0c1430 100%)`,
+                py: { xs: 7, md: 10 }, scrollMarginTop: '80px', position: 'relative', overflow: 'hidden',
+            }}>
+                <Box aria-hidden sx={{
+                    position: 'absolute', inset: 0, pointerEvents: 'none',
+                    background: [
+                        `radial-gradient(ellipse 60% 40% at 0%   50%, ${T.violetGlow} 0%, transparent 55%)`,
+                        `radial-gradient(ellipse 50% 40% at 100% 50%, ${T.cyanGlow}   0%, transparent 50%)`,
+                    ].join(','),
+                }} />
+                <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+                    <Reveal>
+                        <Box sx={{ textAlign: 'center', mb: 7 }}>
+                            <SectionBadge>Simple Process</SectionBadge>
+                            <SectionTitle light>Get Online in 3 Easy Steps</SectionTitle>
+                            <SectionSub light>From searching your domain name to going live — less than 5 minutes.</SectionSub>
+                        </Box>
+                    </Reveal>
+                    <Grid container spacing={4} alignItems="stretch">
+                        {howItWorks.map((step, i) => {
+                            const Icon = step.icon;
+                            return (
+                                <Grid size={{ xs: 12, md: 4 }} key={step.step}>
+                                    <Reveal delay={i * 0.12}>
+                                        <motion.div whileHover={{ y: -4 }} transition={EASE_SPRING} style={{ height: '100%' }}>
+                                            <Paper elevation={0} sx={{
+                                                p: { xs: 3, md: 4 }, borderRadius: R, height: '100%',
+                                                bgcolor: T.bgCard, border: `1px solid ${T.border}`,
+                                                textAlign: 'center', backdropFilter: 'blur(10px)',
+                                                transition: 'border-color 0.2s, background 0.2s',
+                                                '&:hover': { bgcolor: T.bgCardHov, borderColor: `${T.amber}35` },
+                                            }}>
+                                                <motion.div
+                                                    animate={rm ? {} : { y: [0, -6, 0] }}
+                                                    transition={{ duration: 3 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.5 }}
+                                                >
+                                                    <Box sx={{
+                                                        width: 68, height: 68, borderRadius: '50%', mx: 'auto', mb: 2.5,
+                                                        background: `linear-gradient(135deg, ${T.amber} 0%, ${T.amberDk} 100%)`,
+                                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                        boxShadow: `0 10px 32px ${T.amberGlow}`,
+                                                    }}>
+                                                        <Icon size={30} color="#0a0f1e" strokeWidth={2.2} />
+                                                    </Box>
+                                                </motion.div>
+                                                <Typography sx={{ fontSize: '0.7rem', fontWeight: 800, color: T.amber, letterSpacing: '0.14em', textTransform: 'uppercase', mb: 0.75 }}>
+                                                    Step {step.step}
+                                                </Typography>
+                                                <Typography sx={{ fontWeight: 800, fontSize: '1.15rem', color: T.textLt, mb: 1.5, fontFamily: '"Outfit",sans-serif' }}>
+                                                    {step.title}
+                                                </Typography>
+                                                <Typography sx={{ color: T.muted, fontSize: '0.9375rem', lineHeight: 1.68 }}>
+                                                    {step.desc}
+                                                </Typography>
+                                            </Paper>
+                                        </motion.div>
+                                    </Reveal>
+                                </Grid>
+                            );
+                        })}
+                    </Grid>
+                    <Reveal delay={0.32}>
+                        <Box sx={{ textAlign: 'center', mt: 6 }}>
+                            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                                <Button variant="contained" size="large" endIcon={<ArrowRight size={20} />}
+                                    onClick={() => document.getElementById('search')?.scrollIntoView({ behavior: 'smooth' })}
+                                    sx={{
+                                        background: `linear-gradient(135deg, ${T.amberLt} 0%, ${T.amber} 55%, ${T.amberDk} 100%)`,
+                                        color: '#0a0f1e', fontWeight: 800, borderRadius: RS, px: 4.5, py: 1.75, fontSize: '1rem',
+                                        boxShadow: `0 8px 32px ${T.amberGlow}`,
+                                        '&:hover': { filter: 'brightness(1.1)', boxShadow: `0 12px 40px rgba(245,158,11,0.4)` },
+                                    }}>
+                                    Search Your Domain Now
+                                </Button>
+                            </motion.div>
+                        </Box>
+                    </Reveal>
+                </Container>
+            </Box>
+
+            {/* ══════════════ HOSTING PLANS ═══════════════════════════ */}
+            {/* Hosting plans hidden for now */}
+
+            {/* ══════════════ WHY CHOOSE US ═══════════════════════════ */}
+            <Box id="platform" component="section" sx={{
+                background: `linear-gradient(155deg, ${T.bgDeep} 0%, #0a1028 55%, #070c1d 100%)`,
+                py: { xs: 7, md: 10 }, scrollMarginTop: '80px', position: 'relative', overflow: 'hidden',
+            }}>
+                <Box aria-hidden sx={{
+                    position: 'absolute', inset: 0, pointerEvents: 'none',
+                    background: `radial-gradient(ellipse 70% 50% at 100% 50%, ${T.violetGlow} 0%, transparent 55%)`,
+                }} />
+                <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+                    <Grid container spacing={{ xs: 4, md: 8 }} alignItems="center">
+                        <Grid size={{ xs: 12, md: 5 }}>
+                            <Reveal from="left">
+                                <SectionBadge>Why Plan A Hosting</SectionBadge>
+                                <SectionTitle light>India's Most Trusted Domain &amp; Hosting Platform</SectionTitle>
+                                <Typography sx={{ color: T.muted, fontSize: '1rem', lineHeight: 1.72, mt: 2, mb: 3.5 }}>
+                                    Helping Indian businesses establish their online presence since 2014.
+                                    From solopreneurs to enterprises — thousands of customers trust us with their most important digital asset.
+                                </Typography>
+                                <Stack spacing={1.5} sx={{ mb: 4 }}>
+                                    {['ICANN Accredited Registrar','Data Centres in India','GST Compliant Invoices','Free WHOIS Privacy on all domains','24/7 Hindi & English Support'].map((item) => (
+                                        <Stack key={item} direction="row" spacing={1.5} alignItems="center">
+                                            <Box sx={{ width: 22, height: 22, borderRadius: '50%', bgcolor: `${T.success}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                                <CheckCircle size={14} color={T.success} />
+                                            </Box>
+                                            <Typography sx={{ color: 'rgba(241,245,249,0.9)', fontSize: '0.9375rem' }}>{item}</Typography>
+                                        </Stack>
+                                    ))}
+                                </Stack>
+                                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                                    <Button variant="contained" endIcon={<ArrowRight size={18} />} onClick={() => navigate('/signup')} sx={{
+                                        background: `linear-gradient(135deg, ${T.amberLt} 0%, ${T.amber} 55%, ${T.amberDk} 100%)`,
+                                        color: '#0a0f1e', fontWeight: 800, borderRadius: RS, px: 3.5, py: 1.4,
+                                        boxShadow: `0 6px 24px ${T.amberGlow}`,
+                                        '&:hover': { filter: 'brightness(1.1)' },
+                                    }}>
+                                        Create Free Account
+                                    </Button>
+                                </motion.div>
+                            </Reveal>
+                        </Grid>
+                        <Grid size={{ xs: 12, md: 7 }}>
+                            <Grid container spacing={2.5}>
+                                {whyUs.map((item, i) => {
+                                    const Icon = item.icon;
+                                    return (
+                                        <Grid size={{ xs: 12, sm: 6 }} key={item.title}>
+                                            <Reveal delay={i * 0.07}>
+                                                <motion.div whileHover={{ y: -3 }} transition={EASE_SPRING}>
+                                                    <Paper elevation={0} sx={{
+                                                        p: 3, borderRadius: R, bgcolor: T.bgCard,
+                                                        border: `1px solid ${T.border}`, transition: 'all 0.2s',
+                                                        '&:hover': { bgcolor: T.bgCardHov, borderColor: `${T.amber}35` },
+                                                    }}>
+                                                        <Stack direction="row" spacing={2} alignItems="flex-start">
+                                                            <Box sx={{
+                                                                width: 44, height: 44, borderRadius: '12px', flexShrink: 0,
+                                                                background: `linear-gradient(135deg, ${T.amber}, ${T.amberDk})`,
+                                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                                boxShadow: `0 4px 14px ${T.amberGlow}`,
+                                                            }}>
+                                                                <Icon size={20} color="#0a0f1e" strokeWidth={2.2} />
+                                                            </Box>
+                                                            <Box>
+                                                                <Typography sx={{ fontWeight: 700, fontSize: '0.9375rem', color: T.textLt, mb: 0.5, fontFamily: '"Outfit",sans-serif' }}>
+                                                                    {item.title}
+                                                                </Typography>
+                                                                <Typography sx={{ color: T.muted, fontSize: '0.84rem', lineHeight: 1.62 }}>
+                                                                    {item.desc}
+                                                                </Typography>
+                                                            </Box>
+                                                        </Stack>
+                                                    </Paper>
+                                                </motion.div>
+                                            </Reveal>
+                                        </Grid>
+                                    );
+                                })}
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Container>
+            </Box>
+
+            {/* ══════════════ TESTIMONIALS ════════════════════════════ */}
+            <Box component="section" sx={{ bgcolor: T.bgLight, py: { xs: 7, md: 10 } }}>
                 <Container maxWidth="lg">
-                    <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 10 } }}>
-                        <Typography variant="overline" sx={{ color: '#2ECC71', fontWeight: 700, letterSpacing: '0.12em', fontSize: '0.8rem' }}>Notifications</Typography>
-                        <Typography variant="h3" sx={{ color: '#0f172a', fontWeight: 800, mt: 1, mb: 2, fontSize: { xs: '1.9rem', md: '2.6rem' } }}>Connect Your Favorite Tools</Typography>
-                        <Typography variant="h6" sx={{ color: '#64748b', fontWeight: 400, fontSize: '1rem' }}>Get instant alerts through multiple notification channels</Typography>
-                    </Box>
+                    <Reveal>
+                        <Box sx={{ textAlign: 'center', mb: 6 }}>
+                            <SectionBadge>Customer Stories</SectionBadge>
+                            <SectionTitle>Loved by Thousands of Indian Businesses</SectionTitle>
+                            <SectionSub>Don't take our word for it — hear from our customers.</SectionSub>
+                        </Box>
+                    </Reveal>
                     <Grid container spacing={3}>
-                        {[
-                            { icon: <Mail size={28} />, color: '#E74C3C', title: 'Email', desc: 'Detailed incident reports delivered to your inbox with customizable templates.' },
-                            { icon: <MessageSquare size={28} />, color: '#00A4EF', title: 'SMS', desc: 'Critical alerts sent directly to your phone for immediate attention.' },
-                            { icon: <MessageSquare size={28} />, color: '#611F69', title: 'Slack', desc: 'Real-time notifications in your team channels with rich formatting.' },
-                            { icon: <Send size={28} />, color: '#0088CC', title: 'Telegram', desc: 'Instant messaging alerts with bot integration for quick responses.' },
-                            { icon: <Cloud size={28} />, color: '#2ECC71', title: 'Webhooks', desc: 'Custom integrations with your existing tools and workflows.' },
-                            { icon: <Bell size={28} />, color: '#F39C12', title: 'Push Notifications', desc: 'Mobile and desktop push alerts for on-the-go monitoring.' }
-                        ].map((integration, idx) => (
-                            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={idx}>
-                                <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: idx * 0.08 }} viewport={{ once: true }}>
-                                    <Box sx={{ p: 3.5, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '18px', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.03)', transition: 'all 0.25s', height: '100%', '&:hover': { border: `1px solid ${integration.color}40`, boxShadow: `0 10px 28px ${integration.color}15`, transform: 'translateY(-5px)' } }}>
-                                        <Box sx={{ mb: 2, p: 2, bgcolor: `${integration.color}12`, display: 'inline-flex', borderRadius: '14px', color: integration.color }}>{integration.icon}</Box>
-                                        <Typography sx={{ color: '#0f172a', fontWeight: 700, mb: 1, fontSize: '0.95rem' }}>{integration.title}</Typography>
-                                        <Typography variant="body2" sx={{ color: '#64748b', lineHeight: 1.65 }}>{integration.desc}</Typography>
-                                    </Box>
-                                </motion.div>
+                        {testimonials.map((t, i) => (
+                            <Grid size={{ xs: 12, sm: 6 }} key={t.name}>
+                                <Reveal delay={i * 0.08}>
+                                    <motion.div whileHover={{ y: -4 }} transition={EASE_SPRING}>
+                                        <Paper elevation={0} sx={{
+                                            p: 3.5, borderRadius: R, height: '100%',
+                                            border: `1px solid ${T.borderLt}`, bgcolor: '#fff',
+                                            transition: 'box-shadow 0.22s, border-color 0.22s',
+                                            '&:hover': { boxShadow: '0 16px 44px rgba(0,0,0,0.09)', borderColor: `${T.amber}50` },
+                                        }}>
+                                            <Stack direction="row" spacing={0.4} sx={{ mb: 2 }}>
+                                                {Array.from({ length: t.stars }).map((_, si) => (
+                                                    <Star key={si} size={16} color={T.amber} fill={T.amber} />
+                                                ))}
+                                            </Stack>
+                                            <Typography sx={{ color: T.mutedDk, fontSize: '0.9375rem', lineHeight: 1.72, mb: 3, fontStyle: 'italic' }}>
+                                                "{t.text}"
+                                            </Typography>
+                                            <Stack direction="row" spacing={1.5} alignItems="center">
+                                                <Box sx={{
+                                                    width: 46, height: 46, borderRadius: '50%',
+                                                    background: `linear-gradient(135deg, ${T.amber}, ${T.violet})`,
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    fontSize: '0.8rem', fontWeight: 800, color: '#fff', flexShrink: 0,
+                                                }}>
+                                                    {t.av}
+                                                </Box>
+                                                <Box>
+                                                    <Typography sx={{ fontWeight: 700, fontSize: '0.9375rem', color: T.textDk }}>{t.name}</Typography>
+                                                    <Typography sx={{ color: T.mutedDk, fontSize: '0.8rem' }}>{t.role}</Typography>
+                                                </Box>
+                                            </Stack>
+                                        </Paper>
+                                    </motion.div>
+                                </Reveal>
                             </Grid>
                         ))}
                     </Grid>
                 </Container>
             </Box>
 
-            {/* Trust Metrics */}
-            <Box sx={{ bgcolor: '#ffffff', py: { xs: 5, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
-                <Container maxWidth="lg">
-                    <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 10 } }}>
-                        <Typography variant="overline" sx={{ color: '#2ECC71', fontWeight: 700, letterSpacing: '0.12em', fontSize: '0.8rem' }}>By the Numbers</Typography>
-                        <Typography variant="h3" sx={{ color: '#0f172a', fontWeight: 800, mt: 1, mb: 2, fontSize: { xs: '1.9rem', md: '2.6rem' } }}>Trusted by Thousands Worldwide</Typography>
-                        <Typography variant="h6" sx={{ color: '#64748b', fontWeight: 400, fontSize: '1rem' }}>Join our growing community of satisfied users</Typography>
-                    </Box>
-                    <Grid container spacing={3}>
-                        {[
-                            { icon: <Monitor size={36} color="#2ECC71" />, value: '10,000+', label: 'Total Monitors Tracked', color: '#2ECC71' },
-                            { icon: <TrendingUp size={36} color="#3498DB" />, value: '99.9%', label: 'Average Uptime', color: '#3498DB' },
-                            { icon: <Globe size={36} color="#F39C12" />, value: '15+', label: 'Global Monitoring Locations', color: '#F39C12' },
-                            { icon: <Users size={36} color="#9B59B6" />, value: '50+', label: 'Countries Served', color: '#9B59B6' }
-                        ].map((metric, idx) => (
-                            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={idx}>
-                                <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: idx * 0.12 }} viewport={{ once: true }}>
-                                    <Box sx={{ p: 4, bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', textAlign: 'center', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', transition: 'all 0.25s', height: '100%', '&:hover': { border: `1px solid ${metric.color}35`, boxShadow: `0 12px 32px ${metric.color}15`, transform: 'translateY(-6px)' } }}>
-                                        <Box sx={{ mb: 2.5, p: 2, bgcolor: `${metric.color}12`, display: 'inline-flex', borderRadius: '14px' }}>{metric.icon}</Box>
-                                        <Typography variant="h3" sx={{ color: metric.color, fontWeight: 900, mb: 0.75, fontSize: { xs: '2rem', md: '2.5rem' } }}>{metric.value}</Typography>
-                                        <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 600 }}>{metric.label}</Typography>
-                                    </Box>
-                                </motion.div>
-                            </Grid>
-                        ))}
-                    </Grid>
-                </Container>
-            </Box>
-
-            {/* FAQ */}
-            <Box sx={{ bgcolor: '#f8fafc', py: { xs: 5, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
+            {/* ══════════════ FAQ ══════════════════════════════════════ */}
+            <Box id="faq" component="section" sx={{
+                background: `linear-gradient(160deg, #08102a 0%, ${T.bgDeep} 55%, #070c1d 100%)`,
+                py: { xs: 7, md: 10 }, scrollMarginTop: '80px',
+            }}>
                 <Container maxWidth="md">
-                    <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 8 } }}>
-                        <Typography variant="overline" sx={{ color: '#2ECC71', fontWeight: 700, letterSpacing: '0.12em', fontSize: '0.8rem' }}>FAQ</Typography>
-                        <Typography variant="h3" sx={{ color: '#0f172a', fontWeight: 800, mt: 1, mb: 2, fontSize: { xs: '1.9rem', md: '2.6rem' } }}>Frequently Asked Questions</Typography>
-                        <Typography variant="h6" sx={{ color: '#64748b', fontWeight: 400, fontSize: '1rem' }}>Everything you need to know about our monitoring platform</Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                        {[
-                            { question: 'How does uptime monitoring work?', answer: 'Our platform performs automated checks on your websites, servers, and APIs at regular intervals. If any check fails, you\'re immediately notified through your preferred channels.' },
-                            { question: 'What happens when a monitor fails?', answer: 'When a monitor detects downtime, we send instant alerts via Email, SMS, Slack, or other configured channels. You\'ll receive detailed incident information to help diagnose the issue quickly.' },
-                            { question: 'How often are checks performed?', answer: 'Check intervals range from 30 seconds to 5 minutes depending on your plan. Enterprise customers can configure custom intervals as low as 10 seconds.' },
-                            { question: 'Can I monitor multiple websites?', answer: 'Yes! You can monitor unlimited websites, APIs, servers, and ports. Each monitor can be configured independently with different check intervals and alert settings.' },
-                            { question: 'What notification methods are available?', answer: 'We support Email, SMS, Push notifications, Slack, Telegram, Discord, and custom webhooks. You can configure multiple notification channels for redundancy.' },
-                            { question: 'How accurate is the monitoring?', answer: 'We use distributed monitoring from 15+ global locations to eliminate false positives. A site is only marked as down when multiple locations confirm the outage.' },
-                            { question: 'Can I integrate with my existing tools?', answer: 'Absolutely! We support webhooks for custom integrations, plus native integrations with Slack, Telegram, Discord, and popular incident management platforms.' },
-                            { question: 'What types of monitoring do you support?', answer: 'HTTP/HTTPS website monitoring, Ping monitoring, Port monitoring, DNS record checks, SSL certificate monitoring, and keyword monitoring. All available in one platform.' }
-                        ].map((faq, idx) => (
-                            <motion.div key={idx} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: idx * 0.04 }} viewport={{ once: true }}>
-                                <Accordion disableGutters elevation={0} sx={{ bgcolor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '14px !important', '&:before': { display: 'none' }, '&.Mui-expanded': { border: '1px solid rgba(46,204,113,0.3)', boxShadow: '0 4px 16px rgba(46,204,113,0.08)' } }}>
-                                    <AccordionSummary expandIcon={<ChevronDown size={18} color="#94a3b8" />} sx={{ px: 3, py: 1.5, '& .MuiAccordionSummary-content': { my: 1.5 } }}>
-                                        <Typography sx={{ color: '#1e293b', fontWeight: 700, fontSize: '0.95rem' }}>{faq.question}</Typography>
+                    <Reveal>
+                        <Box sx={{ textAlign: 'center', mb: 6 }}>
+                            <SectionBadge>FAQ</SectionBadge>
+                            <SectionTitle light>Frequently Asked Questions</SectionTitle>
+                            <SectionSub light>Everything you need to know about domains and hosting.</SectionSub>
+                        </Box>
+                    </Reveal>
+                    <Stack spacing={1.5}>
+                        {faqs.map((faq, i) => (
+                            <Reveal key={i} delay={i * 0.04}>
+                                <Accordion expanded={openFaq === i} onChange={() => setOpenFaq(openFaq === i ? false : i)} elevation={0}
+                                    sx={{
+                                        bgcolor: openFaq === i ? 'rgba(245,158,11,0.07)' : T.bgCard,
+                                        border: `1px solid ${openFaq === i ? T.amber + '55' : T.border}`,
+                                        borderRadius: `${R} !important`, '&:before': { display: 'none' },
+                                        overflow: 'hidden', transition: 'all 0.2s',
+                                    }}>
+                                    <AccordionSummary
+                                        expandIcon={
+                                            <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={{ duration: 0.25 }}>
+                                                <ChevronDown size={20} color={openFaq === i ? T.amber : T.muted} />
+                                            </motion.div>
+                                        }
+                                        sx={{ px: 3, py: 0.75 }}
+                                    >
+                                        <Typography sx={{ fontWeight: 700, fontSize: '0.9375rem', color: openFaq === i ? T.amber : T.textLt, fontFamily: '"Outfit",sans-serif' }}>
+                                            {faq.q}
+                                        </Typography>
                                     </AccordionSummary>
-                                    <AccordionDetails sx={{ px: 3, pb: 3 }}>
-                                        <Typography sx={{ color: '#64748b', lineHeight: 1.8, fontSize: '0.9rem' }}>{faq.answer}</Typography>
+                                    <AccordionDetails sx={{ px: 3, pb: 2.5 }}>
+                                        <Typography sx={{ color: T.muted, fontSize: '0.9375rem', lineHeight: 1.72 }}>
+                                            {faq.a}
+                                        </Typography>
                                     </AccordionDetails>
                                 </Accordion>
-                            </motion.div>
+                            </Reveal>
                         ))}
-                    </Box>
-                </Container>
-            </Box>
-
-            {/* CTA Banner */}
-            <Box sx={{ bgcolor: '#ffffff', py: { xs: 5, md: 14 }, borderTop: '1px solid #f1f5f9' }}>
-                <Container maxWidth="md">
-                    <motion.div initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-                        <Box sx={{ background: '#0A3D62', borderRadius: '28px', p: { xs: 3, md: 8 }, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-                            <Box sx={{ position: 'absolute', top: -60, right: -60, width: 220, height: 220, borderRadius: '50%', background: 'radial-gradient(circle, rgba(46,204,113,0.15) 0%, transparent 70%)', pointerEvents: 'none' }} />
-                            <Box sx={{ position: 'absolute', bottom: -40, left: -40, width: 160, height: 160, borderRadius: '50%', background: 'radial-gradient(circle, rgba(46,204,113,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
-                            <Box sx={{ position: 'relative', zIndex: 1 }}>
-                                <Chip label="No credit card required" sx={{ mb: 3, bgcolor: 'rgba(46,204,113,0.15)', color: '#4ade80', border: '1px solid rgba(46,204,113,0.25)', fontWeight: 600, fontSize: '0.75rem' }} />
-                                <Typography variant="h2" sx={{ color: '#ffffff', fontWeight: 900, mb: 2.5, fontSize: { xs: '1.9rem', md: '3rem' }, lineHeight: 1.2 }}>
-                                    Ready to Ensure 100% Uptime?
-                                </Typography>
-                                <Typography sx={{ color: 'rgba(255,255,255,0.7)', mb: 4.5, maxWidth: 560, mx: 'auto', lineHeight: 1.75, fontSize: '1rem' }}>
-                                    Join thousands of businesses monitoring their infrastructure with confidence. Start in 30 seconds.
-                                </Typography>
-                                <Button variant="contained" size="large" onClick={() => navigate('/signup')} endIcon={<ArrowRight size={18} />}
-                                    sx={{ bgcolor: '#2ECC71', px: { xs: 3, md: 5 }, py: 1.8, fontSize: '1rem', fontWeight: 700, borderRadius: '12px', boxShadow: '0 8px 24px rgba(46,204,113,0.4)', '&:hover': { bgcolor: '#27ae60', transform: 'translateY(-2px)', boxShadow: '0 12px 32px rgba(46,204,113,0.5)' }, transition: 'all 0.2s' }}>
-                                    Start Monitoring Free
+                    </Stack>
+                    <Reveal delay={0.2}>
+                        <Box sx={{ mt: 5, textAlign: 'center' }}>
+                            <Typography sx={{ color: T.muted, fontSize: '0.9375rem', mb: 2 }}>
+                                Still have questions? Our support team is available 24/7.
+                            </Typography>
+                            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{ display: 'inline-block' }}>
+                                <Button variant="outlined" startIcon={<Headphones size={18} />} onClick={() => navigate('/signup')} sx={{
+                                    borderColor: T.amber, color: T.amber, fontWeight: 700, borderRadius: RS, px: 3,
+                                    '&:hover': { bgcolor: T.amberBg, borderColor: T.amberDk },
+                                }}>
+                                    Contact Support
                                 </Button>
-                            </Box>
+                            </motion.div>
                         </Box>
-                    </motion.div>
+                    </Reveal>
                 </Container>
             </Box>
 
-            {/* Footer */}
-            <Box sx={{ py: { xs: 3, md: 5 }, px: 2, textAlign: 'center', borderTop: '1px solid #f1f5f9', bgcolor: '#f8fafc' }}>
-                {/* <img src="/logo-white.png" alt="Logo" style={{ height: 28, marginBottom: 12, filter: 'brightness(0) saturate(100%) invert(10%) sepia(20%) saturate(500%) hue-rotate(180deg)' }} /> */}
-                <Typography variant="body2" sx={{ color: '#94a3b8', mt: 1 }}>
-                    © {new Date().getFullYear()} Lease Packet Tools. All rights reserved.
-                </Typography>
+            {/* ══════════════ FINAL CTA ════════════════════════════════ */}
+            <Box component="section" sx={{ bgcolor: T.bgLight, py: { xs: 8, md: 12 }, borderTop: `1px solid ${T.borderLt}` }}>
+                <Container maxWidth="md">
+                    <Reveal from="scale">
+                        <Paper elevation={0} sx={{
+                            p: { xs: 4, md: 7 }, borderRadius: '24px',
+                            background: `linear-gradient(140deg, ${T.bgDeep} 0%, #0c1535 55%, #0a112e 100%)`,
+                            border: `1px solid rgba(245,158,11,0.2)`,
+                            textAlign: 'center', position: 'relative', overflow: 'hidden',
+                            boxShadow: `0 40px 100px rgba(4,6,15,0.35), 0 0 0 1px rgba(245,158,11,0.08) inset`,
+                        }}>
+                            {/* multi-layer glow */}
+                            <Box aria-hidden sx={{ position: 'absolute', top: -80, left: '50%', transform: 'translateX(-50%)', width: 500, height: 250, borderRadius: '50%', background: `radial-gradient(ellipse, ${T.amberGlow} 0%, transparent 65%)`, pointerEvents: 'none' }} />
+                            <Box aria-hidden sx={{ position: 'absolute', bottom: -60, left: '10%', width: 280, height: 200, borderRadius: '50%', background: `radial-gradient(ellipse, ${T.violetGlow} 0%, transparent 65%)`, pointerEvents: 'none' }} />
+
+                            <motion.div animate={rm ? {} : { y: [0, -8, 0], rotate: [0, 5, -5, 0] }} transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}>
+                                <Globe size={52} color={T.amber} style={{ marginBottom: 20, filter: `drop-shadow(0 0 16px ${T.amberGlow})` }} />
+                            </motion.div>
+
+                            <Typography sx={{
+                                color: T.textLt, fontSize: { xs: '1.8rem', md: '2.6rem' },
+                                fontWeight: 900, lineHeight: 1.08, mb: 2,
+                                fontFamily: '"Outfit",sans-serif', letterSpacing: '-0.025em',
+                            }}>
+                                Your domain is waiting.<br />
+                                <Box component="span" sx={{
+                                    background: `linear-gradient(135deg, ${T.amberLt} 0%, ${T.amber} 55%, ${T.amberDk} 100%)`,
+                                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                                }}>
+                                    Claim it today.
+                                </Box>
+                            </Typography>
+                            <Typography sx={{ color: T.muted, fontSize: '1.0625rem', lineHeight: 1.7, mb: 4.5, maxWidth: 480, mx: 'auto' }}>
+                                Join 50,000+ Indian businesses who trust Plan A Hosting for their domain and hosting needs.
+                            </Typography>
+                            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
+                                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                                    <Button variant="contained" size="large" endIcon={<ArrowRight size={20} />}
+                                        onClick={() => document.getElementById('search')?.scrollIntoView({ behavior: 'smooth' })}
+                                        sx={{
+                                            background: `linear-gradient(135deg, ${T.amberLt} 0%, ${T.amber} 55%, ${T.amberDk} 100%)`,
+                                            color: '#0a0f1e', fontWeight: 800, borderRadius: RS, px: 4.5, py: 1.75, fontSize: '1rem',
+                                            boxShadow: `0 8px 32px ${T.amberGlow}`,
+                                            '&:hover': { filter: 'brightness(1.1)', boxShadow: `0 12px 40px rgba(245,158,11,0.42)` },
+                                        }}>
+                                        Search Your Domain
+                                    </Button>
+                                </motion.div>
+                                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                                    <Button variant="outlined" size="large" onClick={() => navigate('/signup')} sx={{
+                                        borderColor: 'rgba(148,163,184,0.3)', color: T.textLt, fontWeight: 700,
+                                        borderRadius: RS, px: 4.5, py: 1.75,
+                                        '&:hover': { borderColor: T.amber, bgcolor: T.amberBg },
+                                    }}>
+                                        Create Free Account
+                                    </Button>
+                                </motion.div>
+                            </Stack>
+                            <Typography sx={{ mt: 3, color: T.muted, fontSize: '0.8125rem' }}>
+                                No credit card required &nbsp;·&nbsp; Free WHOIS privacy &nbsp;·&nbsp; 30-day money-back guarantee
+                            </Typography>
+                        </Paper>
+                    </Reveal>
+                </Container>
             </Box>
         </Box>
     );

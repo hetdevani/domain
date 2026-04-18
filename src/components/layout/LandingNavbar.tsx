@@ -1,393 +1,462 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-    AppBar, Toolbar, Box, Button, Menu, MenuItem,
-    Typography, Divider, Drawer, IconButton, List, ListItemButton, Collapse
+    AppBar,
+    Toolbar,
+    Box,
+    Button,
+    Typography,
+    Drawer,
+    IconButton,
+    Container,
+    Divider,
+    Stack,
 } from '@mui/material';
 import {
-    User, ChevronDown, Globe, MapPin, Search, Shield,
-    FileText, FileSearch, Zap, Type, AlignLeft,
-    ArrowRightLeft, Server, Wifi, Mail, Menu as MenuIcon, X, ChevronRight,
-    Network, Settings2
+    User,
+    Globe,
+    Menu as MenuIcon,
+    X,
+    Server,
+    Shield,
+    Search,
+    HelpCircle,
+    Tag,
+    ChevronRight,
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
-export interface ToolLink {
-    label: string;
-    path: string;
-    icon: React.ReactNode;
-    color: string;
-    desc: string;
-}
+const HEADER_Z = 1300;
+export const LANDING_HEADER_OFFSET_PX = { xs: 64, md: 72 };
 
-export interface ToolGroup {
-    group: string;
-    groupIcon: React.ReactNode;
-    groupColor: string;
-    tools: ToolLink[];
-}
+/* ── shared nav constants ── */
+const NAV_BG_TOP      = 'rgba(4, 6, 20, 0.72)';   // always visible, not fully transparent
+const NAV_BG_SCROLLED = 'rgba(4, 6, 20, 0.96)';
+const AMBER      = '#f59e0b';
+const AMBER_DARK = '#d97706';
+const AMBER_GLOW = 'rgba(245,158,11,0.25)';
 
-export const TOOL_GROUPS: ToolGroup[] = [
-    {
-        group: 'DNS & Network',
-        groupIcon: <Network size={14} />,
-        groupColor: '#2ECC71',
-        tools: [
-            { label: 'DNS Propagation Checker', path: '/tools/dns-propagation', icon: <Globe size={15} />, color: '#2ECC71', desc: 'Check DNS propagation globally' },
-            { label: 'IP Intelligence', path: '/tools/ip-intelligence', icon: <MapPin size={15} />, color: '#3498DB', desc: 'Geo-locate any IP address' },
-            { label: 'DNS Lookup', path: '/tools/dns-lookup', icon: <Search size={15} />, color: '#9B59B6', desc: 'Query all DNS record types' },
-            { label: 'What Is My IP', path: '/tools/what-is-my-ip', icon: <Wifi size={15} />, color: '#1ABC9C', desc: 'Detect your public IP' },
-        ],
-    },
-    {
-        group: 'SEO & Website',
-        groupIcon: <FileSearch size={14} />,
-        groupColor: '#F39C12',
-        tools: [
-            { label: 'Meta Tag Analyzer', path: '/tools/meta-tag-analyzer', icon: <FileSearch size={15} />, color: '#F39C12', desc: 'Analyze page meta tags' },
-            { label: 'Robots.txt Checker', path: '/tools/robots-txt-checker', icon: <Shield size={15} />, color: '#E67E22', desc: 'Validate robots.txt rules' },
-            { label: 'Sitemap Checker', path: '/tools/sitemap-checker', icon: <FileText size={15} />, color: '#8E44AD', desc: 'Validate XML sitemaps' },
-            { label: 'Page Speed Metrics', path: '/tools/page-speed', icon: <Zap size={15} />, color: '#F39C12', desc: 'Measure page performance' },
-        ],
-    },
-    {
-        group: 'Security & Server',
-        groupIcon: <Server size={14} />,
-        groupColor: '#E74C3C',
-        tools: [
-            { label: 'HTTP Header Checker', path: '/tools/http-header-checker', icon: <Server size={15} />, color: '#E74C3C', desc: 'Inspect HTTP response headers' },
-            { label: 'SMTP Test', path: '/tools/smtp-test', icon: <Mail size={15} />, color: '#1ABC9C', desc: 'Test SMTP server & auth' },
-            { label: 'Domain Monitoring', path: '/tools/domain-monitoring', icon: <Globe size={15} />, color: '#8B5CF6', desc: 'Check domain expiry & WHOIS' },
-        ],
-    },
-    {
-        group: 'Utilities',
-        groupIcon: <Settings2 size={14} />,
-        groupColor: '#3498DB',
-        tools: [
-            { label: 'Word Counter', path: '/tools/word-counter', icon: <Type size={15} />, color: '#2ECC71', desc: 'Count words, chars & more' },
-            { label: 'Lorem Ipsum Generator', path: '/tools/lorem-ipsum', icon: <AlignLeft size={15} />, color: '#3498DB', desc: 'Generate placeholder text' },
-            { label: 'HTACCESS Redirect Generator', path: '/tools/htaccess-redirect', icon: <ArrowRightLeft size={15} />, color: '#E74C3C', desc: 'Build redirect rules' },
-        ],
-    },
+const navLinks = [
+    { label: 'Domains', sectionId: 'tlds', icon: Tag },
+    { label: 'Hosting', sectionId: 'hosting', icon: Server },
+    { label: 'Features', sectionId: 'features', icon: Shield },
+    { label: 'FAQ', sectionId: 'faq', icon: HelpCircle },
 ];
-
-// Flat list kept for backward compatibility
-export const TOOL_LINKS: ToolLink[] = TOOL_GROUPS.flatMap(g => g.tools);
 
 const LandingNavbar: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { isAuthenticated, user } = useAuth();
-
-    const [toolsAnchor, setToolsAnchor] = useState<null | HTMLElement>(null);
     const [mobileOpen, setMobileOpen] = useState(false);
-    const [mobileToolsOpen, setMobileToolsOpen] = useState(true);
+    const [scrolled, setScrolled] = useState(false);
+    const [activeLink, setActiveLink] = useState<string | null>(null);
 
-    const isToolsActive = location.pathname.startsWith('/tools');
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 24);
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
 
-    const handleMobileNav = (path: string) => {
-        setMobileOpen(false);
-        navigate(path);
+    const scrollToSection = (id: string) => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
-    const ToolItem = ({ tool, onClick }: { tool: ToolLink; onClick: () => void }) => {
-        const active = location.pathname === tool.path;
-        return (
-            <MenuItem
-                onClick={onClick}
-                selected={active}
-                sx={{
-                    py: 1, px: 1.5, borderRadius: '8px', gap: 1.5, mx: 0.5,
-                    '&:hover': { bgcolor: '#f8fafc' },
-                    '&.Mui-selected': { bgcolor: `${tool.color}0D` },
-                }}
-            >
-                <Box sx={{ p: 0.7, bgcolor: `${tool.color}15`, borderRadius: '6px', display: 'flex', alignItems: 'center', color: tool.color, flexShrink: 0 }}>
-                    {tool.icon}
-                </Box>
-                <Box sx={{ minWidth: 0 }}>
-                    <Typography sx={{ color: active ? tool.color : '#1e293b', fontWeight: 600, fontSize: '0.82rem', lineHeight: 1.3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {tool.label}
-                    </Typography>
-                    <Typography sx={{ color: '#94a3b8', fontSize: '0.7rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {tool.desc}
-                    </Typography>
-                </Box>
-            </MenuItem>
-        );
+    const goToSection = (id: string) => {
+        setMobileOpen(false);
+        setActiveLink(id);
+        if (location.pathname !== '/') {
+            navigate('/');
+            window.setTimeout(() => scrollToSection(id), 80);
+        } else {
+            scrollToSection(id);
+        }
     };
 
     return (
-        <AppBar
-            position="fixed"
-            elevation={0}
-            sx={{
-                bgcolor: '#0A3D62',
-                backdropFilter: 'blur(12px)',
-                borderBottom: '1px solid rgba(255,255,255,0.08)',
-                zIndex: 1300,
-            }}
-        >
-            <Toolbar sx={{ justifyContent: 'space-between', py: '15px', minHeight: 'unset !important' }}>
-                {/* Logo */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, cursor: 'pointer' }} onClick={() => navigate('/')}>
-                    <img src="/logo-white.png" alt="Logo" style={{ height: 38 }} />
-                </Box>
+        <>
+            <AppBar
+                position="fixed"
+                elevation={0}
+                sx={{
+                    top: 0, left: 0, right: 0, width: '100%',
+                    zIndex: HEADER_Z,
+                    background: scrolled ? NAV_BG_SCROLLED : NAV_BG_TOP,
+                    backdropFilter: 'blur(20px) saturate(160%)',
+                    WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+                    borderBottom: scrolled
+                        ? '1px solid rgba(148,163,184,0.12)'
+                        : '1px solid rgba(148,163,184,0.07)',
+                    transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
+                    boxShadow: scrolled
+                        ? `0 4px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(245,158,11,0.06) inset`
+                        : 'none',
+                    /* subtle top amber line when scrolled */
+                    '&::before': scrolled ? {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0, left: 0, right: 0, height: '1px',
+                        background: `linear-gradient(90deg, transparent 0%, ${AMBER}60 30%, ${AMBER}80 50%, ${AMBER}60 70%, transparent 100%)`,
+                    } : {},
+                }}
+            >
+                <Container maxWidth="lg">
+                    <Toolbar disableGutters sx={{ justifyContent: 'space-between', minHeight: { xs: 64, md: 72 } }}>
 
-                {/* Desktop Center Nav */}
-                <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 0.5 }}>
-                    <Button
-                        onClick={(e) => setToolsAnchor(e.currentTarget)}
-                        endIcon={
-                            <ChevronDown
-                                size={15}
-                                style={{ transition: 'transform 0.2s', transform: toolsAnchor ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                            />
-                        }
-                        sx={{
-                            color: isToolsActive ? '#2ECC71' : 'rgba(255,255,255,0.85)',
-                            textTransform: 'none', fontWeight: 600, fontSize: '0.9rem', px: 2, borderRadius: '8px',
-                            borderBottom: isToolsActive ? '2px solid #2ECC71' : '2px solid transparent',
-                            '&:hover': { bgcolor: 'rgba(255,255,255,0.06)', color: '#fff' },
-                        }}
-                    >
-                        Tools
-                    </Button>
+                        {/* ── Logo ── */}
+                        <motion.div
+                            whileHover={{ scale: 1.04 }}
+                            whileTap={{ scale: 0.97 }}
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => navigate('/')}
+                        >
+                            <Stack direction="row" alignItems="center" spacing={1.5}>
+                                <Box
+                                    sx={{
+                                        width: 42, height: 42, borderRadius: '12px',
+                                        background: `linear-gradient(135deg, ${AMBER} 0%, ${AMBER_DARK} 100%)`,
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        boxShadow: `0 4px 20px ${AMBER_GLOW}, 0 0 0 1px ${AMBER}30 inset`,
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        '&::after': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            top: 0, left: '-100%',
+                                            width: '60%', height: '100%',
+                                            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)',
+                                            animation: 'shimmer 3s infinite',
+                                        },
+                                        '@keyframes shimmer': {
+                                            '0%': { left: '-100%' },
+                                            '100%': { left: '200%' },
+                                        },
+                                    }}
+                                >
+                                    <Globe color="#fff" size={21} strokeWidth={2.3} />
+                                </Box>
+                                <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                                    <Typography
+                                        sx={{
+                                            fontWeight: 800, fontSize: '1.05rem',
+                                            letterSpacing: '-0.03em', color: '#f8fafc',
+                                            lineHeight: 1.1,
+                                            fontFamily: '"Outfit","DM Sans",sans-serif',
+                                        }}
+                                    >
+                                        Plan A
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            fontSize: '0.62rem', fontWeight: 700,
+                                            letterSpacing: '0.15em', color: AMBER,
+                                            textTransform: 'uppercase', lineHeight: 1,
+                                        }}
+                                    >
+                                        Hosting
+                                    </Typography>
+                                </Box>
+                            </Stack>
+                        </motion.div>
 
-                    {/* Desktop Mega-Menu */}
-                    <Menu
-                        anchorEl={toolsAnchor}
-                        open={Boolean(toolsAnchor)}
-                        onClose={() => setToolsAnchor(null)}
-                        transformOrigin={{ horizontal: 'left', vertical: 'top' }}
-                        anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+                        {/* ── Desktop nav links ── */}
+                        <Box
+                            sx={{
+                                display: { xs: 'none', md: 'flex' },
+                                alignItems: 'center', gap: 0.5,
+                            }}
+                        >
+                            {navLinks.map((link) => {
+                                const Icon = link.icon;
+                                const isActive = activeLink === link.sectionId;
+                                return (
+                                    <motion.div key={link.label} whileHover={{ y: -1 }} whileTap={{ scale: 0.96 }}>
+                                        <Button
+                                            onClick={() => goToSection(link.sectionId)}
+                                            startIcon={<Icon size={15} strokeWidth={2.2} />}
+                                            sx={{
+                                                color: isActive ? AMBER : 'rgba(226,232,240,0.88)',
+                                                textTransform: 'none', fontWeight: 600,
+                                                fontSize: '0.875rem', px: 2, py: 1,
+                                                borderRadius: '10px', minWidth: 'auto',
+                                                position: 'relative',
+                                                transition: 'all 0.18s',
+                                                '&:hover': {
+                                                    color: '#fff',
+                                                    bgcolor: 'rgba(255,255,255,0.07)',
+                                                },
+                                                ...(isActive && {
+                                                    bgcolor: `${AMBER}15`,
+                                                    '&::after': {
+                                                        content: '""',
+                                                        position: 'absolute',
+                                                        bottom: 6, left: '50%',
+                                                        transform: 'translateX(-50%)',
+                                                        width: 16, height: 2,
+                                                        borderRadius: 4,
+                                                        bgcolor: AMBER,
+                                                    },
+                                                }),
+                                            }}
+                                        >
+                                            {link.label}
+                                        </Button>
+                                    </motion.div>
+                                );
+                            })}
+                        </Box>
+
+                        {/* ── Right CTA ── */}
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                            {/* Desktop-only search */}
+                            <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.94 }}>
+                                <IconButton
+                                    onClick={() => goToSection('search')}
+                                    sx={{
+                                        display: { xs: 'none', md: 'flex' },
+                                        color: 'rgba(148,163,184,0.7)',
+                                        width: 38, height: 38,
+                                        border: '1px solid rgba(148,163,184,0.16)',
+                                        borderRadius: '10px',
+                                        transition: 'all 0.18s',
+                                        '&:hover': {
+                                            color: AMBER,
+                                            borderColor: `${AMBER}50`,
+                                            bgcolor: `${AMBER}10`,
+                                        },
+                                    }}
+                                >
+                                    <Search size={17} />
+                                </IconButton>
+                            </motion.div>
+
+                            {/* Auth buttons */}
+                            <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 1, alignItems: 'center' }}>
+                                {isAuthenticated ? (
+                                    <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                                        <Button
+                                            variant="contained"
+                                            onClick={() => navigate(user?.type === 3 ? '/status-pages' : '/dashboard')}
+                                            startIcon={<User size={16} />}
+                                            sx={{
+                                                background: `linear-gradient(135deg, ${AMBER} 0%, ${AMBER_DARK} 100%)`,
+                                                color: '#0a0f1e', borderRadius: '10px',
+                                                px: 2.5, fontWeight: 700, fontSize: '0.875rem',
+                                                textTransform: 'none',
+                                                boxShadow: `0 4px 18px ${AMBER_GLOW}`,
+                                                border: 'none',
+                                                transition: 'filter 0.2s, box-shadow 0.2s',
+                                                '&:hover': {
+                                                    background: `linear-gradient(135deg, ${AMBER} 0%, ${AMBER_DARK} 100%)`,
+                                                    filter: 'brightness(1.13)',
+                                                    boxShadow: `0 6px 24px rgba(245,158,11,0.45)`,
+                                                },
+                                            }}
+                                        >
+                                            Dashboard
+                                        </Button>
+                                    </motion.div>
+                                ) : (
+                                    <>
+                                        <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                                            <Button
+                                                onClick={() => navigate('/login')}
+                                                sx={{
+                                                    color: 'rgba(226,232,240,0.85)',
+                                                    fontWeight: 600, textTransform: 'none',
+                                                    fontSize: '0.875rem', borderRadius: '10px', px: 2,
+                                                    '&:hover': {
+                                                        color: '#fff',
+                                                        bgcolor: 'rgba(255,255,255,0.07)',
+                                                    },
+                                                }}
+                                            >
+                                                Log in
+                                            </Button>
+                                        </motion.div>
+                                        <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                                            <Button
+                                                variant="contained"
+                                                onClick={() => navigate('/signup')}
+                                                sx={{
+                                                    background: `linear-gradient(135deg, ${AMBER} 0%, ${AMBER_DARK} 100%)`,
+                                                    color: '#0a0f1e', borderRadius: '10px',
+                                                    px: 2.75, fontWeight: 800,
+                                                    textTransform: 'none', fontSize: '0.875rem',
+                                                    boxShadow: `0 4px 18px ${AMBER_GLOW}`,
+                                                    transition: 'filter 0.2s, box-shadow 0.2s',
+                                                    '&:hover': {
+                                                        background: `linear-gradient(135deg, ${AMBER} 0%, ${AMBER_DARK} 100%)`,
+                                                        filter: 'brightness(1.13)',
+                                                        boxShadow: `0 6px 24px rgba(245,158,11,0.45)`,
+                                                    },
+                                                }}
+                                            >
+                                                Get Started
+                                            </Button>
+                                        </motion.div>
+                                    </>
+                                )}
+                            </Box>
+
+                            {/* Hamburger */}
+                            <motion.div whileTap={{ scale: 0.92 }}>
+                                <IconButton
+                                    onClick={() => setMobileOpen(true)}
+                                    sx={{
+                                        display: { xs: 'flex', md: 'none' },
+                                        color: '#f8fafc',
+                                        border: '1px solid rgba(148,163,184,0.2)',
+                                        borderRadius: '10px', width: 40, height: 40,
+                                        '&:hover': { bgcolor: 'rgba(255,255,255,0.08)', borderColor: `${AMBER}40` },
+                                    }}
+                                >
+                                    <MenuIcon size={20} />
+                                </IconButton>
+                            </motion.div>
+                        </Stack>
+                    </Toolbar>
+                </Container>
+            </AppBar>
+
+            {/* ── Mobile Drawer ── */}
+            <AnimatePresence>
+                {mobileOpen && (
+                    <Drawer
+                        anchor="right"
+                        open={mobileOpen}
+                        onClose={() => setMobileOpen(false)}
                         PaperProps={{
                             sx: {
-                                mt: 1,
-                                bgcolor: '#ffffff',
-                                border: '1px solid #e2e8f0',
-                                borderRadius: '16px',
-                                boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
-                                minWidth: 720,
-                                py: 0,
-                                overflow: 'hidden',
+                                width: 'min(100%, 300px)',
+                                background: 'linear-gradient(160deg, #04060f 0%, #080e22 100%)',
+                                borderLeft: '1px solid rgba(148,163,184,0.1)',
+                                p: 0,
                             },
                         }}
                     >
-                        {/* Mega-menu header */}
-                        <Box sx={{ px: 2.5, py: 1.5, borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Zap size={13} color="#94a3b8" />
-                            <Typography sx={{ color: '#94a3b8', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 700 }}>
-                                Developer & SEO Tools
-                            </Typography>
-                        </Box>
-
-                        {/* 4-column group layout */}
-                        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', p: 1.5, gap: 0 }}>
-                            {TOOL_GROUPS.map((group, gIdx) => (
-                                <Box key={group.group} sx={{ display: 'flex', flexDirection: 'column', borderRight: gIdx < TOOL_GROUPS.length - 1 ? '1px solid #f1f5f9' : 'none', px: 0.5 }}>
-                                    {/* Group header */}
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 1.5, py: 1, mb: 0.5 }}>
-                                        <Box sx={{ p: 0.5, bgcolor: `${group.groupColor}18`, borderRadius: '5px', color: group.groupColor, display: 'flex' }}>
-                                            {group.groupIcon}
-                                        </Box>
-                                        <Typography sx={{ color: group.groupColor, fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                                            {group.group}
-                                        </Typography>
-                                    </Box>
-
-                                    {/* Tools in group */}
-                                    {group.tools.map((tool) => (
-                                        <ToolItem
-                                            key={tool.path}
-                                            tool={tool}
-                                            onClick={() => { setToolsAnchor(null); navigate(tool.path); }}
-                                        />
-                                    ))}
-                                </Box>
-                            ))}
-                        </Box>
-                    </Menu>
-                </Box>
-
-                {/* Right Buttons */}
-                <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
-                    {isAuthenticated ? (
-                        <Button
-                            variant="outlined"
-                            onClick={() => navigate(user?.type === 3 ? '/status-pages' : '/dashboard')}
-                            startIcon={<User size={16} />}
-                            sx={{
-                                display: { xs: 'none', md: 'flex' },
-                                color: '#fff', borderColor: 'rgba(255,255,255,0.25)', px: 2.5,
-                                borderRadius: '8px', textTransform: 'none', fontWeight: 600,
-                                '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,0.08)' },
-                            }}
-                        >
-                            {user?.type === 3 ? 'Status Pages' : 'Dashboard'}
-                        </Button>
-                    ) : (
-                        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5 }}>
-                            <Button
-                                variant="outlined"
-                                onClick={() => navigate('/login')}
+                        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                            {/* Drawer header */}
+                            <Box
                                 sx={{
-                                    color: '#fff', borderColor: 'rgba(255,255,255,0.25)', px: 2.5,
-                                    borderRadius: '8px', textTransform: 'none', fontWeight: 600,
-                                    '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,0.08)' },
+                                    p: 2.5, pb: 2,
+                                    borderBottom: '1px solid rgba(148,163,184,0.1)',
+                                    background: 'rgba(245,158,11,0.04)',
                                 }}
                             >
-                                Log In
-                            </Button>
-                            <Button
-                                variant="contained"
-                                onClick={() => navigate('/signup')}
-                                sx={{
-                                    bgcolor: '#2ECC71', px: 2.5, borderRadius: '8px',
-                                    textTransform: 'none', fontWeight: 700,
-                                    boxShadow: '0 4px 14px rgba(46,204,113,0.35)',
-                                    '&:hover': { bgcolor: '#27ae60' },
-                                }}
-                            >
-                                Register
-                            </Button>
-                        </Box>
-                    )}
-
-                    {/* Hamburger — mobile only */}
-                    <IconButton
-                        onClick={() => setMobileOpen(true)}
-                        sx={{ display: { xs: 'flex', md: 'none' }, color: '#fff', bgcolor: 'rgba(255,255,255,0.06)', borderRadius: '10px', p: 1, '&:hover': { bgcolor: 'rgba(255,255,255,0.12)' } }}
-                    >
-                        <MenuIcon size={20} />
-                    </IconButton>
-                </Box>
-            </Toolbar>
-
-            {/* Mobile Drawer */}
-            <Drawer
-                anchor="right"
-                open={mobileOpen}
-                onClose={() => setMobileOpen(false)}
-                PaperProps={{ sx: { width: '85vw', maxWidth: 360, bgcolor: '#ffffff', borderLeft: '1px solid #e2e8f0' } }}
-            >
-                {/* Drawer Header */}
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2.5, py: 2, borderBottom: '1px solid #f1f5f9' }}>
-                    <img src="/logo-dark.png" alt="Logo" style={{ height: 32 }} />
-                    <IconButton onClick={() => setMobileOpen(false)} sx={{ color: '#64748b', '&:hover': { color: '#1e293b', bgcolor: '#f1f5f9' } }}>
-                        <X size={20} />
-                    </IconButton>
-                </Box>
-
-                <Box sx={{ overflowY: 'auto', flex: 1, py: 1 }}>
-                    {/* Tools section toggle */}
-                    <ListItemButton
-                        onClick={() => setMobileToolsOpen(!mobileToolsOpen)}
-                        sx={{ px: 2.5, py: 1.5, '&:hover': { bgcolor: '#f8fafc' } }}
-                    >
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1 }}>
-                            <Zap size={16} color={isToolsActive ? '#2ECC71' : '#94a3b8'} />
-                            <Typography sx={{ color: isToolsActive ? '#2ECC71' : '#1e293b', fontWeight: 700, fontSize: '0.95rem' }}>
-                                Tools
-                            </Typography>
-                        </Box>
-                        <ChevronDown
-                            size={16}
-                            color="#94a3b8"
-                            style={{ transition: 'transform 0.2s', transform: mobileToolsOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                        />
-                    </ListItemButton>
-
-                    <Collapse in={mobileToolsOpen}>
-                        <Box sx={{ mx: 1.5, mb: 1 }}>
-                            {TOOL_GROUPS.map((group, gIdx) => (
-                                <Box key={group.group}>
-                                    {/* Group header */}
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 1.5, pt: gIdx === 0 ? 1 : 1.5, pb: 0.5 }}>
-                                        <Box sx={{ p: 0.5, bgcolor: `${group.groupColor}18`, borderRadius: '5px', color: group.groupColor, display: 'flex' }}>
-                                            {group.groupIcon}
+                                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                    <Stack direction="row" spacing={1.25} alignItems="center">
+                                        <Box
+                                            sx={{
+                                                width: 36, height: 36, borderRadius: '10px',
+                                                background: `linear-gradient(135deg, ${AMBER}, ${AMBER_DARK})`,
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                boxShadow: `0 4px 16px ${AMBER_GLOW}`,
+                                            }}
+                                        >
+                                            <Globe color="#fff" size={18} strokeWidth={2.3} />
                                         </Box>
-                                        <Typography sx={{ color: group.groupColor, fontWeight: 700, fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                                            {group.group}
-                                        </Typography>
-                                    </Box>
+                                        <Box>
+                                            <Typography sx={{ fontWeight: 800, color: '#f8fafc', fontFamily: '"Outfit",sans-serif', fontSize: '1rem', lineHeight: 1.1 }}>
+                                                Plan A
+                                            </Typography>
+                                            <Typography sx={{ fontSize: '0.6rem', fontWeight: 700, color: AMBER, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+                                                Hosting
+                                            </Typography>
+                                        </Box>
+                                    </Stack>
+                                    <IconButton
+                                        onClick={() => setMobileOpen(false)}
+                                        sx={{ color: '#94a3b8', borderRadius: '10px', border: '1px solid rgba(148,163,184,0.15)', '&:hover': { color: '#fff', bgcolor: 'rgba(255,255,255,0.06)' } }}
+                                    >
+                                        <X size={18} />
+                                    </IconButton>
+                                </Stack>
+                            </Box>
 
-                                    {/* Tools */}
-                                    <Box sx={{ bgcolor: '#f8fafc', borderRadius: '10px', overflow: 'hidden', border: '1px solid #f1f5f9' }}>
-                                        <List disablePadding>
-                                            {group.tools.map((tool) => {
-                                                const active = location.pathname === tool.path;
-                                                return (
-                                                    <ListItemButton
-                                                        key={tool.path}
-                                                        onClick={() => handleMobileNav(tool.path)}
-                                                        sx={{
-                                                            px: 2, py: 1.1, gap: 1.5,
-                                                            bgcolor: active ? `${tool.color}0D` : 'transparent',
-                                                            borderLeft: active ? `3px solid ${tool.color}` : '3px solid transparent',
-                                                            '&:hover': { bgcolor: `${tool.color}08` },
-                                                        }}
-                                                    >
-                                                        <Box sx={{ p: 0.6, bgcolor: `${tool.color}15`, borderRadius: '6px', color: tool.color, display: 'flex', flexShrink: 0 }}>
-                                                            {tool.icon}
-                                                        </Box>
-                                                        <Box sx={{ flex: 1, minWidth: 0 }}>
-                                                            <Typography sx={{ color: active ? tool.color : '#1e293b', fontWeight: 600, fontSize: '0.83rem', lineHeight: 1.3 }}>
-                                                                {tool.label}
-                                                            </Typography>
-                                                            <Typography sx={{ color: '#94a3b8', fontSize: '0.7rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                                                {tool.desc}
-                                                            </Typography>
-                                                        </Box>
-                                                        {active && <ChevronRight size={14} color={tool.color} style={{ flexShrink: 0 }} />}
-                                                    </ListItemButton>
-                                                );
-                                            })}
-                                        </List>
-                                    </Box>
+                            {/* Nav links */}
+                            <Box sx={{ p: 2, flex: 1 }}>
+                                <Stack spacing={0.5}>
+                                    {navLinks.map((link, i) => {
+                                        const Icon = link.icon;
+                                        return (
+                                            <motion.div
+                                                key={link.label}
+                                                initial={{ opacity: 0, x: 20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{ delay: i * 0.06, duration: 0.3 }}
+                                            >
+                                                <Button
+                                                    fullWidth
+                                                    onClick={() => goToSection(link.sectionId)}
+                                                    startIcon={<Icon size={18} />}
+                                                    endIcon={<ChevronRight size={15} />}
+                                                    sx={{
+                                                        justifyContent: 'flex-start', color: '#e2e8f0',
+                                                        textTransform: 'none', fontWeight: 600,
+                                                        py: 1.4, px: 2, borderRadius: '10px',
+                                                        '& .MuiButton-endIcon': { ml: 'auto' },
+                                                        '&:hover': {
+                                                            bgcolor: `${AMBER}12`,
+                                                            color: AMBER,
+                                                            '& svg': { color: AMBER },
+                                                        },
+                                                    }}
+                                                >
+                                                    {link.label}
+                                                </Button>
+                                            </motion.div>
+                                        );
+                                    })}
+                                </Stack>
+                            </Box>
 
-                                    {gIdx < TOOL_GROUPS.length - 1 && (
-                                        <Divider sx={{ borderColor: '#f1f5f9', my: 0.5 }} />
+                            <Divider sx={{ borderColor: 'rgba(148,163,184,0.1)', mx: 2 }} />
+
+                            {/* Bottom CTA */}
+                            <Box sx={{ p: 2.5 }}>
+                                <Stack spacing={1.25}>
+                                    <Button
+                                        fullWidth
+                                        onClick={() => { setMobileOpen(false); goToSection('search'); }}
+                                        sx={{
+                                            background: `linear-gradient(135deg, ${AMBER} 0%, ${AMBER_DARK} 100%)`,
+                                            color: '#0a0f1e', borderRadius: '10px', py: 1.3,
+                                            fontWeight: 800, textTransform: 'none',
+                                            boxShadow: `0 4px 20px ${AMBER_GLOW}`,
+                                            '&:hover': { filter: 'brightness(1.08)' },
+                                        }}
+                                    >
+                                        Search Domains
+                                    </Button>
+                                    {!isAuthenticated && (
+                                        <Button
+                                            fullWidth
+                                            onClick={() => { setMobileOpen(false); navigate('/login'); }}
+                                            sx={{
+                                                border: '1px solid rgba(148,163,184,0.22)',
+                                                color: '#e2e8f0', borderRadius: '10px', py: 1.3,
+                                                fontWeight: 700, textTransform: 'none',
+                                                '&:hover': { bgcolor: 'rgba(255,255,255,0.06)', borderColor: `${AMBER}40` },
+                                            }}
+                                        >
+                                            Log in
+                                        </Button>
                                     )}
-                                </Box>
-                            ))}
+                                </Stack>
+                            </Box>
                         </Box>
-                    </Collapse>
-                </Box>
+                    </Drawer>
+                )}
+            </AnimatePresence>
 
-                {/* Drawer Footer */}
-                <Box sx={{ px: 2, py: 2.5, borderTop: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                    {isAuthenticated ? (
-                        <Button
-                            variant="outlined" fullWidth
-                            onClick={() => handleMobileNav(user?.type === 3 ? '/status-pages' : '/dashboard')}
-                            startIcon={<User size={16} />}
-                            sx={{ color: '#1e293b', borderColor: '#e2e8f0', borderRadius: '10px', textTransform: 'none', fontWeight: 600, py: 1.2, '&:hover': { borderColor: '#94a3b8', bgcolor: '#f8fafc' } }}
-                        >
-                            {user?.type === 3 ? 'Status Pages' : 'Dashboard'}
-                        </Button>
-                    ) : (
-                        <>
-                            <Button
-                                variant="outlined" fullWidth
-                                onClick={() => handleMobileNav('/login')}
-                                sx={{ color: '#1e293b', borderColor: '#e2e8f0', borderRadius: '10px', textTransform: 'none', fontWeight: 600, py: 1.2, '&:hover': { borderColor: '#94a3b8', bgcolor: '#f8fafc' } }}
-                            >
-                                Log In
-                            </Button>
-                            <Button
-                                variant="contained" fullWidth
-                                onClick={() => handleMobileNav('/signup')}
-                                sx={{ bgcolor: '#2ECC71', borderRadius: '10px', textTransform: 'none', fontWeight: 700, py: 1.2, '&:hover': { bgcolor: '#27ae60' } }}
-                            >
-                                Register
-                            </Button>
-                        </>
-                    )}
-                </Box>
-            </Drawer>
-        </AppBar>
+            {/* Spacer */}
+            <Box
+                aria-hidden
+                sx={{ height: { xs: `${LANDING_HEADER_OFFSET_PX.xs}px`, md: `${LANDING_HEADER_OFFSET_PX.md}px` }, flexShrink: 0 }}
+            />
+        </>
     );
 };
 

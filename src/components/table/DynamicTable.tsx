@@ -35,6 +35,7 @@ import {
     Edit,
     Trash2
 } from 'lucide-react';
+import { BRAND } from '../../theme';
 
 export interface FilterField {
     key: string;
@@ -141,15 +142,16 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     };
 
     const headerCellSx = {
-        bgcolor: '#F1F5F9',
-        color: '#64748B',
+        bgcolor: BRAND.bgMuted,
+        color: BRAND.textSecondary,
         fontWeight: 700,
-        fontSize: '0.7rem',
+        fontSize: '0.69rem',
         textTransform: 'uppercase' as const,
-        letterSpacing: '0.06em',
-        borderBottom: '1px solid rgba(0,0,0,0.08)',
+        letterSpacing: '0.08em',
+        borderBottom: `1px solid ${BRAND.borderLight}`,
         py: 1.75,
         whiteSpace: 'nowrap' as const,
+        fontFamily: '"DM Sans", sans-serif',
     };
 
     return (
@@ -164,7 +166,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                 gap: 2
             }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <Typography variant="h5" sx={{ fontWeight: 800, color: '#0A3D62', letterSpacing: '-0.01em' }}>
+                    <Typography variant="h5" sx={{ fontWeight: 800, color: BRAND.textPrimary, letterSpacing: '-0.02em', fontFamily: '"Outfit","DM Sans",sans-serif' }}>
                         {title}
                     </Typography>
                     {titleComponent}
@@ -177,14 +179,18 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                             startIcon={<Plus size={17} />}
                             onClick={onCreate}
                             sx={{
-                                borderRadius: 2,
+                                borderRadius: '10px',
                                 fontWeight: 700,
+                                fontSize: '0.875rem',
+                                letterSpacing: '0.01em',
                                 px: 2.5,
-                                boxShadow: '0 4px 12px rgba(10,61,98,0.25)',
-                                bgcolor: '#0A3D62',
+                                background: `linear-gradient(135deg, ${BRAND.amberLt} 0%, ${BRAND.amber} 55%, ${BRAND.amberDk} 100%)`,
+                                color: '#0a0f1e',
+                                boxShadow: `0 4px 14px ${BRAND.amberGlow}`,
                                 '&:hover': {
-                                    bgcolor: '#0d4d7a',
-                                    boxShadow: '0 6px 16px rgba(10,61,98,0.35)',
+                                    background: `linear-gradient(135deg, ${BRAND.amberLt} 0%, ${BRAND.amber} 55%, ${BRAND.amberDk} 100%)`,
+                                    filter: 'brightness(1.08)',
+                                    boxShadow: `0 6px 20px ${BRAND.amberGlow}`,
                                 }
                             }}
                         >
@@ -195,11 +201,13 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                         variant="outlined"
                         startIcon={<Download size={17} />}
                         sx={{
-                            borderRadius: 2,
+                            borderRadius: '10px',
                             fontWeight: 600,
-                            borderColor: 'rgba(0,0,0,0.15)',
-                            color: 'text.secondary',
-                            '&:hover': { borderColor: 'rgba(0,0,0,0.25)', bgcolor: 'rgba(0,0,0,0.03)' }
+                            fontSize: '0.875rem',
+                            letterSpacing: '0.01em',
+                            borderColor: BRAND.borderLight,
+                            color: BRAND.textSecondary,
+                            '&:hover': { borderColor: BRAND.amberBorder, color: BRAND.amberDk, bgcolor: BRAND.amberBg }
                         }}
                     >
                         Export
@@ -242,8 +250,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                                 borderRadius: 2,
                                 bgcolor: '#F8FAFC',
                                 fontSize: '0.875rem',
-                                '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#0A3D62' },
-                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#0A3D62' },
+                                '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: BRAND.amber },
+                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: BRAND.amber },
                             }
                         }}
                     />
@@ -270,9 +278,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                                     <Badge
                                         badgeContent={Object.keys(filters).filter(k => filters[k] !== '' && filters[k] !== undefined).length}
                                         color="primary"
-                                        sx={{ '& .MuiBadge-badge': { bgcolor: '#0A3D62', fontSize: '0.6rem', minWidth: 16, height: 16 } }}
+                                        sx={{ '& .MuiBadge-badge': { bgcolor: BRAND.amber, color: '#0a0f1e', fontSize: '0.6rem', minWidth: 16, height: 16 } }}
                                     >
-                                        <Filter size={16} color={Object.keys(filters).length > 0 ? '#0A3D62' : '#64748b'} />
+                                        <Filter size={16} color={Object.keys(filters).length > 0 ? BRAND.amber : BRAND.textMuted} />
                                     </Badge>
                                 </IconButton>
                             </Tooltip>
@@ -290,7 +298,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                                     }
                                 }}
                             >
-                                <Typography sx={{ fontWeight: 700, fontSize: '0.85rem', color: '#334155', mb: 2 }}>Filter by</Typography>
+                                <Typography sx={{ fontWeight: 700, fontSize: '0.8rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: BRAND.textSecondary, mb: 2 }}>Filter by</Typography>
                                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                                     {filterConfig.map((field) => (
                                         <FormControl key={field.key} size="small" fullWidth>
@@ -313,7 +321,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                                     <Button
                                         fullWidth variant="outlined" size="small"
                                         onClick={() => { setFilters({}); setPendingFilters({}); setFilterAnchor(null); }}
-                                        sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 600, borderColor: 'rgba(0,0,0,0.15)', color: '#64748b' }}
+                                        sx={{ borderRadius: '8px', fontWeight: 600, borderColor: BRAND.borderLight, color: BRAND.textSecondary }}
                                     >
                                         Reset
                                     </Button>
@@ -327,7 +335,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                                             setFilters(applied);
                                             setFilterAnchor(null);
                                         }}
-                                        sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 700, bgcolor: '#0A3D62', '&:hover': { bgcolor: '#0d4d7a' } }}
+                                        sx={{ borderRadius: '8px', fontWeight: 700, background: `linear-gradient(135deg, ${BRAND.amber}, ${BRAND.amberDk})`, color: '#0a0f1e', '&:hover': { filter: 'brightness(1.08)' } }}
                                     >
                                         Apply
                                     </Button>
@@ -373,7 +381,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                             {loading ? (
                                 <TableRow>
                                     <TableCell colSpan={columns.length + (actions ? 1 : 0)} align="center" sx={{ py: 12, border: 0 }}>
-                                        <CircularProgress size={36} sx={{ color: '#0A3D62' }} />
+                                        <CircularProgress size={36} sx={{ color: BRAND.amber }} />
                                         <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>Loading data...</Typography>
                                     </TableCell>
                                 </TableRow>
@@ -392,8 +400,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                                         }}>
                                             <Search size={24} color="#94a3b8" />
                                         </Box>
-                                        <Typography variant="h6" sx={{ fontWeight: 700, color: '#64748b', mb: 0.5 }}>No results found</Typography>
-                                        <Typography variant="body2" color="text.disabled">Try adjusting your search or filters</Typography>
+                                        <Typography variant="h6" sx={{ fontWeight: 700, color: BRAND.textSecondary, letterSpacing: '-0.01em', mb: 0.5, fontFamily: '"Outfit",sans-serif' }}>No results found</Typography>
+                                        <Typography variant="body2" sx={{ color: BRAND.textMuted, fontSize: '0.875rem' }}>Try adjusting your search or filters</Typography>
                                     </TableCell>
                                 </TableRow>
                             ) : (
@@ -409,7 +417,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                                             bgcolor: index % 2 === 0 ? '#FFFFFF' : '#FAFBFE',
                                             transition: 'background-color 0.15s ease',
                                             '&:hover': {
-                                                bgcolor: alpha('#0A3D62', 0.04) + ' !important',
+                                                bgcolor: BRAND.bgSection + ' !important',
                                             },
                                             '&:last-child td': { borderBottom: 0 },
                                         }}

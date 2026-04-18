@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { X, Save, Plus } from 'lucide-react';
 import { ButtonLoader } from './Loaders';
+import { BRAND } from '../../theme';
 
 interface FormModalProps {
     open: boolean;
@@ -60,10 +61,10 @@ const FormModal: React.FC<FormModalProps> = ({
         >
             <DialogTitle sx={{ m: 0, p: { xs: 2, md: 3 }, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Box>
-                    <Typography variant="h5" sx={{ fontWeight: 800, color: '#0A3D62', letterSpacing: '-0.02em', mb: 0.5 }}>
+                    <Typography variant="h5" sx={{ fontWeight: 800, color: BRAND.textPrimary, letterSpacing: '-0.025em', fontFamily: '"Outfit","DM Sans",sans-serif', mb: 0.5 }}>
                         {title}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
+                    <Typography variant="body2" sx={{ color: BRAND.textMuted, fontWeight: 400, fontSize: '0.875rem', letterSpacing: '0.01em' }}>
                         {isEdit ? 'Update the details below to save changes' : 'Fill in the required information to create a new entry'}
                     </Typography>
                 </Box>
@@ -128,18 +129,21 @@ const FormModal: React.FC<FormModalProps> = ({
                                 borderRadius: '12px',
                                 fontWeight: 700,
                                 fontSize: '0.95rem',
-                                backgroundColor: isEdit ? '#0A3D62' : '#2ECC71',
-                                boxShadow: `0 8px 20px -4px ${alpha(isEdit ? '#0A3D62' : '#2ECC71', 0.4)}`,
+                                backgroundColor: isEdit ? BRAND.textPrimary : BRAND.success,
+                                boxShadow: `0 8px 20px -4px ${alpha(isEdit ? BRAND.textPrimary : BRAND.success, 0.35)}`,
                                 minWidth: 160,
+                                fontWeight: 700,
+                                fontSize: '0.9rem',
+                                letterSpacing: '0.01em',
                                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                 '&:hover': {
-                                    backgroundColor: isEdit ? '#072e4a' : '#27ae60',
-                                    boxShadow: `0 12px 25px -4px ${alpha(isEdit ? '#0A3D62' : '#2ECC71', 0.5)}`,
+                                    backgroundColor: isEdit ? '#0f172a' : '#059669',
+                                    boxShadow: `0 12px 25px -4px ${alpha(isEdit ? BRAND.textPrimary : BRAND.success, 0.45)}`,
                                     transform: 'translateY(-2px)'
                                 },
                                 '&:active': { transform: 'translateY(0)' },
                                 '&.Mui-disabled': {
-                                    backgroundColor: alpha(isEdit ? '#0A3D62' : '#2ECC71', 0.5),
+                                    backgroundColor: alpha(isEdit ? BRAND.textPrimary : BRAND.success, 0.5),
                                     color: '#fff'
                                 }
                             }}

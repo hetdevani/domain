@@ -4,51 +4,60 @@
 
 @layer base {
   :root {
-    --primary-main: #0ea5e9;
-    --background-default: #f8fafc;
-    --background-paper: #ffffff;
+    /* ── Brand tokens (mirrors BRAND in src/theme/index.ts) ── */
+    --amber:          #f59e0b;
+    --amber-lt:       #fcd34d;
+    --amber-dk:       #d97706;
+    --amber-glow:     rgba(245, 158, 11, 0.22);
+
+    /* Dashboard light surfaces */
+    --bg-page:        #f4f6fc;
+    --bg-paper:       #ffffff;
+    --bg-muted:       #eef2f9;
+    --border-light:   #e2e8f0;
+    --text-primary:   #0f172a;
+    --text-secondary: #475569;
+    --text-muted:     #94a3b8;
+
+    /* Dark surfaces (sidebar, auth, landing) */
+    --bg-deep:        #04060f;
+    --bg-dark:        #070c1d;
+    --border-dark:    rgba(148, 163, 184, 0.12);
+
+    /* Semantic */
+    --success:  #10b981;
+    --danger:   #ef4444;
+    --warning:  #f97316;
+
+    /* Legacy aliases */
+    --primary-main:       var(--amber);
+    --background-default: var(--bg-page);
+    --background-paper:   var(--bg-paper);
   }
 
   body {
-    @apply bg-slate-50 text-slate-900 overflow-x-hidden;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
     margin: 0;
     font-family: 'DM Sans', sans-serif;
+    overflow-x: clip;
   }
 
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #f1f5f9;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #94a3b8;
-    border-radius: 99px;
-    border: 2px solid #f1f5f9;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #64748b;
-  }
+  /* Light scrollbar for dashboard */
+  ::-webkit-scrollbar        { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track  { background: var(--bg-muted); }
+  ::-webkit-scrollbar-thumb  { background: #cbd5e1; border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-xl;
-  }
-  
-  .dynamic-transition {
-    @apply transition-all duration-300 ease-in-out;
+    @apply bg-white/80 backdrop-blur-md border shadow-sm;
+    border-color: var(--border-light);
   }
 }
 
-/* MUI Override Fixes */
-.MuiButton-root {
-  text-transform: none !important;
-}
+/* MUI Override */
+.MuiButton-root { text-transform: none !important; }
 
-#root {
-  width: 100%;
-  min-height: 100vh;
-}
+#root { width: 100%; min-height: 100vh; }

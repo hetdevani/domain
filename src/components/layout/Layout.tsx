@@ -39,12 +39,9 @@ const Layout: React.FC = () => {
     return (
         <Box
             sx={{
-                display: 'flex',
-                minHeight: '100vh',
-                background: '#f7f7f7',
-                backgroundImage:
-                    'radial-gradient(rgba(10,61,98,0.045) 1px, transparent 1px)',
-                backgroundSize: '22px 22px',
+                display:    'flex',
+                minHeight:  '100vh',
+                background: '#f4f6fc',
             }}
         >
             <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />

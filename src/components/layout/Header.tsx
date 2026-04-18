@@ -21,21 +21,21 @@ import {
     PanelLeftClose,
     PanelLeftOpen,
 } from 'lucide-react';
-import { useTheme } from '@mui/material/styles';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { BRAND } from '../../theme';
 
 const PAGE_META: Record<string, { title: string; subtitle: string }> = {
-    '/dashboard': { title: 'Dashboard', subtitle: 'Operations overview' },
-    '/monitors': { title: 'Monitors', subtitle: 'Track uptime & performance' },
-    '/incidents': { title: 'Incidents', subtitle: 'Active & resolved events' },
-    '/status-pages': { title: 'Status Pages', subtitle: 'Public status portals' },
-    '/users': { title: 'User Management', subtitle: 'Admin users' },
-    '/customers': { title: 'Customers', subtitle: 'Customer accounts' },
-    '/plans': { title: 'Plans', subtitle: 'Subscription plans' },
-    '/masters': { title: 'Masters', subtitle: 'Master configuration' },
-    '/settings': { title: 'Settings', subtitle: 'Account & security' },
-    '/reports': { title: 'Reports', subtitle: 'Analytics & reports' },
+    '/dashboard':    { title: 'Dashboard',       subtitle: 'Operations overview'        },
+    '/monitors':     { title: 'Monitors',         subtitle: 'Track uptime & performance' },
+    '/incidents':    { title: 'Incidents',         subtitle: 'Active & resolved events'  },
+    '/status-pages': { title: 'Status Pages',      subtitle: 'Public status portals'     },
+    '/users':        { title: 'User Management',   subtitle: 'Admin users'               },
+    '/customers':    { title: 'Customers',          subtitle: 'Customer accounts'         },
+    '/plans':        { title: 'Plans',              subtitle: 'Subscription plans'        },
+    '/masters':      { title: 'Masters',            subtitle: 'Master configuration'      },
+    '/settings':     { title: 'Settings',           subtitle: 'Account & security'        },
+    '/reports':      { title: 'Reports',            subtitle: 'Analytics & reports'       },
 };
 
 interface HeaderProps {
@@ -46,24 +46,33 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }) => {
     const { user, logout } = useAuth();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const theme = useTheme();
     const location = useLocation();
-    const navigate = useNavigate();
+    const navigate  = useNavigate();
 
     const pageMeta =
         Object.entries(PAGE_META).find(([path]) => location.pathname.startsWith(path))?.[1] ||
-        { title: 'LeasePacket', subtitle: '' };
+        { title: 'Plan A', subtitle: '' };
 
-    const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
+    const handleMenuOpen  = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
     const handleMenuClose = () => setAnchorEl(null);
-    const handleLogout = () => { handleMenuClose(); logout(); };
+    const handleLogout    = () => { handleMenuClose(); logout(); };
 
-    const initials = user?.name
-        ?.split(' ')
-        .map(n => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2) || 'U';
+    const initials = user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U';
+
+    /* shared icon-button style */
+    const iconBtnSx = {
+        color:        BRAND.textSecondary,
+        width:        36, height: 36,
+        borderRadius: '9px',
+        border:       `1px solid ${BRAND.borderLight}`,
+        bgcolor:      '#ffffff',
+        transition:   'all 0.15s ease',
+        '&:hover': {
+            color:       BRAND.amberDk,
+            borderColor: BRAND.amberBorder,
+            bgcolor:     BRAND.amberBg,
+        },
+    };
 
     return (
         <AppBar
@@ -71,31 +80,18 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }) => {
             elevation={0}
             sx={{
                 backgroundColor: '#ffffff',
-                color: '#0f172a',
-                zIndex: theme.zIndex.drawer + 3,
-                height: 64,
-                justifyContent: 'center',
-                borderBottom: '1px solid rgba(0,0,0,0.07)',
-                boxShadow: 'none',
+                color:           BRAND.textPrimary,
+                zIndex:          1200,
+                height:          64,
+                justifyContent:  'center',
+                borderBottom:    `1px solid ${BRAND.borderLight}`,
+                boxShadow:       '0 1px 4px rgba(0,0,0,0.06)',
             }}
         >
             <Toolbar sx={{ px: { xs: 2, sm: 3 }, gap: 2, minHeight: '64px !important' }}>
 
                 {/* Sidebar toggle */}
-                <IconButton
-                    onClick={onMenuClick}
-                    size="small"
-                    sx={{
-                        color: '#64748b',
-                        width: 36,
-                        height: 36,
-                        borderRadius: '8px',
-                        border: '1px solid rgba(0,0,0,0.09)',
-                        flexShrink: 0,
-                        transition: 'all 0.15s ease',
-                        '&:hover': { bgcolor: '#f8fafc', color: '#0f172a', borderColor: 'rgba(0,0,0,0.18)' },
-                    }}
-                >
+                <IconButton onClick={onMenuClick} size="small" sx={iconBtnSx}>
                     {sidebarOpen ? <PanelLeftClose size={17} /> : <PanelLeftOpen size={17} />}
                 </IconButton>
 
@@ -103,26 +99,16 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }) => {
                 <Box sx={{ flexGrow: 1, minWidth: 0 }}>
                     <Typography
                         sx={{
-                            fontWeight: 800,
-                            fontSize: '1.0625rem',
-                            color: '#0f172a',
-                            lineHeight: 1.2,
+                            fontWeight:    800, fontSize: '1.0625rem',
+                            color:         BRAND.textPrimary, lineHeight: 1.2,
                             letterSpacing: '-0.015em',
-                            fontFamily: '"Outfit", "DM Sans", sans-serif',
+                            fontFamily:    '"Outfit","DM Sans",sans-serif',
                         }}
                     >
                         {pageMeta.title}
                     </Typography>
                     {pageMeta.subtitle && (
-                        <Typography
-                            sx={{
-                                fontSize: '0.725rem',
-                                color: '#94a3b8',
-                                fontWeight: 500,
-                                lineHeight: 1,
-                                mt: 0.25,
-                            }}
-                        >
+                        <Typography sx={{ fontSize: '0.72rem', color: BRAND.textMuted, fontWeight: 500, lineHeight: 1, mt: 0.2 }}>
                             {pageMeta.subtitle}
                         </Typography>
                     )}
@@ -133,85 +119,51 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }) => {
 
                     {/* Notifications */}
                     <Tooltip title="Notifications">
-                        <IconButton
-                            size="small"
-                            sx={{
-                                color: '#64748b',
-                                width: 36,
-                                height: 36,
-                                borderRadius: '8px',
-                                border: '1px solid rgba(0,0,0,0.09)',
-                                transition: 'all 0.15s ease',
-                                '&:hover': { bgcolor: '#f8fafc', color: '#0f172a', borderColor: 'rgba(0,0,0,0.18)' },
-                            }}
-                        >
-                            <Badge
-                                badgeContent={0}
-                                color="error"
-                                sx={{
-                                    '& .MuiBadge-badge': {
-                                        fontSize: '0.6rem',
-                                        minWidth: 15,
-                                        height: 15,
-                                        padding: 0,
-                                    },
-                                }}
-                            >
+                        <IconButton size="small" sx={iconBtnSx}>
+                            <Badge badgeContent={0} color="error">
                                 <Bell size={17} />
                             </Badge>
                         </IconButton>
                     </Tooltip>
 
-                    {/* Divider */}
-                    <Box sx={{ width: '1px', height: 24, bgcolor: 'rgba(0,0,0,0.08)', mx: 0.5 }} />
+                    {/* Separator */}
+                    <Box sx={{ width: '1px', height: 24, bgcolor: BRAND.borderLight, mx: 0.5 }} />
 
-                    {/* Profile button */}
+                    {/* Profile pill */}
                     <Box
                         onClick={handleMenuOpen}
                         sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1,
-                            cursor: 'pointer',
-                            py: 0.75,
-                            px: 1.25,
+                            display:      'flex', alignItems: 'center', gap: 1,
+                            cursor:       'pointer', py: 0.75, px: 1.25,
                             borderRadius: '10px',
-                            border: '1px solid rgba(0,0,0,0.09)',
-                            transition: 'all 0.15s ease',
+                            border:       `1px solid ${BRAND.borderLight}`,
+                            bgcolor:      '#ffffff',
+                            transition:   'all 0.15s ease',
                             '&:hover': {
-                                bgcolor: '#f8fafc',
-                                borderColor: 'rgba(0,0,0,0.16)',
+                                bgcolor:     BRAND.amberBg,
+                                borderColor: BRAND.amberBorder,
                             },
                         }}
                     >
                         <Avatar
                             src={user?.image}
                             sx={{
-                                width: 27,
-                                height: 27,
-                                fontSize: '0.7rem',
-                                fontWeight: 800,
-                                bgcolor: '#0A3D62',
-                                color: '#ffffff',
+                                width:      27, height: 27,
+                                fontSize:   '0.7rem', fontWeight: 800,
+                                background: `linear-gradient(135deg, ${BRAND.amber}, ${BRAND.amberDk})`,
+                                color:      '#0a0f1e',
                             }}
                         >
                             {initials}
                         </Avatar>
                         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                            <Typography
-                                sx={{
-                                    fontWeight: 700,
-                                    fontSize: '0.8125rem',
-                                    color: '#0f172a',
-                                    lineHeight: 1,
-                                    fontFamily: '"Outfit", "DM Sans", sans-serif',
-                                }}
-                            >
+                            <Typography sx={{ fontWeight: 700, fontSize: '0.8125rem', color: BRAND.textPrimary, lineHeight: 1, fontFamily: '"Outfit","DM Sans",sans-serif' }}>
                                 {user?.name?.split(' ')[0]}
                             </Typography>
                         </Box>
                     </Box>
 
+                    {/* Dropdown */}
                     <Menu
                         anchorEl={anchorEl}
                         open={Boolean(anchorEl)}
@@ -220,70 +172,34 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }) => {
                         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                         PaperProps={{
                             sx: {
-                                mt: 1,
-                                width: 228,
-                                borderRadius: '14px',
-                                boxShadow: '0 8px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
-                                border: '1px solid rgba(0,0,0,0.07)',
+                                mt: 1, width: 228,
+                                borderRadius:    '14px',
+                                backgroundColor: '#ffffff',
+                                border:          `1px solid ${BRAND.borderLight}`,
+                                boxShadow:       '0 10px 40px rgba(0,0,0,0.12)',
                                 py: 0.75,
-                                overflow: 'hidden',
                             },
-                        }}
+                        } as any}
                     >
-                        {/* User info header */}
+                        {/* User info */}
                         <Box sx={{ px: 2, py: 1.25, mb: 0.5 }}>
-                            <Typography
-                                sx={{
-                                    fontWeight: 700,
-                                    fontSize: '0.875rem',
-                                    color: '#0f172a',
-                                    fontFamily: '"Outfit", "DM Sans", sans-serif',
-                                }}
-                            >
+                            <Typography sx={{ fontWeight: 700, fontSize: '0.875rem', color: BRAND.textPrimary, fontFamily: '"Outfit","DM Sans",sans-serif' }}>
                                 {user?.name}
                             </Typography>
-                            <Typography sx={{ fontSize: '0.75rem', color: '#94a3b8', mt: 0.125 }}>
-                                {Number(user?.type) === 1
-                                    ? 'Master Admin'
-                                    : Number(user?.type) === 2
-                                    ? 'Administrator'
-                                    : 'Customer'}
+                            <Typography sx={{ fontSize: '0.75rem', color: BRAND.textMuted, mt: 0.125 }}>
+                                {Number(user?.type) === 1 ? 'Master Admin' : Number(user?.type) === 2 ? 'Administrator' : 'Customer'}
                             </Typography>
                         </Box>
 
-                        <Divider sx={{ mb: 0.5 }} />
+                        <Divider />
 
-                        <MenuItem
-                            onClick={handleMenuClose}
-                            sx={{
-                                borderRadius: '8px',
-                                mx: 0.75,
-                                fontSize: '0.875rem',
-                                fontWeight: 500,
-                                py: 1,
-                                color: '#374151',
-                            }}
-                        >
-                            <ListItemIcon sx={{ color: '#64748b' }}>
-                                <User size={16} />
-                            </ListItemIcon>
+                        <MenuItem onClick={handleMenuClose} sx={{ borderRadius: '8px', mx: 0.75, py: 1 }}>
+                            <ListItemIcon sx={{ color: BRAND.textSecondary }}><User size={16} /></ListItemIcon>
                             My Profile
                         </MenuItem>
 
-                        <MenuItem
-                            onClick={() => { handleMenuClose(); navigate('/settings'); }}
-                            sx={{
-                                borderRadius: '8px',
-                                mx: 0.75,
-                                fontSize: '0.875rem',
-                                fontWeight: 500,
-                                py: 1,
-                                color: '#374151',
-                            }}
-                        >
-                            <ListItemIcon sx={{ color: '#64748b' }}>
-                                <Settings size={16} />
-                            </ListItemIcon>
+                        <MenuItem onClick={() => { handleMenuClose(); navigate('/settings'); }} sx={{ borderRadius: '8px', mx: 0.75, py: 1 }}>
+                            <ListItemIcon sx={{ color: BRAND.textSecondary }}><Settings size={16} /></ListItemIcon>
                             Settings
                         </MenuItem>
 
@@ -292,18 +208,13 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }) => {
                         <MenuItem
                             onClick={handleLogout}
                             sx={{
-                                borderRadius: '8px',
-                                mx: 0.75,
-                                fontSize: '0.875rem',
-                                fontWeight: 600,
-                                py: 1,
-                                color: '#ef4444',
-                                '& .MuiListItemIcon-root': { color: '#ef4444' },
+                                borderRadius: '8px', mx: 0.75, py: 1,
+                                color:        BRAND.danger,
+                                '&:hover':    { bgcolor: BRAND.dangerBg },
+                                '& .MuiListItemIcon-root': { color: BRAND.danger },
                             }}
                         >
-                            <ListItemIcon>
-                                <LogOut size={16} />
-                            </ListItemIcon>
+                            <ListItemIcon><LogOut size={16} /></ListItemIcon>
                             Sign Out
                         </MenuItem>
                     </Menu>
