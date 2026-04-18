@@ -1,111 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-  <!-- Homepage -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- HOMEPAGE — highest priority                              -->
+  <!-- ════════════════════════════════════════════════════════ -->
   <url>
-    <loc>https://tools.leasepacket.com/</loc>
-    <lastmod>2026-03-15</lastmod>
+    <loc>https://planahosting.in/</loc>
+    <lastmod>2026-04-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://planahosting.in/og-image.png</image:loc>
+      <image:title>Plan A Hosting — Domain Registration &amp; Web Hosting India</image:title>
+      <image:caption>Register .com, .in &amp; 100+ domains starting ₹449/yr with free WHOIS privacy</image:caption>
+    </image:image>
   </url>
 
-  <!-- DNS & Network Tools -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- DNS &amp; NETWORK TOOLS                                   -->
+  <!-- ════════════════════════════════════════════════════════ -->
   <url>
-    <loc>https://tools.leasepacket.com/tools/dns-propagation</loc>
-    <lastmod>2026-03-15</lastmod>
+    <loc>https://planahosting.in/tools/dns-propagation</loc>
+    <lastmod>2026-04-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tools.leasepacket.com/tools/dns-lookup</loc>
-    <lastmod>2026-03-15</lastmod>
+    <loc>https://planahosting.in/tools/dns-lookup</loc>
+    <lastmod>2026-04-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tools.leasepacket.com/tools/ip-intelligence</loc>
-    <lastmod>2026-03-15</lastmod>
+    <loc>https://planahosting.in/tools/ip-intelligence</loc>
+    <lastmod>2026-04-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tools.leasepacket.com/tools/what-is-my-ip</loc>
-    <lastmod>2026-03-15</lastmod>
+    <loc>https://planahosting.in/tools/what-is-my-ip</loc>
+    <lastmod>2026-04-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- SEO & Website Tools -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- SEO &amp; WEBSITE TOOLS                                   -->
+  <!-- ════════════════════════════════════════════════════════ -->
   <url>
-    <loc>https://tools.leasepacket.com/tools/meta-tag-analyzer</loc>
-    <lastmod>2026-03-15</lastmod>
+    <loc>https://planahosting.in/tools/meta-tag-analyzer</loc>
+    <lastmod>2026-04-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tools.leasepacket.com/tools/http-header-checker</loc>
-    <lastmod>2026-03-15</lastmod>
+    <loc>https://planahosting.in/tools/http-header-checker</loc>
+    <lastmod>2026-04-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tools.leasepacket.com/tools/robots-txt-checker</loc>
-    <lastmod>2026-03-15</lastmod>
+    <loc>https://planahosting.in/tools/robots-txt-checker</loc>
+    <lastmod>2026-04-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tools.leasepacket.com/tools/sitemap-checker</loc>
-    <lastmod>2026-03-15</lastmod>
+    <loc>https://planahosting.in/tools/sitemap-checker</loc>
+    <lastmod>2026-04-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tools.leasepacket.com/tools/page-speed</loc>
-    <lastmod>2026-03-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <!-- Security & Server Tools -->
-  <url>
-    <loc>https://tools.leasepacket.com/tools/http-header-checker</loc>
-    <lastmod>2026-03-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://tools.leasepacket.com/tools/smtp-test</loc>
-    <lastmod>2026-03-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://tools.leasepacket.com/tools/domain-monitoring</loc>
-    <lastmod>2026-03-15</lastmod>
+    <loc>https://planahosting.in/tools/page-speed</loc>
+    <lastmod>2026-04-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- Utility Tools -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- SECURITY &amp; SERVER TOOLS                               -->
+  <!-- ════════════════════════════════════════════════════════ -->
   <url>
-    <loc>https://tools.leasepacket.com/tools/word-counter</loc>
-    <lastmod>2026-03-15</lastmod>
+    <loc>https://planahosting.in/tools/smtp-test</loc>
+    <lastmod>2026-04-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tools.leasepacket.com/tools/lorem-ipsum</loc>
-    <lastmod>2026-03-15</lastmod>
+    <loc>https://planahosting.in/tools/domain-monitoring</loc>
+    <lastmod>2026-04-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- UTILITY TOOLS                                            -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <url>
+    <loc>https://planahosting.in/tools/word-counter</loc>
+    <lastmod>2026-04-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://planahosting.in/tools/lorem-ipsum</loc>
+    <lastmod>2026-04-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://tools.leasepacket.com/tools/htaccess-redirect</loc>
-    <lastmod>2026-03-15</lastmod>
+    <loc>https://planahosting.in/tools/htaccess-redirect</loc>
+    <lastmod>2026-04-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

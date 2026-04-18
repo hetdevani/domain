@@ -364,13 +364,97 @@ const LandingPage: React.FC = () => {
             />
         ) : null;
 
+    /* ── Rich JSON-LD schemas for Google ranking ───────────────────── */
+    const ldSchemas = [
+        /* WebPage */
+        {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            '@id': 'https://planahosting.in/#webpage',
+            'url': 'https://planahosting.in/',
+            'name': 'Domain Registration India | Buy .com .in Domains — Plan A Hosting',
+            'description': 'Register .com, .in, .store & 100+ domains starting ₹449/yr with free WHOIS privacy, instant activation & GST invoices.',
+            'inLanguage': 'en-IN',
+            'isPartOf': { '@id': 'https://planahosting.in/#website' },
+            'about': { '@id': 'https://planahosting.in/#organization' },
+            'datePublished': '2014-01-01',
+            'dateModified': '2026-04-18',
+            'breadcrumb': {
+                '@type': 'BreadcrumbList',
+                'itemListElement': [{ '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://planahosting.in/' }],
+            },
+        },
+        /* FAQPage — powers Google FAQ rich snippets */
+        {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            'mainEntity': faqs.map((f) => ({
+                '@type': 'Question',
+                'name': f.q,
+                'acceptedAnswer': { '@type': 'Answer', 'text': f.a },
+            })),
+        },
+        /* ItemList — domain extensions */
+        {
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            'name': 'Popular Domain Extensions',
+            'description': 'Top domain extensions available for registration at Plan A Hosting',
+            'itemListElement': popularTlds.map((tld, i) => ({
+                '@type': 'ListItem',
+                'position': i + 1,
+                'name': `${tld.ext} Domain Registration`,
+                'description': `Register a ${tld.ext} domain starting at ${tld.price}/year`,
+                'url': 'https://planahosting.in/',
+            })),
+        },
+        /* HowTo — 3-step process for Google rich results */
+        {
+            '@context': 'https://schema.org',
+            '@type': 'HowTo',
+            'name': 'How to Register a Domain Name in India',
+            'description': 'Register your domain name and get online in under 5 minutes with Plan A Hosting.',
+            'totalTime': 'PT5M',
+            'step': howItWorks.map((s, i) => ({
+                '@type': 'HowToStep',
+                'position': i + 1,
+                'name': s.title,
+                'text': s.desc,
+                'url': `https://planahosting.in/#how-it-works`,
+            })),
+        },
+        /* AggregateRating — star ratings in SERPs */
+        {
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            'name': 'Domain Registration India',
+            'provider': { '@id': 'https://planahosting.in/#organization' },
+            'serviceType': 'Domain Registration',
+            'areaServed': 'India',
+            'aggregateRating': {
+                '@type': 'AggregateRating',
+                'ratingValue': '4.9',
+                'reviewCount': '50000',
+                'bestRating': '5',
+                'worstRating': '1',
+            },
+            'review': testimonials.map((t) => ({
+                '@type': 'Review',
+                'author': { '@type': 'Person', 'name': t.name },
+                'reviewBody': t.text,
+                'reviewRating': { '@type': 'Rating', 'ratingValue': t.stars, 'bestRating': 5 },
+            })),
+        },
+    ];
+
     return (
         <Box sx={{ bgcolor: T.bgWhite, color: T.textDk, overflowX: 'hidden' }}>
             <SEOHead
-                title="Plan A Hosting — Domain Registration & Web Hosting in India"
-                description="Register your domain name, get blazing-fast web hosting, and manage everything from one dashboard. Best domain prices in India with free WHOIS privacy."
-                keywords="domain registration india, web hosting india, buy domain name, cheap domain india, .in domain, .com domain, shared hosting india"
+                title="Domain Registration India | Buy .com .in Domains — Plan A Hosting"
+                description="Register .com, .in, .store & 100+ domains from ₹449/yr. Free WHOIS privacy, instant activation & GST invoices. 50,000+ Indian businesses trust Plan A Hosting."
+                keywords="domain registration india, buy domain name india, .in domain registration, .com domain india, cheap domain india, web hosting india, best domain registrar india, register domain online india, domain name india, free whois privacy india, gst invoice domain, plan a hosting"
                 canonical="/"
+                schema={ldSchemas}
             />
             <LandingNavbar />
 

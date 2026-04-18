@@ -1,7 +1,10 @@
-User-agent: *
-Allow: /
+# robots.txt — Plan A Hosting
+# https://planahosting.in
 
-# Tool pages
+User-agent: *
+
+# Allow public pages
+Allow: /$
 Allow: /tools/
 Allow: /tools/dns-propagation
 Allow: /tools/dns-lookup
@@ -18,12 +21,17 @@ Allow: /tools/htaccess-redirect
 Allow: /tools/smtp-test
 Allow: /tools/domain-monitoring
 
-# Disallow private/auth routes
+# Disallow private/auth areas
 Disallow: /dashboard
 Disallow: /dashboard/
 Disallow: /login
 Disallow: /signup
 Disallow: /api/
+Disallow: /settings
+Disallow: /admin/
 
-# Sitemap
-Sitemap: https://tools.leasepacket.com/sitemap.xml
+# Crawl-delay for polite bots
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://planahosting.in/sitemap.xml
