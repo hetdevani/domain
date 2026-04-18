@@ -765,83 +765,147 @@ const LandingPage: React.FC = () => {
 
             {/* ══════════════ HOW IT WORKS ════════════════════════════ */}
             <Box id="how-it-works" component="section" sx={{
-                background: `linear-gradient(160deg, #08102a 0%, ${T.bgDark} 55%, #0c1430 100%)`,
-                py: { xs: 7, md: 10 }, scrollMarginTop: '80px', position: 'relative', overflow: 'hidden',
+                bgcolor: T.bgLight,
+                py: { xs: 8, md: 12 }, scrollMarginTop: '80px', position: 'relative', overflow: 'hidden',
             }}>
+                {/* subtle background decoration */}
                 <Box aria-hidden sx={{
                     position: 'absolute', inset: 0, pointerEvents: 'none',
                     background: [
-                        `radial-gradient(ellipse 60% 40% at 0%   50%, ${T.violetGlow} 0%, transparent 55%)`,
-                        `radial-gradient(ellipse 50% 40% at 100% 50%, ${T.cyanGlow}   0%, transparent 50%)`,
+                        `radial-gradient(ellipse 50% 40% at 0% 30%, rgba(245,158,11,0.06) 0%, transparent 60%)`,
+                        `radial-gradient(ellipse 40% 35% at 100% 70%, rgba(124,58,237,0.05) 0%, transparent 55%)`,
                     ].join(','),
                 }} />
                 <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
                     <Reveal>
-                        <Box sx={{ textAlign: 'center', mb: 7 }}>
+                        <Box sx={{ textAlign: 'center', mb: { xs: 7, md: 9 } }}>
                             <SectionBadge>Simple Process</SectionBadge>
-                            <SectionTitle light>Get Online in 3 Easy Steps</SectionTitle>
-                            <SectionSub light>From searching your domain name to going live — less than 5 minutes.</SectionSub>
+                            <SectionTitle>Get Online in 3 Easy Steps</SectionTitle>
+                            <SectionSub>From searching your domain name to going live — less than 5 minutes.</SectionSub>
                         </Box>
                     </Reveal>
-                    <Grid container spacing={4} alignItems="stretch">
+
+                    {/* Steps — alternating layout */}
+                    <Stack spacing={{ xs: 6, md: 0 }}>
                         {howItWorks.map((step, i) => {
                             const Icon = step.icon;
+                            const isEven = i % 2 === 1;
+                            const gradients = [
+                                `linear-gradient(135deg, ${T.amber} 0%, ${T.amberDk} 100%)`,
+                                `linear-gradient(135deg, ${T.violet} 0%, #4f46e5 100%)`,
+                                `linear-gradient(135deg, #10b981 0%, #059669 100%)`,
+                            ];
+                            const glows = [T.amberGlow, T.violetGlow, 'rgba(16,185,129,0.22)'];
+                            const bgAccents = ['rgba(245,158,11,0.06)', 'rgba(124,58,237,0.06)', 'rgba(16,185,129,0.06)'];
                             return (
-                                <Grid size={{ xs: 12, md: 4 }} key={step.step}>
-                                    <Reveal delay={i * 0.12}>
-                                        <motion.div whileHover={{ y: -4 }} transition={EASE_SPRING} style={{ height: '100%' }}>
-                                            <Paper elevation={0} sx={{
-                                                p: { xs: 3, md: 4 }, borderRadius: R, height: '100%',
-                                                bgcolor: T.bgCard, border: `1px solid ${T.border}`,
-                                                textAlign: 'center', backdropFilter: 'blur(10px)',
-                                                transition: 'border-color 0.2s, background 0.2s',
-                                                '&:hover': { bgcolor: T.bgCardHov, borderColor: `${T.amber}35` },
+                                <Box key={step.step} sx={{
+                                    display: 'flex',
+                                    flexDirection: { xs: 'column', md: isEven ? 'row-reverse' : 'row' },
+                                    alignItems: 'center',
+                                    gap: { xs: 4, md: 8 },
+                                    py: { xs: 2, md: 5 },
+                                    position: 'relative',
+                                    '&:not(:last-child)::after': {
+                                        content: '""',
+                                        display: { xs: 'none', md: 'block' },
+                                        position: 'absolute',
+                                        bottom: 0,
+                                        left: '50%',
+                                        transform: 'translateX(-50%)',
+                                        width: 2,
+                                        height: 40,
+                                        background: `linear-gradient(to bottom, ${T.borderLt}, transparent)`,
+                                    },
+                                }}>
+                                    {/* Visual side */}
+                                    <Reveal from={isEven ? 'right' : 'left'} delay={0.05}>
+                                        <Box sx={{
+                                            flex: '0 0 auto',
+                                            width: { xs: 220, md: 300 },
+                                            height: { xs: 220, md: 300 },
+                                            borderRadius: '50%',
+                                            background: bgAccents[i],
+                                            border: `2px solid ${glows[i].replace('0.22', '0.18')}`,
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            position: 'relative',
+                                            mx: 'auto',
+                                            boxShadow: `0 0 0 12px ${bgAccents[i]}`,
+                                        }}>
+                                            {/* Step number badge */}
+                                            <Box sx={{
+                                                position: 'absolute', top: 10, right: 10,
+                                                width: 44, height: 44, borderRadius: '50%',
+                                                background: gradients[i],
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                boxShadow: `0 4px 14px ${glows[i]}`,
+                                                zIndex: 1,
                                             }}>
-                                                <motion.div
-                                                    animate={rm ? {} : { y: [0, -6, 0] }}
-                                                    transition={{ duration: 3 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.5 }}
-                                                >
-                                                    <Box sx={{
-                                                        width: 68, height: 68, borderRadius: '50%', mx: 'auto', mb: 2.5,
-                                                        background: `linear-gradient(135deg, ${T.amber} 0%, ${T.amberDk} 100%)`,
-                                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                        boxShadow: `0 10px 32px ${T.amberGlow}`,
-                                                    }}>
-                                                        <Icon size={30} color="#0a0f1e" strokeWidth={2.2} />
-                                                    </Box>
-                                                </motion.div>
-                                                <Typography sx={{ fontSize: '0.7rem', fontWeight: 800, color: T.amber, letterSpacing: '0.14em', textTransform: 'uppercase', mb: 0.75 }}>
+                                                <Typography sx={{ fontWeight: 900, fontSize: '1rem', color: '#fff', fontFamily: '"Outfit",sans-serif' }}>
+                                                    {step.step}
+                                                </Typography>
+                                            </Box>
+                                            {/* Main icon circle */}
+                                            <motion.div
+                                                animate={rm ? {} : { y: [0, -10, 0] }}
+                                                transition={{ duration: 3.5 + i, repeat: Infinity, ease: 'easeInOut', delay: i * 0.6 }}
+                                            >
+                                                <Box sx={{
+                                                    width: { xs: 110, md: 140 },
+                                                    height: { xs: 110, md: 140 },
+                                                    borderRadius: '50%',
+                                                    background: gradients[i],
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    boxShadow: `0 20px 60px ${glows[i]}`,
+                                                }}>
+                                                    <Icon size={56} color="#fff" strokeWidth={1.8} />
+                                                </Box>
+                                            </motion.div>
+                                        </Box>
+                                    </Reveal>
+
+                                    {/* Text side */}
+                                    <Reveal from={isEven ? 'left' : 'right'} delay={0.12}>
+                                        <Box sx={{ flex: 1, textAlign: { xs: 'center', md: 'left' }, maxWidth: { md: 480 } }}>
+                                            <Box sx={{
+                                                display: 'inline-block',
+                                                background: gradients[i],
+                                                borderRadius: '8px',
+                                                px: 1.5, py: 0.4, mb: 2,
+                                            }}>
+                                                <Typography sx={{ fontSize: '0.7rem', fontWeight: 800, color: '#fff', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
                                                     Step {step.step}
                                                 </Typography>
-                                                <Typography sx={{ fontWeight: 800, fontSize: '1.15rem', color: T.textLt, mb: 1.5, fontFamily: '"Outfit",sans-serif' }}>
-                                                    {step.title}
-                                                </Typography>
-                                                <Typography sx={{ color: T.muted, fontSize: '0.9375rem', lineHeight: 1.68 }}>
-                                                    {step.desc}
-                                                </Typography>
-                                            </Paper>
-                                        </motion.div>
+                                            </Box>
+                                            <Typography sx={{
+                                                fontWeight: 800, fontSize: { xs: '1.6rem', md: '2rem' },
+                                                color: T.textDk, mb: 1.75, lineHeight: 1.15,
+                                                fontFamily: '"Outfit","DM Sans",sans-serif', letterSpacing: '-0.02em',
+                                            }}>
+                                                {step.title}
+                                            </Typography>
+                                            <Typography sx={{ color: T.mutedDk, fontSize: '1.0125rem', lineHeight: 1.75, mb: 3 }}>
+                                                {step.desc}
+                                            </Typography>
+                                            {i === 2 && (
+                                                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{ display: 'inline-block' }}>
+                                                    <Button variant="contained" size="large" endIcon={<ArrowRight size={18} />}
+                                                        onClick={() => document.getElementById('search')?.scrollIntoView({ behavior: 'smooth' })}
+                                                        sx={{
+                                                            background: `linear-gradient(135deg, ${T.amberLt} 0%, ${T.amber} 55%, ${T.amberDk} 100%)`,
+                                                            color: '#0a0f1e', fontWeight: 800, borderRadius: RS, px: 3.5, py: 1.4,
+                                                            boxShadow: `0 6px 24px ${T.amberGlow}`,
+                                                            '&:hover': { filter: 'brightness(1.1)' },
+                                                        }}>
+                                                        Search Your Domain Now
+                                                    </Button>
+                                                </motion.div>
+                                            )}
+                                        </Box>
                                     </Reveal>
-                                </Grid>
+                                </Box>
                             );
                         })}
-                    </Grid>
-                    <Reveal delay={0.32}>
-                        <Box sx={{ textAlign: 'center', mt: 6 }}>
-                            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                                <Button variant="contained" size="large" endIcon={<ArrowRight size={20} />}
-                                    onClick={() => document.getElementById('search')?.scrollIntoView({ behavior: 'smooth' })}
-                                    sx={{
-                                        background: `linear-gradient(135deg, ${T.amberLt} 0%, ${T.amber} 55%, ${T.amberDk} 100%)`,
-                                        color: '#0a0f1e', fontWeight: 800, borderRadius: RS, px: 4.5, py: 1.75, fontSize: '1rem',
-                                        boxShadow: `0 8px 32px ${T.amberGlow}`,
-                                        '&:hover': { filter: 'brightness(1.1)', boxShadow: `0 12px 40px rgba(245,158,11,0.4)` },
-                                    }}>
-                                    Search Your Domain Now
-                                </Button>
-                            </motion.div>
-                        </Box>
-                    </Reveal>
+                    </Stack>
                 </Container>
             </Box>
 
