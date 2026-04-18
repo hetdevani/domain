@@ -13,17 +13,14 @@ import {
     Accordion,
     AccordionSummary,
     AccordionDetails,
-    Divider,
 } from '@mui/material';
 import SEOHead from '../../components/seo/SEOHead';
 import { motion, AnimatePresence, useReducedMotion, useInView } from 'framer-motion';
 import {
     Globe,
     Search,
-    Shield,
     ArrowRight,
     Sparkles,
-    Check,
     Users,
     Headphones,
     Zap,
@@ -32,13 +29,6 @@ import {
     Clock,
     ChevronDown,
     Star,
-    Phone,
-    Mail,
-    MapPin,
-    Twitter,
-    Linkedin,
-    Facebook,
-    Instagram,
     CheckCircle,
     XCircle,
     RefreshCw,
@@ -182,6 +172,7 @@ const hostingPlans = [
         cta: 'Contact Sales',
     },
 ];
+void hostingPlans;
 
 const testimonials = [
     { name: 'Rahul Sharma',  role: 'Founder, TechStartup.in',    av: 'RS', stars: 5, text: 'Plan A Hosting made it incredibly easy to register our startup domain and get hosting up within minutes. The dashboard is clean and the support team is extremely responsive.' },

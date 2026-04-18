@@ -304,7 +304,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                             px:          1.25, py: 1.25, mb: 0.75,
                             borderRadius: '10px',
                             bgcolor:     'rgba(255,255,255,0.035)',
-                            border:      `1px solid ${BRAND.border}`,
+                            border:      `1px solid ${BRAND.borderDark}`,
                         }}
                     >
                         <Avatar
@@ -394,7 +394,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                     overflowX:       'hidden',
                     backgroundColor: BRAND.bgDeep,
                     border:          'none',
-                    borderRight:     `1px solid ${BRAND.border}`,
+                    borderRight:     `1px solid ${BRAND.borderDark}`,
                     boxShadow:       `4px 0 32px rgba(0,0,0,0.4)`,
                 },
             }}
