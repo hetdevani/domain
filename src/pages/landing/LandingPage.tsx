@@ -125,10 +125,10 @@ const popularTlds = [
 ];
 
 const statsData = [
-    { value: 50,   suffix: 'K+',  label: 'Domains Managed' },
-    { value: 99.9, suffix: '%',   label: 'Uptime SLA'      },
-    { value: 24,   suffix: '/7',  label: 'Expert Support'  },
-    { value: 10,   suffix: '+',   label: 'Years Experience' },
+    { value: 50,   suffix: 'K+',  label: 'Domains Managed',  icon: Globe,      grad: 'linear-gradient(135deg,#f59e0b,#d97706)', glow: 'rgba(245,158,11,0.25)'   },
+    { value: 99.9, suffix: '%',   label: 'Uptime SLA',       icon: Zap,        grad: 'linear-gradient(135deg,#10b981,#059669)', glow: 'rgba(16,185,129,0.25)'   },
+    { value: 24,   suffix: '/7',  label: 'Expert Support',   icon: Headphones, grad: 'linear-gradient(135deg,#7c3aed,#4f46e5)', glow: 'rgba(124,58,237,0.25)'   },
+    { value: 10,   suffix: '+',   label: 'Years Experience', icon: Award,      grad: 'linear-gradient(135deg,#06b6d4,#0284c7)', glow: 'rgba(6,182,212,0.25)'    },
 ];
 
 const features = [
@@ -283,24 +283,44 @@ function Reveal({ children, delay = 0, from = 'bottom' }:
 }
 
 /* animated stat card */
-function StatCard({ value, suffix, label }: { value: number; suffix: string; label: string }) {
+function StatCard({ value, suffix, label, icon: Icon, grad, glow }: {
+    value: number; suffix: string; label: string;
+    icon: React.ElementType; grad: string; glow: string;
+}) {
     const ref = useRef<HTMLDivElement>(null);
     const inView = useInView(ref, { once: true, margin: '-40px' });
     const count = useCountUp(value, 1600, inView);
     return (
-        <Box ref={ref} sx={{ textAlign: 'center', py: 2 }}>
-            <Typography sx={{
-                fontSize: { xs: '2.2rem', md: '2.9rem' }, fontWeight: 900, lineHeight: 1,
-                fontFamily: '"Outfit",sans-serif', mb: 0.75,
-                background: `linear-gradient(135deg, ${T.amberLt} 0%, ${T.amber} 60%, ${T.amberDk} 100%)`,
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+        <motion.div whileHover={{ y: -6, scale: 1.03 }} transition={{ type: 'spring', stiffness: 380, damping: 28 }}>
+            <Box ref={ref} sx={{
+                textAlign: 'center', py: 3.5, px: 2.5,
+                borderRadius: '20px',
+                bgcolor: 'rgba(255,255,255,0.05)',
+                border: `1px solid rgba(255,255,255,0.09)`,
+                backdropFilter: 'blur(14px)',
+                transition: 'border-color 0.22s, box-shadow 0.22s',
+                '&:hover': { borderColor: glow.replace('0.25', '0.5'), boxShadow: `0 0 32px ${glow}` },
             }}>
-                {count}{suffix}
-            </Typography>
-            <Typography sx={{ color: T.muted, fontWeight: 600, fontSize: '0.9375rem' }}>
-                {label}
-            </Typography>
-        </Box>
+                <Box sx={{
+                    width: 54, height: 54, borderRadius: '14px', mx: 'auto', mb: 2,
+                    background: grad, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: `0 8px 24px ${glow}`,
+                }}>
+                    <Icon size={24} color="#fff" strokeWidth={2.2} />
+                </Box>
+                <Typography sx={{
+                    fontSize: { xs: '2.2rem', md: '2.7rem' }, fontWeight: 900, lineHeight: 1,
+                    fontFamily: '"Outfit",sans-serif', mb: 0.75,
+                    background: `${grad}`,
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                }}>
+                    {count}{suffix}
+                </Typography>
+                <Typography sx={{ color: T.muted, fontWeight: 600, fontSize: '0.9rem', letterSpacing: '0.02em' }}>
+                    {label}
+                </Typography>
+            </Box>
+        </motion.div>
     );
 }
 
@@ -632,7 +652,33 @@ const LandingPage: React.FC = () => {
             </AnimatePresence>
 
             {/* ══════════════ TLD PRICING STRIP ═══════════════════════ */}
-            <Box id="tlds" component="section" sx={{ bgcolor: T.bgLight, borderTop: `1px solid ${T.borderLt}`, py: { xs: 6, md: 8 }, scrollMarginTop: '80px' }}>
+            <Box id="tlds" component="section" sx={{ bgcolor: T.bgLight, borderTop: `1px solid ${T.borderLt}`, py: { xs: 6, md: 8 }, scrollMarginTop: '80px', overflow: 'hidden' }}>
+                {/* Auto-scroll marquee ticker */}
+                <Box sx={{
+                    bgcolor: T.bgDeep, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`,
+                    py: 1.25, mb: 6, overflow: 'hidden', position: 'relative',
+                    '&::before, &::after': {
+                        content: '""', position: 'absolute', top: 0, bottom: 0, width: 80, zIndex: 1, pointerEvents: 'none',
+                    },
+                    '&::before': { left: 0, background: `linear-gradient(to right, ${T.bgDeep}, transparent)` },
+                    '&::after':  { right: 0, background: `linear-gradient(to left,  ${T.bgDeep}, transparent)` },
+                }}>
+                    <motion.div
+                        animate={{ x: ['0%', '-50%'] }}
+                        transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
+                        style={{ display: 'flex', gap: 32, width: 'max-content' }}
+                    >
+                        {[...popularTlds, ...popularTlds].map((tld, i) => (
+                            <Stack key={i} direction="row" alignItems="center" spacing={1.25} sx={{ flexShrink: 0 }}>
+                                <Typography sx={{ color: T.amber, fontWeight: 800, fontSize: '0.9rem', fontFamily: '"Outfit",sans-serif' }}>{tld.ext}</Typography>
+                                <Typography sx={{ color: T.muted, fontWeight: 600, fontSize: '0.8rem' }}>{tld.price}/yr</Typography>
+                                {tld.popular && <Box sx={{ width: 5, height: 5, borderRadius: '50%', bgcolor: T.amber }} />}
+                                <Box sx={{ width: 1, height: 16, bgcolor: T.border, mx: 1 }} />
+                            </Stack>
+                        ))}
+                    </motion.div>
+                </Box>
+
                 <Container maxWidth="lg">
                     <Reveal>
                         <Box sx={{ textAlign: 'center', mb: 5 }}>
@@ -645,34 +691,37 @@ const LandingPage: React.FC = () => {
                         {popularTlds.map((tld, i) => (
                             <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2 }} key={tld.ext}>
                                 <Reveal delay={i * 0.04}>
-                                    <Paper elevation={0} onClick={() => document.getElementById('search')?.scrollIntoView({ behavior: 'smooth' })}
-                                        sx={{
-                                            p: 2.5, borderRadius: R, textAlign: 'center',
-                                            border: tld.popular ? `1.5px solid ${T.amberGlow}` : `1px solid ${T.borderLt}`,
-                                            cursor: 'pointer', position: 'relative', overflow: 'hidden',
-                                            bgcolor: tld.popular ? T.amberBg : '#fff',
-                                            transition: 'all 0.22s ease',
-                                            '&:hover': {
-                                                transform: 'translateY(-4px)',
-                                                boxShadow: `0 12px 32px ${T.amberGlow}`,
-                                                borderColor: T.amber,
-                                            },
-                                        }}>
-                                        {tld.popular && (
-                                            <Box sx={{
-                                                position: 'absolute', top: 0, right: 0,
-                                                bgcolor: T.amber, color: '#000', fontSize: '0.58rem', fontWeight: 800,
-                                                px: 1, py: 0.35, borderBottomLeftRadius: 8, letterSpacing: '0.08em',
-                                            }}>POPULAR</Box>
-                                        )}
-                                        <Typography sx={{ fontWeight: 800, fontSize: '1.15rem', color: T.textDk, fontFamily: '"Outfit",sans-serif' }}>
-                                            {tld.ext}
-                                        </Typography>
-                                        <Typography sx={{ color: T.amber, fontWeight: 700, fontSize: '0.9375rem', mt: 0.5 }}>
-                                            {tld.price}
-                                        </Typography>
-                                        <Typography sx={{ color: T.mutedDk, fontSize: '0.7rem', mt: 0.2 }}>/year</Typography>
-                                    </Paper>
+                                    <motion.div whileHover={{ y: -6, scale: 1.04 }} transition={{ type: 'spring', stiffness: 400, damping: 26 }}>
+                                        <Paper elevation={0} onClick={() => document.getElementById('search')?.scrollIntoView({ behavior: 'smooth' })}
+                                            sx={{
+                                                p: 2.5, borderRadius: R, textAlign: 'center',
+                                                border: tld.popular ? `1.5px solid ${T.amberGlow}` : `1px solid ${T.borderLt}`,
+                                                cursor: 'pointer', position: 'relative', overflow: 'hidden',
+                                                bgcolor: tld.popular ? T.amberBg : '#fff',
+                                                transition: 'box-shadow 0.22s, border-color 0.22s',
+                                                '&:hover': {
+                                                    boxShadow: `0 14px 36px ${T.amberGlow}`,
+                                                    borderColor: T.amber,
+                                                    bgcolor: 'rgba(245,158,11,0.05)',
+                                                },
+                                            }}>
+                                            {tld.popular && (
+                                                <Box sx={{
+                                                    position: 'absolute', top: 0, right: 0,
+                                                    bgcolor: T.amber, color: '#000', fontSize: '0.55rem', fontWeight: 800,
+                                                    px: 1, py: 0.35, borderBottomLeftRadius: 8, letterSpacing: '0.09em',
+                                                }}>HOT</Box>
+                                            )}
+                                            <Typography sx={{ fontWeight: 800, fontSize: '1.2rem', color: T.textDk, fontFamily: '"Outfit",sans-serif', letterSpacing: '-0.01em' }}>
+                                                {tld.ext}
+                                            </Typography>
+                                            <Box sx={{ height: 2, width: 28, bgcolor: T.amber, borderRadius: 99, mx: 'auto', my: 0.75, opacity: 0.6 }} />
+                                            <Typography sx={{ color: T.amber, fontWeight: 800, fontSize: '0.9375rem' }}>
+                                                {tld.price}
+                                            </Typography>
+                                            <Typography sx={{ color: T.mutedDk, fontSize: '0.68rem', mt: 0.15, letterSpacing: '0.06em', textTransform: 'uppercase' }}>/year</Typography>
+                                        </Paper>
+                                    </motion.div>
                                 </Reveal>
                             </Grid>
                         ))}
@@ -702,11 +751,11 @@ const LandingPage: React.FC = () => {
                     opacity: 0.4,
                 }} />
                 <Container maxWidth="lg" sx={{ position: 'relative' }}>
-                    <Grid container spacing={2} justifyContent="center">
+                    <Grid container spacing={2.5} justifyContent="center">
                         {statsData.map((s, i) => (
                             <Grid size={{ xs: 6, md: 3 }} key={s.label}>
                                 <Reveal delay={i * 0.08}>
-                                    <StatCard value={s.value} suffix={s.suffix} label={s.label} />
+                                    <StatCard value={s.value} suffix={s.suffix} label={s.label} icon={s.icon} grad={s.grad} glow={s.glow} />
                                 </Reveal>
                             </Grid>
                         ))}
@@ -715,8 +764,17 @@ const LandingPage: React.FC = () => {
             </Box>
 
             {/* ══════════════ FEATURES ════════════════════════════════ */}
-            <Box id="features" component="section" sx={{ bgcolor: T.bgLight, py: { xs: 7, md: 10 }, scrollMarginTop: '80px' }}>
-                <Container maxWidth="lg">
+            <Box id="features" component="section" sx={{
+                bgcolor: T.bgLight, py: { xs: 7, md: 10 }, scrollMarginTop: '80px',
+                position: 'relative', overflow: 'hidden',
+            }}>
+                {/* Subtle mesh grid background */}
+                <Box aria-hidden sx={{
+                    position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0.4,
+                    backgroundImage: `linear-gradient(${T.borderLt} 1px, transparent 1px), linear-gradient(90deg, ${T.borderLt} 1px, transparent 1px)`,
+                    backgroundSize: '60px 60px',
+                }} />
+                <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
                     <Reveal>
                         <Box sx={{ textAlign: 'center', mb: 6 }}>
                             <SectionBadge>Everything You Need</SectionBadge>
@@ -727,26 +785,40 @@ const LandingPage: React.FC = () => {
                     <Grid container spacing={3}>
                         {features.map((f, i) => {
                             const Icon = f.icon;
+                            /* extract a glow color from the gradient string */
+                            const glowColor = f.grad.match(/#[0-9a-f]{6}/i)?.[0] ?? T.amber;
                             return (
                                 <Grid size={{ xs: 12, sm: 6, md: 4 }} key={f.title}>
                                     <Reveal delay={i * 0.06}>
-                                        <motion.div whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 400, damping: 28 }}>
+                                        <motion.div whileHover={{ y: -8 }} transition={{ type: 'spring', stiffness: 380, damping: 28 }} style={{ height: '100%' }}>
                                             <Paper elevation={0} sx={{
                                                 p: 3.5, borderRadius: R, height: '100%',
                                                 border: `1px solid ${T.borderLt}`, bgcolor: '#fff',
-                                                transition: 'box-shadow 0.22s, border-color 0.22s',
+                                                position: 'relative', overflow: 'hidden',
+                                                transition: 'box-shadow 0.28s, border-color 0.28s',
+                                                /* per-card colored top border on hover */
+                                                '&::before': {
+                                                    content: '""', position: 'absolute', top: 0, left: 0, right: 0,
+                                                    height: 3, background: f.grad,
+                                                    transform: 'scaleX(0)', transformOrigin: 'left',
+                                                    transition: 'transform 0.32s ease',
+                                                    borderTopLeftRadius: R, borderTopRightRadius: R,
+                                                },
                                                 '&:hover': {
-                                                    boxShadow: `0 20px 50px rgba(0,0,0,0.1)`,
-                                                    borderColor: `${T.amber}55`,
+                                                    boxShadow: `0 24px 56px ${glowColor}22`,
+                                                    borderColor: `${glowColor}44`,
+                                                    '&::before': { transform: 'scaleX(1)' },
                                                 },
                                             }}>
-                                                <Box sx={{
-                                                    width: 52, height: 52, borderRadius: '14px', mb: 2.5,
-                                                    background: f.grad, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                    boxShadow: '0 8px 24px rgba(0,0,0,0.16)',
-                                                }}>
-                                                    <Icon size={25} color="#fff" strokeWidth={2} />
-                                                </Box>
+                                                <motion.div whileHover={{ rotate: [0, -8, 8, 0], scale: 1.08 }} transition={{ duration: 0.4 }}>
+                                                    <Box sx={{
+                                                        width: 56, height: 56, borderRadius: '16px', mb: 2.5,
+                                                        background: f.grad, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                        boxShadow: `0 10px 28px ${glowColor}40`,
+                                                    }}>
+                                                        <Icon size={26} color="#fff" strokeWidth={2} />
+                                                    </Box>
+                                                </motion.div>
                                                 <Typography sx={{ fontWeight: 700, fontSize: '1.05rem', mb: 1, color: T.textDk, fontFamily: '"Outfit",sans-serif' }}>
                                                     {f.title}
                                                 </Typography>
@@ -997,8 +1069,20 @@ const LandingPage: React.FC = () => {
             </Box>
 
             {/* ══════════════ TESTIMONIALS ════════════════════════════ */}
-            <Box component="section" sx={{ bgcolor: T.bgLight, py: { xs: 7, md: 10 } }}>
-                <Container maxWidth="lg">
+            <Box component="section" sx={{
+                bgcolor: T.bgLight, py: { xs: 7, md: 10 },
+                position: 'relative', overflow: 'hidden',
+            }}>
+                {/* Large decorative background quote */}
+                <Typography aria-hidden sx={{
+                    position: 'absolute', top: -40, left: '50%', transform: 'translateX(-50%)',
+                    fontSize: '28rem', fontWeight: 900, lineHeight: 1,
+                    color: T.amber, opacity: 0.03, pointerEvents: 'none', userSelect: 'none',
+                    fontFamily: 'Georgia, serif',
+                }}>
+                    "
+                </Typography>
+                <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
                     <Reveal>
                         <Box sx={{ textAlign: 'center', mb: 6 }}>
                             <SectionBadge>Customer Stories</SectionBadge>
@@ -1007,43 +1091,70 @@ const LandingPage: React.FC = () => {
                         </Box>
                     </Reveal>
                     <Grid container spacing={3}>
-                        {testimonials.map((t, i) => (
-                            <Grid size={{ xs: 12, sm: 6 }} key={t.name}>
-                                <Reveal delay={i * 0.08}>
-                                    <motion.div whileHover={{ y: -4 }} transition={EASE_SPRING}>
-                                        <Paper elevation={0} sx={{
-                                            p: 3.5, borderRadius: R, height: '100%',
-                                            border: `1px solid ${T.borderLt}`, bgcolor: '#fff',
-                                            transition: 'box-shadow 0.22s, border-color 0.22s',
-                                            '&:hover': { boxShadow: '0 16px 44px rgba(0,0,0,0.09)', borderColor: `${T.amber}50` },
-                                        }}>
-                                            <Stack direction="row" spacing={0.4} sx={{ mb: 2 }}>
-                                                {Array.from({ length: t.stars }).map((_, si) => (
-                                                    <Star key={si} size={16} color={T.amber} fill={T.amber} />
-                                                ))}
-                                            </Stack>
-                                            <Typography sx={{ color: T.mutedDk, fontSize: '0.9375rem', lineHeight: 1.72, mb: 3, fontStyle: 'italic' }}>
-                                                "{t.text}"
-                                            </Typography>
-                                            <Stack direction="row" spacing={1.5} alignItems="center">
+                        {testimonials.map((t, i) => {
+                            const accentGrads = [
+                                `linear-gradient(180deg, ${T.amber}, ${T.amberDk})`,
+                                `linear-gradient(180deg, ${T.violet}, #4f46e5)`,
+                                `linear-gradient(180deg, #10b981, #059669)`,
+                                `linear-gradient(180deg, ${T.cyan}, #0284c7)`,
+                            ];
+                            return (
+                                <Grid size={{ xs: 12, sm: 6 }} key={t.name}>
+                                    <Reveal delay={i * 0.08}>
+                                        <motion.div whileHover={{ y: -6 }} transition={EASE_SPRING} style={{ height: '100%' }}>
+                                            <Paper elevation={0} sx={{
+                                                p: 3.5, borderRadius: R, height: '100%',
+                                                border: `1px solid ${T.borderLt}`, bgcolor: '#fff',
+                                                position: 'relative', overflow: 'hidden',
+                                                transition: 'box-shadow 0.26s, border-color 0.26s',
+                                                '&:hover': { boxShadow: '0 20px 52px rgba(0,0,0,0.1)', borderColor: `${T.amber}45` },
+                                            }}>
+                                                {/* Colored left accent bar */}
                                                 <Box sx={{
-                                                    width: 46, height: 46, borderRadius: '50%',
-                                                    background: `linear-gradient(135deg, ${T.amber}, ${T.violet})`,
-                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                    fontSize: '0.8rem', fontWeight: 800, color: '#fff', flexShrink: 0,
+                                                    position: 'absolute', left: 0, top: 0, bottom: 0,
+                                                    width: 4, background: accentGrads[i % accentGrads.length],
+                                                    borderTopLeftRadius: R, borderBottomLeftRadius: R,
+                                                }} />
+                                                {/* Decorative quote mark */}
+                                                <Typography aria-hidden sx={{
+                                                    position: 'absolute', top: 10, right: 20,
+                                                    fontSize: '5rem', lineHeight: 1, fontWeight: 900,
+                                                    color: T.amber, opacity: 0.08,
+                                                    fontFamily: 'Georgia, serif', pointerEvents: 'none',
                                                 }}>
-                                                    {t.av}
+                                                    "
+                                                </Typography>
+                                                <Box sx={{ pl: 1.5 }}>
+                                                    <Stack direction="row" spacing={0.4} sx={{ mb: 2 }}>
+                                                        {Array.from({ length: t.stars }).map((_, si) => (
+                                                            <Star key={si} size={15} color={T.amber} fill={T.amber} />
+                                                        ))}
+                                                    </Stack>
+                                                    <Typography sx={{ color: T.mutedDk, fontSize: '0.9375rem', lineHeight: 1.74, mb: 3, fontStyle: 'italic' }}>
+                                                        "{t.text}"
+                                                    </Typography>
+                                                    <Stack direction="row" spacing={1.5} alignItems="center">
+                                                        <Box sx={{
+                                                            width: 48, height: 48, borderRadius: '50%',
+                                                            background: accentGrads[i % accentGrads.length],
+                                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                            fontSize: '0.82rem', fontWeight: 800, color: '#fff', flexShrink: 0,
+                                                            boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
+                                                        }}>
+                                                            {t.av}
+                                                        </Box>
+                                                        <Box>
+                                                            <Typography sx={{ fontWeight: 700, fontSize: '0.9375rem', color: T.textDk }}>{t.name}</Typography>
+                                                            <Typography sx={{ color: T.mutedDk, fontSize: '0.8rem' }}>{t.role}</Typography>
+                                                        </Box>
+                                                    </Stack>
                                                 </Box>
-                                                <Box>
-                                                    <Typography sx={{ fontWeight: 700, fontSize: '0.9375rem', color: T.textDk }}>{t.name}</Typography>
-                                                    <Typography sx={{ color: T.mutedDk, fontSize: '0.8rem' }}>{t.role}</Typography>
-                                                </Box>
-                                            </Stack>
-                                        </Paper>
-                                    </motion.div>
-                                </Reveal>
-                            </Grid>
-                        ))}
+                                            </Paper>
+                                        </motion.div>
+                                    </Reveal>
+                                </Grid>
+                            );
+                        })}
                     </Grid>
                 </Container>
             </Box>
